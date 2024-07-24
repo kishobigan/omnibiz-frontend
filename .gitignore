@@ -19,9 +19,6 @@ jspm_packages/
 # Optional eslint cache
 .eslintcache
 
-# Next.js build output
-.next/
-
 # Next.js static files
 out/
 
