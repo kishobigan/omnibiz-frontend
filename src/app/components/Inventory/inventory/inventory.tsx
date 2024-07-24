@@ -2,14 +2,15 @@
 import React, {useState, useEffect} from "react";
 import Table from "@/app/widgets/table/Table";
 import SearchBar from "@/app/widgets/searchBar/searchBar";
-import AddItemForm from "@/app/components/Inventory/addItemForm/addItem";
-import AddCategoryForm from "@/app/components/Inventory/addCategoryForm/addCategory";
+// import AddItemForm from "@/app/components/Inventory/addItemForm/addItem";
+// import AddCategoryForm from "@/app/components/Inventory/addCategoryForm/addCategory";
 import "./inventory.css";
 import Pagination from "@/app/widgets/pagination/pagination";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Button from "@/app/widgets/Button/Button";
 import CreateInventoryForm from "@/app/components/Inventory/createInventoryForm/createInventory";
+import CreateOrderForm from "../createOrderForm/createOrder";
 import {useParams} from "next/navigation";
 import api from "@/app/utils/Api/api";
 
@@ -30,9 +31,10 @@ function Inventory() {
     const rowsPerPage = 10;
 
     const [modalType, setModalType] = useState<"Add" | "Edit" | "View">("Add")
-    const [showCategoryModal, setShowCategoryModal] = useState(false);
-    const [showItemModal, setShowItemModal] = useState(false);
+    // const [showCategoryModal, setShowCategoryModal] = useState(false);
+    // const [showItemModal, setShowItemModal] = useState(false);
     const [showInventoryModal, setShowInventoryModal] = useState(false);
+    const [showOrderModal, setShowOrderModal] = useState(false);
     const [selectedInventory, setSelectedInventory] = useState(null)
     const [update, setUpdate] = useState(false);
     const {business_id} = useParams()
@@ -108,19 +110,26 @@ function Inventory() {
     return (
         <div className="container-fluid">
             <div className="button-container d-flex justify-content-end mt-4">
-                <Button
+                {/* <Button
                     onClick={() => setShowItemModal(true)}
                     variant="light"
                     className="me-2 buttonWithPadding"
                 >
                     Add Item
-                </Button>
-                <Button
+                </Button> */}
+                {/* <Button
                     onClick={() => setShowCategoryModal(true)}
                     variant="light"
                     className="me-2 buttonWithPadding"
                 >
                     Add Category
+                </Button> */}
+                 <Button
+                    onClick={() => setShowOrderModal(true)} // Show the CreateOrderForm modal
+                    variant="light"
+                    className="buttonWithPadding"
+                >
+                    Create Order
                 </Button>
                 <Button
                     onClick={() => {
@@ -159,19 +168,19 @@ function Inventory() {
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
-            <AddCategoryForm
+            {/* <AddCategoryForm
                 show={showCategoryModal}
                 onHide={() => {
                     setShowCategoryModal(false);
                 }}
-            />
-            <AddItemForm
+            /> */}
+            {/* <AddItemForm
                 show={showItemModal}
                 update={() => setUpdate(!update)}
                 onHide={() => {
                     setShowItemModal(false);
                 }}
-            />
+            /> */}
             <CreateInventoryForm
                 show={showInventoryModal}
                 type={modalType}
@@ -181,6 +190,12 @@ function Inventory() {
                     setShowInventoryModal(false);
                     setSelectedInventory(null)
                 }}
+            />
+             <CreateOrderForm
+                show={showOrderModal}
+                type="Add" // Pass the type prop
+                onHide={() => setShowOrderModal(false)} // Hide the CreateOrderForm modal
+                update={() => setUpdate(!update)}
             />
         </div>
     );
