@@ -1,0 +1,58 @@
+
+.side_bar_body {
+    height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--dullBlack);
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-grow-1 {
+    flex-grow: 2;
+}
+
+.side_bar_logo img {
+    width: 100%;
+    height: auto;
+    max-width: 150px;
+}
+
+.menu_text {
+    font-size: 8px;
+    color: var(--whiteColor);
+}
+
+.nav-link {
+    color: var(--whiteColor);
+}
+
+.nav-link.active {
+    background-color: var(--lightBlue) !important;
+    color: var(--whiteColor) !important;
+}
+
+.nav-link.active:hover {
+    background-color: var(--grayColor) !important;
+}
+
+.nav-link:hover {
+    background-color: var(--lightgray);
+    color: var(--dullBlack);
+}
+
+.side_bar_icon {
+    height: 20px;
+    width: 20px;
+}
+
+@media only screen and (max-width: 576px) {
+    .side_bar_logo img {
+        max-width: 100px;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    .side_bar_logo img {
+        max-width: 120px;
+    }
+}

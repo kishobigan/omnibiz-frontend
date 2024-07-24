@@ -1,0 +1,21 @@
+.container {
+    max-width: 450px; 
+    margin: 0 auto; /* Center the container */
+    padding: 20px;
+  }
+  
+  /* .signInContent {
+     Additional styles for the SignInContent component 
+  } */
+
+  .forgot-password-link {
+   text-align: right;
+   font-size: small;
+ }
+ 
+ .error {
+  color: red; /* Change to any color you prefer */
+  font-size: 13px; /* Adjust the font size as needed */
+  margin-top: 5px;
+  margin-bottom: 10px;
+}

@@ -1,0 +1,25 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    padding: 40px;
+    justify-content: space-between; /* Added to space between header and filter */
+
+}
+.filter-container {
+    display: flex;
+    align-items: center;
+}
+
+.filter-icon {
+    margin-right: 8px;
+}
+.search{
+    margin-left: 10px;
+}
+.supplier-add {
+    margin-left: 20px;
+}
+._body{
+    margin-top: 50px;
+}
+

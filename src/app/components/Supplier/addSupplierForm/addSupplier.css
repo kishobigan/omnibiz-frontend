@@ -1,0 +1,13 @@
+.custom-select option:checked {
+    font-size: 14px;
+}
+
+.custom-select {
+    font-size: 15px;
+}
+
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 0.25em;
+}

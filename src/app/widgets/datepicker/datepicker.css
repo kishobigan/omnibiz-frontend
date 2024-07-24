@@ -1,0 +1,10 @@
+.date-picker-input {
+    position: relative;
+}
+
+.calendar-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Adjust the position of the icon as needed */
+    transform: translateY(-50%);
+}
