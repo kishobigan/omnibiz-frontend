@@ -1,17 +1,18 @@
 "use client";
-import React, {useEffect} from "react";
-import {Modal} from 'react-bootstrap';
-import {useState} from "react";
+import React, { useEffect, useState } from "react";
+import { Modal } from 'react-bootstrap';
 import Input from "@/app/widgets/input/Input";
 import Dropdown from "@/app/widgets/dropdown/dropdown";
 import FormHandler from "@/app/utils/FormHandler/Formhandler";
-import {validate, inventorySchema} from "@/app/utils/Validation/validations";
+import { validate, inventorySchema } from "@/app/utils/Validation/validations";
 import Cookies from "js-cookie";
-import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
-import {useParams} from "next/navigation";
+import { ACCESS_TOKEN } from "@/app/utils/Constants/constants";
+import { useParams } from "next/navigation";
 import api from "@/app/utils/Api/api";
 import Button from "@/app/widgets/Button/Button";
 import Loader from "@/app/widgets/loader/loader";
+import AddItemForm from "@/app/components/Inventory/addItemForm/addItem";
+import AddCategoryForm from "@/app/components/Inventory/addCategoryForm/addCategory";
 
 interface CreateInventoryProps {
     type: 'Add' | 'Edit' | 'View';
@@ -22,8 +23,8 @@ interface CreateInventoryProps {
 }
 
 const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
-                                                                 type, show, onHide, selectedInventory, update
-                                                             }) => {
+    type, show, onHide, selectedInventory, update
+}) => {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [isSubmit, setIsSubmit] = useState<boolean>(false)
@@ -32,7 +33,11 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
     const [items, setItems] = useState<{ value: string, label: string }[]>([])
     const [suppliers, setSuppliers] = useState<{ value: string, label: string }[]>([])
     const token = Cookies.get(ACCESS_TOKEN)
-    const {business_id} = useParams()
+    const { business_id } = useParams()
+
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [showItemModal, setShowItemModal] = useState(false);
+    const [showCreateInventoryModal, setShowCreateInventoryModal] = useState(show);
 
     type FormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -45,7 +50,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
         suppliers: "",
     };
 
-    const {handleChange, handleSubmit, values, setValue, errors, initForm} = FormHandler(() => setIsSubmit(true),
+    const { handleChange, handleSubmit, values, setValue, errors, initForm } = FormHandler(() => setIsSubmit(true),
         validate, inventorySchema, initValues);
 
     useEffect(() => {
@@ -192,7 +197,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
     }, [isSubmit, update]);
 
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const {value} = e.target;
+        const { value } = e.target;
         handleChange({
             target: {
                 name: 'category',
@@ -201,7 +206,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
         } as React.ChangeEvent<FormElements>);
     };
     const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const {value} = e.target;
+        const { value } = e.target;
         handleChange({
             target: {
                 name: 'item',
@@ -212,10 +217,23 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         handleSubmit({
-            preventDefault: () => {
-            }
+            preventDefault: () => { }
         } as React.FormEvent<HTMLFormElement>);
     };
+
+    const handleAddCategoryHide = () => {
+        setShowCategoryModal(false);
+        setShowCreateInventoryModal(true);
+    };
+
+    const handleAddItemHide = () => {
+        setShowItemModal(false);
+        setShowCreateInventoryModal(true);
+    };
+
+    useEffect(() => {
+        setShowCreateInventoryModal(show);
+    }, [show]);
 
     const errorStyle = {
         color: "red",
@@ -225,126 +243,162 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
     };
 
     return (
-        <Modal
-            show={show}
-            onHide={() => {
-                if (type !== 'View') initForm(initValues);
-                onHide();
-                setErrorMessage(null);
-            }}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            backdrop
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    {type === "Add" && <div>Create Inventory</div>}
-                    {type === "View" && <div>View Inventory</div>}
-                    {type === "Edit" && <div>Edit Inventory</div>}
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <form onSubmit={handleSubmit} className="row g-3 ms-5 me-5">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <Dropdown
-                                label="Item"
-                                options={items}
-                                value={values.item}
-                                onChange={handleItemChange}
-                                name="item"
-                            />
-                            {errors.item && <span style={errorStyle}>{errors.item}</span>}
+        <>
+            <Modal
+                show={showCreateInventoryModal}
+                onHide={() => {
+                    if (type !== 'View') initForm(initValues);
+                    onHide();
+                    setErrorMessage(null);
+                }}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                backdrop
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        {type === "Add" && <div>Create Inventory</div>}
+                        {type === "View" && <div>View Inventory</div>}
+                        {type === "Edit" && <div>Edit Inventory</div>}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form onSubmit={handleSubmit} className="row g-3 ms-5 me-5">
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <Dropdown
+                                    label="Item"
+                                    options={items}
+                                    value={values.item}
+                                    onChange={handleItemChange}
+                                    name="item"
+                                />
+                                {errors.item && <span style={errorStyle}>{errors.item}</span>}
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <Dropdown
+                                    label="Category"
+                                    options={categories}
+                                    value={values.category}
+                                    onChange={handleCategoryChange}
+                                    name="category"
+                                />
+                                {errors.category && <span style={errorStyle}>{errors.category}</span>}
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <Input
+                                    label="Quantity"
+                                    placeholder="Enter quantity"
+                                    type={"Number"}
+                                    name="quantity"
+                                    value={values.quantity}
+                                    onChange={handleChange}
+                                />
+                                {errors.quantity && <span style={errorStyle}>{errors.quantity}</span>}
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <Input
+                                    label="Buying Price"
+                                    placeholder="Enter buying price"
+                                    type={"text"}
+                                    name="buyingPrice"
+                                    value={values.buyingPrice}
+                                    onChange={handleChange}
+                                />
+                                {errors.buyingPrice && <span style={errorStyle}>{errors.buyingPrice}</span>}
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <Input
+                                    label="Selling Price"
+                                    placeholder="Enter selling price"
+                                    type={"text"}
+                                    name="sellingPrice"
+                                    value={values.sellingPrice}
+                                    onChange={handleChange}
+                                />
+                                {errors.sellingPrice && <span style={errorStyle}>{errors.sellingPrice}</span>}
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <Dropdown
+                                    label="Suppliers"
+                                    options={suppliers}
+                                    value={values.suppliers}
+                                    onChange={handleChange}
+                                    name="suppliers"
+                                />
+                                {errors.suppliers && <span style={errorStyle}>{errors.suppliers}</span>}
+                            </div>
+                        </div>
+                        {errorMessage && <p className='error'>{errorMessage}</p>}
+                    </form>
+                    <div className="row g-3 ms-5 me-5">
+                        <div className="d-flex justify-content-end mt-3">
+                            <div className="col-6 d-flex justify-content-end">
+                                <Button
+                                    onClick={() => {
+                                        setShowCategoryModal(true);
+                                        setShowCreateInventoryModal(false);
+                                    }}
+                                    variant="light"
+                                    className="me-2 buttonWithPadding"
+                                >
+                                    Add Category
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        setShowItemModal(true);
+                                        setShowCreateInventoryModal(false);
+                                    }}
+                                    variant="light"
+                                    className="buttonWithPadding"
+                                >
+                                    Add Item
+                                </Button>
+                            </div>
                         </div>
                     </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <Dropdown
-                                label="Category"
-                                options={categories}
-                                value={values.category}
-                                onChange={handleCategoryChange}
-                                name="category"
-                            />
-                            {errors.category && <span style={errorStyle}>{errors.category}</span>}
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <Input
-                                label="Quantity"
-                                placeholder="Enter quantity"
-                                type={"Number"}
-                                name="quantity"
-                                value={values.quantity}
-                                onChange={handleChange}
-                            />
-                            {errors.quantity && <span style={errorStyle}>{errors.quantity}</span>}
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <Input
-                                label="Buying Price"
-                                placeholder="Enter buying price"
-                                type={"text"}
-                                name="buyingPrice"
-                                value={values.buyingPrice}
-                                onChange={handleChange}
-                            />
-                            {errors.buyingPrice && <span style={errorStyle}>{errors.buyingPrice}</span>}
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <Input
-                                label="Selling Price"
-                                placeholder="Enter selling price"
-                                type={"text"}
-                                name="sellingPrice"
-                                value={values.sellingPrice}
-                                onChange={handleChange}
-                            />
-                            {errors.sellingPrice && <span style={errorStyle}>{errors.sellingPrice}</span>}
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <Dropdown
-                                label="Suppliers"
-                                options={suppliers}
-                                value={values.suppliers}
-                                onChange={handleChange}
-                                name="suppliers"
-                            />
-                            {errors.suppliers && <span style={errorStyle}>{errors.suppliers}</span>}
-                        </div>
-                    </div>
-                    {errorMessage && <p className='error'>{errorMessage}</p>}
-                </form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button
-                    variant="light"
-                    onClick={() => {
-                        if (type !== "View") initForm(initValues);
-                        onHide();
-                        setErrorMessage(null)
-                    }}
-                >
-                    Cancel
-                </Button>
-                {type !== "View" && (
+                </Modal.Body>
+                <Modal.Footer>
                     <Button
-                        variant="dark"
-                        onClick={handleFormSubmit}
+                        variant="light"
+                        onClick={() => {
+                            if (type !== "View") initForm(initValues);
+                            onHide();
+                            setErrorMessage(null);
+                        }}
                     >
-                        {loading ? <Loader/> : type === "Add" ? "Create" : "Update"}
+                        Cancel
                     </Button>
-                )}
-            </Modal.Footer>
-        </Modal>
+                    {type !== "View" && (
+                        <Button
+                            variant="dark"
+                            onClick={handleFormSubmit}
+                        >
+                            {loading ? <Loader /> : type === "Add" ? "Create" : "Update"}
+                        </Button>
+                    )}
+                </Modal.Footer>
+            </Modal>
+            <AddCategoryForm
+                show={showCategoryModal}
+                onHide={handleAddCategoryHide}
+            />
+            <AddItemForm
+                show={showItemModal}
+                onHide={handleAddItemHide}
+            />
+        </>
     );
 }
 
