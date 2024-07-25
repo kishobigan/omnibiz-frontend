@@ -68,8 +68,8 @@ const Table: React.FC<TableProps> = ({
     };
 
     return (
-        <table className="table table-striped table-hover">
-            <thead>
+        <table className="table">
+            <thead className='table-light'>
             <tr>
                 {columns.map((column) => (
                     <th key={column.key}>{column.header}</th>
