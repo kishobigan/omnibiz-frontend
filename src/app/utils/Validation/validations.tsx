@@ -255,3 +255,7 @@ export const billingSchema: ValidationSchema = {
         pattern: /^([1-9]\d?|100)$/,
     },
 }
+
+export const contractSchema: ValidationSchema={
+
+}
