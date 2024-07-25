@@ -72,7 +72,7 @@ function Sidebar({userId, role}: SidebarProps) {
     }
     const menuItems = getMenuItems(role);
 
-    const logoutItem: MenuItem = {label: "LogOut", icon: faSignOutAlt, onClick: logout};
+    const logoutItem: MenuItem = {label: "Log out", icon: faSignOutAlt, onClick: logout};
 
     return (
         <div className='d-flex flex-column flex-shrink-0 px-3 w-100 side_bar_body sticky-top'>
