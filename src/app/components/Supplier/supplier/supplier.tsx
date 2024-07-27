@@ -6,12 +6,10 @@ import { faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "next/navigation";
 import FeatherIcon from "feather-icons-react";
 import Button from "@/app/widgets/Button/Button";
-import Table from "@/app/widgets/table/Table";
-import Pagination from "@/app/widgets/pagination/pagination";
 import AddSupplier from "@/app/components/Supplier/addSupplierForm/addSupplier";
 import api from "@/app/utils/Api/api";
-import CreateContractForm from "@/app/components/Supplier/createContract/createContract";
 
+import CreateContractForm from "@/app/components/Supplier/createContract/createContract";
 const Supplier: React.FC = () => {
     const [supplierData, setSupplierData] = useState([]);
     const [contractData, setContractData] = useState([]);
