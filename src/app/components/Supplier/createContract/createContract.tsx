@@ -15,7 +15,7 @@ import Loader from "@/app/widgets/loader/loader";
 interface CreateContractProps {
     show: boolean;
     onHide: () => void;
-    updateContracts: () => void; // Add this prop
+    updateContracts: () => void;
 }
 
 const CreateContractForm: React.FC<CreateContractProps> = ({ show, onHide, updateContracts }) => {
