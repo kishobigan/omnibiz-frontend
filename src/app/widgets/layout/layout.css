@@ -13,7 +13,14 @@ html, body, #__next, .container-fluid, .row {
 .bg_color {
     background-color: var(--blackColor);
 }
+.gradient-bg {
+    background: linear-gradient(to bottom right, #D3D3D3, white); /* Dark at top left to light at bottom right */
+    height: 100%;
+}
 
+.col-sm-10 {
+    height: 100%;
+}
 @media only screen and (max-width: 576px ) {
     .sidebar {
         height: auto !important;
