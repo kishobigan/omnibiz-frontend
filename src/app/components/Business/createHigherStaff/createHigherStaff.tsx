@@ -9,6 +9,7 @@ import api from "@/app/utils/Api/api";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import Button from "@/app/widgets/Button/Button";
+import {useParams} from "next/navigation";
 
 interface CreateHigherStaffProps {
     type: 'Add' | 'Edit' | 'View';
@@ -22,19 +23,14 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
     const [loading, setLoading] = useState<boolean>(false);
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
+    const [businessData, setBusinessData] = useState<{ name: string, value: string }[]>([]);
     const token = Cookies.get(ACCESS_TOKEN)
+    const {user_id} = useParams()
 
     const initValues = {
         email: '',
         business_id: '',
     };
-
-    const businessData = [
-        {name: 'Business 1', value: '5utt4n5x'},
-        {name: 'Business 2', value: 'itlhaccc'},
-        {name: 'Business 3', value: 'qyggfp0f'},
-        {name: "Business 4", value: "business4"},
-    ];
 
     const {
         handleChange,
@@ -59,6 +55,31 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
     }, [initForm, resetForm, selectedHigherStaff, type]);
 
     useEffect(() => {
+        const fetchBusinesses = async () => {
+            try {
+                const response = await api.get(`business/get-all-businesses/${user_id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+                if (response.status === 200) {
+                    const fetchedData = response.data.map((business: any) => ({
+                        name: business.business_name,
+                        value: business.business_id,
+                    }));
+                    setBusinessData(fetchedData);
+                } else {
+                    console.log("Error in fetching businesses", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error in fetching businesses", error);
+            }
+        };
+
+        fetchBusinesses();
+    }, []);
+
+    useEffect(() => {
         if (!isSubmit) {
             return;
         }
@@ -71,7 +92,6 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
                         business_id: selectedBusinesses,
                         role: 'higher-staff'
                     };
-                    console.log("Higher staff create data", requestData)
                     const response = await api.post("auth/create-staff", requestData, {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -79,13 +99,10 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
                     });
                     if (response.status === 201) {
                         console.log("Higher-staff created successfully", response.data);
-                        alert("Higher-staff created successfully")
                         onHide();
                     } else {
                         console.log("Error in creating higher-staff", response.data.message)
-                        alert("Error in creating higher-staff")
                     }
-                    console.log("Business created:", values);
                 } else if (type === 'Edit') {
                     const userId = selectedHigherStaff.id;
                     const requestData = {
@@ -115,10 +132,13 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {value, checked} = e.target;
-        setSelectedBusinesses(prevSelected =>
-            checked ? [...prevSelected, value] : prevSelected.filter(business => business !== value)
-        );
-        console.log("selected businesses ", selectedBusinesses)
+        let tempData = [...selectedBusinesses]
+        if (tempData.includes(value) && !checked) {
+            tempData = tempData.filter((i) => i !== value)
+        } else {
+            tempData.push(value)
+        }
+        setSelectedBusinesses(tempData)
     };
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
@@ -175,11 +195,11 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
                         <div className="form-group">
                             <label>Select Businesses</label>
                             <div className="row">
-                                {businessData.map((business) => (
+                                {businessData.map((business, i) => (
                                     <div key={business.value} className="col-md-4">
                                         <Checkbox
                                             label={business.name}
-                                            name="selectedBusinesses"
+                                            name={"selectedBusinesses" + i}
                                             value={business.value}
                                             checked={selectedBusinesses.includes(business.value)}
                                             handleChange={handleCheckboxChange}
