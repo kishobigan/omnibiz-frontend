@@ -188,19 +188,19 @@ export const paymentSchema: ValidationSchema = {}
 export const createOrderSchema: ValidationSchema = {
     delivery_date: {
         required: true,
-        pattern: /^\d{4}-\d{2}-\d{2}$/, 
+        pattern: /^\d{4}-\d{2}-\d{2}$/,
     },
     amount_ordered: {
         required: true,
-        pattern: /^(?:[1-9]\d*|0)?(?:\.\d{1,2})?$/, 
+        pattern: /^(?:[1-9]\d*|0)?(?:\.\d{1,2})?$/,
     },
     amount_paid: {
         required: true,
-        pattern: /^(?:[1-9]\d*|0)?(?:\.\d{1,2})?$/, 
+        pattern: /^(?:[1-9]\d*|0)?(?:\.\d{1,2})?$/,
     },
     amount_due_date: {
         required: true,
-        pattern: /^\d{4}-\d{2}-\d{2}$/, 
+        pattern: /^\d{4}-\d{2}-\d{2}$/,
     },
     supplier: {
         required: true,
@@ -291,4 +291,8 @@ export const createAccessSchema: ValidationSchema = {
     description: {
         required: true
     }
+}
+
+export const contractSchema: ValidationSchema={
+
 }

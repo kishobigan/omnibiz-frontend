@@ -33,6 +33,7 @@ function Layout({children, role}: LayoutProps) {
                         </div>
                     </div>
                 </div>
+                <div className='col-sm-10 vh-100 gradient-bg'>
                 <div className='col-sm-10 ms-auto'>
                     <div className='mt-0'>
                         {children}

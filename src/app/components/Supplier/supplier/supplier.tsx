@@ -1,36 +1,36 @@
-"use client";
-import React, {useEffect, useState} from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import './supplier.css';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faArrowsAltH, faEye, faEdit} from "@fortawesome/free-solid-svg-icons";
-import Table from "@/app/widgets/table/Table";
-import Pagination from "@/app/widgets/pagination/pagination";
-import {useParams} from "next/navigation";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
+import { useParams } from "next/navigation";
 import FeatherIcon from "feather-icons-react";
 import Button from "@/app/widgets/Button/Button";
 import AddSupplier from "@/app/components/Supplier/addSupplierForm/addSupplier";
 import api from "@/app/utils/Api/api";
-import SearchBar from "@/app/widgets/searchBar/searchBar";
+import CreateContractForm from "@/app/components/Supplier/createContract/createContract";
+import Table from "@/app/widgets/table/Table";
+import Pagination from "@/app/widgets/pagination/pagination";
 
 const Supplier: React.FC = () => {
     const [supplierData, setSupplierData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
-    const [searchText, setSearchText] = useState<string>("");
+    const [contractData, setContractData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
 
     const [modalType, setModalType] = useState<"Add" | "Edit" | "View">("Add");
     const [showModal, setShowModal] = useState(false);
+    const [showContractModal, setShowContractModal] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [update, setUpdate] = useState(false);
-    const {business_id} = useParams();
+    const { business_id } = useParams();
+    const [activeTab, setActiveTab] = useState<'suppliers' | 'contracts'>('suppliers');
 
     useEffect(() => {
         const fetchSupplierData = async () => {
             try {
                 const response = await api.get(`suppliers/get-supplier/${business_id}`);
                 setSupplierData(response.data);
-                setFilteredData(response.data);
             } catch (error) {
                 console.error("Error in fetching suppliers data", error);
             }
@@ -39,17 +39,16 @@ const Supplier: React.FC = () => {
     }, [business_id, update]);
 
     useEffect(() => {
-        setFilteredData(
-            supplierData.filter(
-                (supplier: any) =>
-                    supplier.supplier_name.toLowerCase().includes(searchText.toLowerCase()) ||
-                    supplier.supplier_address.toLowerCase().includes(searchText.toLowerCase()) ||
-                    supplier.supplier_phone.toLowerCase().includes(searchText.toLowerCase()) ||
-                    supplier.supplier_email.toLowerCase().includes(searchText.toLowerCase()) ||
-                    supplier.supplier_website.toLowerCase().includes(searchText.toLowerCase())
-            )
-        );
-    }, [searchText, supplierData]);
+        const fetchContractData = async () => {
+            try {
+                const response = await api.get(`suppliers/get-all-contract/${business_id}`);
+                setContractData(response.data);
+            } catch (error) {
+                console.error("Error in fetching contracts data", error);
+            }
+        };
+        fetchContractData();
+    }, [business_id, update]);
 
     const handleViewClick = (selectedSupplier: any) => {
         setSelectedSupplier(selectedSupplier);
@@ -63,88 +62,130 @@ const Supplier: React.FC = () => {
         setShowModal(true);
     };
 
-    const columns = [
-        {key: 'supplier_name', header: 'Supplier Name'},
-        {key: 'supplier_address', header: 'Address'},
-        {key: 'supplier_phone', header: 'Phone Number'},
-        {key: 'supplier_email', header: 'Email ID'},
-        {key: 'supplier_website', header: 'Website URL'},
-        {key: 'action', header: 'Actions'},
+    const supplierColumns = [
+        { key: 'supplier_name', header: 'Supplier Name' },
+        { key: 'supplier_address', header: 'Address' },
+        { key: 'supplier_phone', header: 'Phone Number' },
+        { key: 'supplier_email', header: 'Email ID' },
+        { key: 'supplier_website', header: 'Website URL' },
+        { key: 'action', header: 'Actions' },
+    ];
+
+    const contractColumns = [
+        { key: 'supplier_id', header: 'Supplier Name' },
+        { key: 'contact_period', header: 'Contract Period' },
     ];
 
     const actions = [
         {
-            icon: <FontAwesomeIcon icon={faEdit} style={{color: 'blue'}}/>,
+            icon: <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />,
             onClick: handleEditClick,
         },
         {
-            icon: <FontAwesomeIcon icon={faEye} style={{color: 'green'}}/>,
+            icon: <FontAwesomeIcon icon={faEye} style={{ color: 'green' }} />,
             onClick: handleViewClick,
         }
     ];
 
-    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-    };
-
-    const startRow = (currentPage - 1) * rowsPerPage;
-    const endRow = startRow + rowsPerPage;
-    const currentData = filteredData.slice(startRow, endRow);
+    const totalSupplierPages = Math.ceil(supplierData.length / rowsPerPage);
+    const totalContractPages = Math.ceil(contractData.length / rowsPerPage);
 
     return (
         <div className='container-fluid row'>
             <div className="header-container">
-                <h5>Suppliers</h5>
-                <div className="filter-container">
-                    {/* <span>
-                        <FontAwesomeIcon icon={faArrowsAltH} className="filter-icon"/>
-                        Filter by:
-                    </span> */}
-                    <div className="search">
-                        <SearchBar searchText={searchText} setSearchText={setSearchText}/>
-                    </div>
-                    <div className="supplier-add">
-                        <Button
-                            onClick={() => {
-                                setModalType("Add");
-                                setShowModal(true);
-                            }}
-                            variant="dark"
-                            className="me-2 buttonWithPadding"
-                            type="button"
-                        >
-                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
-                            Create Supplier
-                        </Button>
-                    </div>
+                <div className="nav-links">
+                    <span
+                        className={`custom-nav-link ${activeTab === 'suppliers' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('suppliers')}
+                    >
+                        Suppliers
+                    </span>
+                    <span
+                        className={`custom-nav-link ${activeTab === 'contracts' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('contracts')}
+                    >
+                        Create Contract
+                    </span>
+                </div>
+                <div className="button-container">
+                    <Button
+                        onClick={() => {
+                            setModalType("Add");
+                            setShowModal(true);
+                        }}
+                        variant="dark"
+                        className="me-2 buttonWithPadding"
+                        type="button"
+                    >
+                        <FeatherIcon className={"action-icons me-2"} icon={"plus"} />
+                        Add Supplier
+                    </Button>
+                    <Button
+                        onClick={() => setShowContractModal(true)}
+                        variant="dark"
+                        className="me-2 buttonWithPadding"
+                        type="button"
+                    >
+                        <FeatherIcon className={"action-icons me-2"} icon={"plus"} />
+                        Create Contract
+                    </Button>
                 </div>
             </div>
 
-            <div className="table-container _body">
-                <Table data={currentData}
-                       columns={columns}
-                       actions={actions}
-                       currentPage={currentPage}
-                       rowsPerPage={rowsPerPage}
-                       emptyMessage="suppliers"
-                />
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                />
-            </div>
-            <AddSupplier
-                show={showModal}
-                type={modalType}
-                selectedSupplier={selectedSupplier}
-                update={() => setUpdate(!update)}
-                onHide={() => {
-                    setShowModal(false);
-                    setSelectedSupplier(null);
-                }}
+            {activeTab === 'suppliers' && (
+                <div className="table-container _body">
+                    <Table
+                        data={supplierData}
+                        columns={supplierColumns}
+                        actions={actions}
+                        currentPage={currentPage}
+                        rowsPerPage={rowsPerPage}
+                        emptyMessage="No suppliers found."
+                    />
+                    <div className="pagination-container">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalSupplierPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    </div>
+                    <AddSupplier
+                        show={showModal}
+                        type={modalType}
+                        selectedSupplier={selectedSupplier}
+                        update={() => setUpdate(!update)}
+                        onHide={() => {
+                            setShowModal(false);
+                            setSelectedSupplier(null);
+                        }}
+                    />
+                </div>
+            )}
+
+            {activeTab === 'contracts' && (
+                <div className="table-container _body">
+                    <Table
+                        data={contractData}
+                        columns={contractColumns}
+                        actions={actions}
+                        currentPage={currentPage}
+                        rowsPerPage={rowsPerPage}
+                        emptyMessage="No contracts found."
+                    />
+                    <div className="pagination-container">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalContractPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    </div>
+                </div>
+            )}
+
+            <CreateContractForm
+                show={showContractModal}
+                onHide={() => setShowContractModal(false)}
+                updateContracts={() => setUpdate(!update)} // Pass the function here
             />
         </div>
     );
