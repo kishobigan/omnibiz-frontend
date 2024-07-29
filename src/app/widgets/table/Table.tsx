@@ -17,17 +17,17 @@ interface TableAction {
 
 interface TableProps {
     data: TableData[];
-    columns: TableColumn[];
+    columns?: TableColumn[];
     actions?: TableAction[];
     currentPage?: number;
     rowsPerPage?: number;
     handleStatusChange?: (id: number, status: boolean) => void;
-    emptyMessage: string;
+    emptyMessage?: string;
 }
 
 const Table: React.FC<TableProps> = ({
                                          data,
-                                         columns,
+                                         columns = [],
                                          actions = [],
                                          currentPage = 1,
                                          rowsPerPage = 10,
