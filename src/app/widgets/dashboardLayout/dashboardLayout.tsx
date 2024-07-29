@@ -9,10 +9,10 @@ import Staff from '@/app/components/Staff/staff/staff';
 import Billing from "@/app/components/Billing/billing/billing";
 
 const tabItems = [
-    {label: "Inventory", component: <Inventory/>},
     {label: "Billing", component: <Billing/>},
     {label: "Supplier", component: <Supplier/>},
     {label: "Staffs", component: <Staff/>},
+    {label: "Inventory", component: <Inventory/>},
     {label: "Accounts", component: <Accounts/>},
 ]
 interface DashboardLayoutProps {
