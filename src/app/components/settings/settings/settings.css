@@ -1,0 +1,46 @@
+.settings-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    /* background: linear-gradient(to bottom, #d0fbd8 30%, #ffffff 60%);  */
+    background: linear-gradient(to bottom, #d2d4d3, #e2e3e1, #f5f5dc); 
+}
+
+/* .settings-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 60%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    box-sizing: border-box;
+} */
+
+.form-box {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.update-owner-container {
+    flex: 6;
+}
+
+.change-password-container {
+    flex: 4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .settings-content {
+        width: 100%;
+    }
+}
