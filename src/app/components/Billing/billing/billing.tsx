@@ -22,34 +22,6 @@ interface Product {
     categoryId: string;
 }
 
-// const items = [
-//     {
-//         itemId: 1,
-//         itemName: "Pepsi 1.5L",
-//         unitPrice: 400
-//     },
-//     // {
-//     //     itemId: 2,
-//     //     itemName: "Kajol",
-//     //     unitPrice: 200
-//     // },
-//     // {
-//     //     itemId: 3,
-//     //     itemName: "Kareena Kapoor",
-//     //     unitPrice: 50
-//     // },
-//     // {
-//     //     itemId: 4,
-//     //     itemName: "Katrina kaif",
-//     //     unitPrice: 300
-//     // },
-//     // {
-//     //     itemId: 5,
-//     //     itemName: "Manisha Koirala",
-//     //     unitPrice: 150
-//     // }
-// ];
-
 const Billing: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -265,22 +237,40 @@ const Billing: React.FC = () => {
                 <div className="scrollable_table mt-2 mb-4">
                     <Table data={tableData} columns={columns} actions={actions} emptyMessage='products'/>
                 </div>
-                <div className='d-inline-flex'>
-                    <div className='col-sm-10'>
-                        <form onSubmit={handleSubmit}>
-                            <Input
-                                label='Apply discount(%) to all items?'
-                                placeholder="discount in percentage%"
-                                icon={null}
-                                value={values.discount || ''}
-                                onChange={handleChange}
-                                name="discount"
-                                type="number"
-                            />
-                        </form>
+                <div className='container-fluid'>
+                    <div className='row row-cols-auto'>
+                        <div className='col'>
+                            <form onSubmit={handleSubmit}>
+                                <Input
+                                    label='Apply discount(%) to all items?'
+                                    placeholder="discount in percentage%"
+                                    icon={null}
+                                    value={values.discount || ''}
+                                    onChange={handleChange}
+                                    name="discount"
+                                    type="text"
+                                />
+                            </form>
+                        </div>
+                        <div className='col fw-bold text-center ms-5 pt-3'>
+                            <label>Subtotal</label>
+                            <p>{subtotal}</p>
+                        </div>
+                        <div className='col fw-bold text-center pt-3 px-5'>
+                            <label>-</label>
+                        </div>
+                        <div className='col fw-bold text-center pt-3'>
+                            <label>Discount</label>
+                            <p>{discount}</p>
+                        </div>
+                        <div className='col fw-bold text-center pt-3 px-5'>
+                            <label>=</label>
+                        </div>
+                        <div className='col fw-bold text-center pt-3'>
+                            <label>Total</label>
+                            <p>{total}</p>
+                        </div>
                     </div>
-                </div>
-                <div>
                 </div>
                 <Payment subtotal={subtotal} discount={discount} total={total} tableData={tableData}
                          customerResponse={customerResponse}/>
@@ -305,3 +295,7 @@ const createCustomer = async (customerData: any) => {
 };
 
 export default Billing;
+
+
+
+
