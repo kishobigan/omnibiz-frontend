@@ -1,10 +1,10 @@
 import React from 'react';
-import Settings from "@/app/components/settings/settings";
+import Settings from "@/app/components/settings/settings/settings";
 import Layout from "@/app/widgets/layout/layout";
 
 const role = 'owner'
 
-function Page() {
+const settings = () => {
     return (
         <div>
             <Layout role={role}>
@@ -14,4 +14,4 @@ function Page() {
     );
 }
 
-export default Page;
+export default settings;

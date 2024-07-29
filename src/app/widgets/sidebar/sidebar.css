@@ -27,7 +27,7 @@
 }
 
 .nav-link.active {
-    background-color: var(--lightBlue) !important;
+    background-color: var(--greenColor) !important;
     color: var(--whiteColor) !important;
 }
 

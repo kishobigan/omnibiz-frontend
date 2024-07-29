@@ -277,6 +277,22 @@ export const billingSchema: ValidationSchema = {
     },
 }
 
+export const changePasswordSchema: ValidationSchema = {
+    oldPassword: {
+        required: true,
+        minLength: 5,
+    },
+    newPassword: {
+        required: true,
+        minLength: 5,
+    },
+    // confirmPassword: {
+    //     required: true,
+    //     custom: (value, formData) => value !== formData.newPassword ? 'New passwords do not match' : null,
+    // },
+};
+
+
 export const createAdminSchema: ValidationSchema = {
     email: {
         required: true,

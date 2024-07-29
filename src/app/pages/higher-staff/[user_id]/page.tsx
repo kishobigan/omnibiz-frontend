@@ -1,11 +1,11 @@
 import React from 'react';
 
-function Settings() {
+function Page() {
     return (
         <div>
-            This is settings page
+            This is higher staff page
         </div>
     );
 }
 
-export default Settings;
+export default Page;

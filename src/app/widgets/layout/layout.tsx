@@ -15,7 +15,7 @@ function Layout({children, role}: LayoutProps) {
     return (
         <div className='container-fluid'>
             <div className='row'>
-                <div className='col-sm-2 navbar navbar-expand-sm sticky-top sidebar'>
+                <div className='col-sm-2 navbar navbar-expand-sm sticky-top sidebar position-fixed'>
                     <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                             data-bs-target="#navbarSupportedContent"
                             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@ function Layout({children, role}: LayoutProps) {
                         </div>
                     </div>
                 </div>
-                <div className='col-sm-10 vh-100 gradient_bg'>
+                <div className='col-sm-10 vh-100 gradient-bg ms-auto'>
                     <div className='mt-0'>
                         {children}
                     </div>
