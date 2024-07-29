@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, {useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import Input from "@/app/widgets/input/Input";
 import Dropdown from "@/app/widgets/dropdown/dropdown";
@@ -30,6 +30,8 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
     const token = Cookies.get(ACCESS_TOKEN);
     const { business_id } = useParams();
 
+    type FormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
     const initValues = {
         delivery_date: "",
         amount_ordered: "",
@@ -50,27 +52,29 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
     useEffect(() => {
         const fetchSuppliers = async () => {
             try {
-                const response = await api.get(`inventory/list-supplier/${business_id}`, {
+                const response = await api.get(`suppliers/get-supplier/${business_id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setSuppliers(
-                    response.data.map((supplier: any) => ({
-                        value: supplier.id,
+                if (response.status === 200) {
+                    const fetchedSuppliers = response.data.map((supplier: any) => ({
+                        value: supplier.supplier_id,
                         label: supplier.supplier_name,
-                    }))
-                );
+                    }));
+                    setSuppliers(fetchedSuppliers);
+                } else {
+                    setErrorMessage("Failed to fetch suppliers.");
+                }
             } catch (error) {
-                console.error("Error fetching suppliers:", error);
+                setErrorMessage("Failed to fetch suppliers.");
             }
         };
-
         fetchSuppliers();
-    }, [business_id, token]);
+    }, [business_id, token, update]);
 
     useEffect(() => {
-        const submitData = async () => {
+        const submitData = async () => {           
             if (!isSubmit) return;
             setLoading(true);
             try {
@@ -82,37 +86,28 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                     amount_due_date: values.amount_due_date,
                     supplier: values.supplier,
                 };
+                let response;
                 if (type === 'Add') {
-                    const response = await api.post("orders/create-order", requestData, {
+                    response = await api.post("orders/create-order", requestData, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
-                    if (response.status === 201) {
-                        console.log("Order created successfully", response.data);
-                        onHide();
-                        if (update) update();
-                    } else {
-                        setErrorMessage("Oops! something went wrong.");
-                        console.log("Error in creating order", response.data.message);
-                    }
                 } else if (type === 'Edit') {
-                    const response = await api.put(`orders/update-order/${selectedOrder.id}`, requestData, {
+                    response = await api.put(`orders/update-order/${selectedOrder.id}`, requestData, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
-                    if (response.status === 200) {
-                        console.log("Order updated successfully", response.data);
-                        if (update) update();
-                        onHide();
-                    } else {
-                        console.log("Error in updating order");
-                        setErrorMessage("Oops! something went wrong.");
-                    }
+                }
+
+                if (response?.status === 201 || response?.status === 200) {
+                    onHide();
+                    if (update) update();
+                } else {
+                    setErrorMessage("Oops! something went wrong.");
                 }
             } catch (error) {
-                console.log("Error in submitting order data", error);
                 setErrorMessage("Oops! Something went wrong, try again later.");
             } finally {
                 setLoading(false);
@@ -121,14 +116,14 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
             }
         };
         submitData();
-    }, [isSubmit, update]);
+    }, [isSubmit, update, values, business_id, token, type, selectedOrder, onHide, initForm, initValues]);
 
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         handleSubmit({
-            preventDefault: () => {},
+            preventDefault: () => {}
         } as React.FormEvent<HTMLFormElement>);
-    };
+    };   
 
     const errorStyle = {
         color: "red",
@@ -177,8 +172,7 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                             <Input
                                 label="Amount Ordered"
                                 placeholder="Enter amount ordered"
-                                type="number"
-                                // step="0.01"
+                                type="text"
                                 name="amount_ordered"
                                 value={values.amount_ordered}
                                 onChange={handleChange}
@@ -191,8 +185,7 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                             <Input
                                 label="Amount Paid"
                                 placeholder="Enter amount paid"
-                                type="number"
-                                // step="0.01"
+                                type="text"
                                 name="amount_paid"
                                 value={values.amount_paid}
                                 onChange={handleChange}
@@ -221,7 +214,6 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                                 value={values.supplier}
                                 options={suppliers}
                                 onChange={handleChange}
-                                
                             />
                         </div>
                     </div>

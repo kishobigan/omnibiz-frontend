@@ -3,7 +3,7 @@
 import React, { ReactNode } from "react";
 import "./background.css";
 import Image from "next/image";
-import logo from "../../../../public/logo-no-background.png";
+import logo from "public/logo-no-background.png";
 
 interface BackgroundProps {
   backgroundImage: string;

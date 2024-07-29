@@ -83,7 +83,7 @@ const Businesses = () => {
             </div>
             <div className="row d-flex justify-content-center">
                 {businessData.length > 0 ? businessData.map((business, index) => (
-                    <div key={index} className="col-md-3 mx-auto mb-4">
+                    <div key={index} className="col-12 col-md-6 col-lg-3 mb-3">
                         <div onClick={() => handleBusinessNavigate(business.business_id)}>
                             <Card
                                 className="cardWithBorderRadius"
