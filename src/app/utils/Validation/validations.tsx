@@ -276,3 +276,18 @@ export const billingSchema: ValidationSchema = {
         pattern: /^([1-9]\d?|100)$/,
     },
 }
+
+export const changePasswordSchema: ValidationSchema = {
+    oldPassword: {
+        required: true,
+        minLength: 5,
+    },
+    newPassword: {
+        required: true,
+        minLength: 5,
+    },
+    // confirmPassword: {
+    //     required: true,
+    //     custom: (value, formData) => value !== formData.newPassword ? 'New passwords do not match' : null,
+    // },
+};

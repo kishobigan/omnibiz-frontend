@@ -13,6 +13,9 @@ const nextConfig = {
     experimental: {
         optimizeCss: true,
     },
+    images: {
+        domains: ['res.cloudinary.com'],  // Add this line to allow external domains
+    },
 };
 
 export default nextConfig;
