@@ -16,7 +16,7 @@ const Supplier: React.FC = () => {
     const [supplierData, setSupplierData] = useState([]);
     const [contractData, setContractData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 10;
+    const rowsPerPage = 4;
 
     const [modalType, setModalType] = useState<"Add" | "Edit" | "View">("Add");
     const [showModal, setShowModal] = useState(false);
@@ -42,7 +42,12 @@ const Supplier: React.FC = () => {
         const fetchContractData = async () => {
             try {
                 const response = await api.get(`suppliers/get-all-contract/${business_id}`);
-                setContractData(response.data);
+                const formattedContracts = response.data.map((contract: any) => ({
+                    ...contract,
+                    contract_end_date: formatDate(contract.contract_end_date)
+                }));
+                setContractData(formattedContracts);
+                console.log("contract data fetched", formattedContracts)
             } catch (error) {
                 console.error("Error in fetching contracts data", error);
             }
@@ -62,6 +67,14 @@ const Supplier: React.FC = () => {
         setShowModal(true);
     };
 
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
     const supplierColumns = [
         { key: 'supplier_name', header: 'Supplier Name' },
         { key: 'supplier_address', header: 'Address' },
@@ -73,7 +86,7 @@ const Supplier: React.FC = () => {
 
     const contractColumns = [
         { key: 'supplier_id', header: 'Supplier Name' },
-        { key: 'contact_period', header: 'Contract Period' },
+        { key: 'contract_end_date', header: 'End Date' },
     ];
 
     const actions = [
@@ -104,7 +117,7 @@ const Supplier: React.FC = () => {
                         className={`custom-nav-link ${activeTab === 'contracts' ? 'active' : ''}`}
                         onClick={() => setActiveTab('contracts')}
                     >
-                        Create Contract
+                        Contracts
                     </span>
                 </div>
                 <div className="button-container">
@@ -149,16 +162,6 @@ const Supplier: React.FC = () => {
                             onPageChange={setCurrentPage}
                         />
                     </div>
-                    <AddSupplier
-                        show={showModal}
-                        type={modalType}
-                        selectedSupplier={selectedSupplier}
-                        update={() => setUpdate(!update)}
-                        onHide={() => {
-                            setShowModal(false);
-                            setSelectedSupplier(null);
-                        }}
-                    />
                 </div>
             )}
 
@@ -182,10 +185,21 @@ const Supplier: React.FC = () => {
                 </div>
             )}
 
+            <AddSupplier
+                show={showModal}
+                type={modalType}
+                selectedSupplier={selectedSupplier}
+                update={() => setUpdate(!update)}
+                onHide={() => {
+                    setShowModal(false);
+                    setSelectedSupplier(null);
+                }}
+            />
+
             <CreateContractForm
                 show={showContractModal}
                 onHide={() => setShowContractModal(false)}
-                updateContracts={() => setUpdate(!update)} // Pass the function here
+                updateContracts={() => setUpdate(!update)}
             />
         </div>
     );

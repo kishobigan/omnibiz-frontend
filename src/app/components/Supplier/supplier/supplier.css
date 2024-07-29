@@ -28,6 +28,7 @@
 
 .nav-links {
     display: flex;
+    margin-right: 50px;
 }
 
 .custom-nav-link {
@@ -45,6 +46,7 @@
 
 .button-container {
     display: flex;
+
 }
 
 .buttonWithPadding {
