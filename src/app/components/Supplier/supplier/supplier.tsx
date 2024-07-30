@@ -1,9 +1,9 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './supplier.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
-import { useParams } from "next/navigation";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
+import {useParams} from "next/navigation";
 import FeatherIcon from "feather-icons-react";
 import Button from "@/app/widgets/Button/Button";
 import AddSupplier from "@/app/components/Supplier/addSupplierForm/addSupplier";
@@ -11,17 +11,39 @@ import api from "@/app/utils/Api/api";
 import CreateContractForm from "@/app/components/Supplier/createContract/createContract";
 import Table from "@/app/widgets/table/Table";
 import Pagination from "@/app/widgets/pagination/pagination";
+import SearchBar from "@/app/widgets/searchBar/searchBar";
+
+interface Supplier {
+    supplier_name: string;
+    supplier_address: string;
+    supplier_phone: string;
+    supplier_email: string;
+    supplier_website: string;
+}
+
+interface Contract {
+    supplier_id: string;
+    contract_end_date: string;
+}
+
+interface TableAction<T> {
+    icon: React.JSX.Element;
+    onClick: (row: T) => void;
+}
 
 const Supplier: React.FC = () => {
-    const [supplierData, setSupplierData] = useState([]);
-    const [contractData, setContractData] = useState([]);
+    const [supplierData, setSupplierData] = useState<Supplier[]>([]);
+    const [filteredSupplierData, setFilteredSupplierData] = useState<Supplier[]>([]);
+    const [contractData, setContractData] = useState<Contract[]>([]);
+    const [filteredContractData, setFilteredContractData] = useState<Contract[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 4;
 
     const [modalType, setModalType] = useState<"Add" | "Edit" | "View">("Add");
     const [showModal, setShowModal] = useState(false);
     const [showContractModal, setShowContractModal] = useState(false);
-    const [selectedSupplier, setSelectedSupplier] = useState(null);
+    const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
     const [update, setUpdate] = useState(false);
     const { business_id } = useParams();
     const [activeTab, setActiveTab] = useState<'suppliers' | 'contracts'>('suppliers');
@@ -31,6 +53,7 @@ const Supplier: React.FC = () => {
             try {
                 const response = await api.get(`suppliers/get-supplier/${business_id}`);
                 setSupplierData(response.data);
+                setFilteredSupplierData(response.data);
             } catch (error) {
                 console.error("Error in fetching suppliers data", error);
             }
@@ -47,6 +70,7 @@ const Supplier: React.FC = () => {
                     contract_end_date: formatDate(contract.contract_end_date)
                 }));
                 setContractData(formattedContracts);
+                setFilteredContractData(formattedContracts);
                 console.log("contract data fetched", formattedContracts)
             } catch (error) {
                 console.error("Error in fetching contracts data", error);
@@ -55,13 +79,18 @@ const Supplier: React.FC = () => {
         fetchContractData();
     }, [business_id, update]);
 
-    const handleViewClick = (selectedSupplier: any) => {
+    useEffect(() => {
+        filterSuppliers(searchText);
+        filterContracts(searchText);
+    }, [searchText, supplierData, contractData]);
+
+    const handleViewClick = (selectedSupplier: Supplier) => {
         setSelectedSupplier(selectedSupplier);
         setModalType("View");
         setShowModal(true);
     };
 
-    const handleEditClick = (selectedSupplier: any) => {
+    const handleEditClick = (selectedSupplier: Supplier) => {
         setSelectedSupplier(selectedSupplier);
         setModalType("Edit");
         setShowModal(true);
@@ -73,6 +102,25 @@ const Supplier: React.FC = () => {
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
         const year = date.getFullYear();
         return `${day}-${month}-${year}`;
+    };
+
+    const filterSuppliers = (text: string) => {
+        const filtered = supplierData.filter(supplier =>
+            supplier.supplier_name.toLowerCase().includes(text.toLowerCase()) ||
+            supplier.supplier_address.toLowerCase().includes(text.toLowerCase()) ||
+            supplier.supplier_phone.toLowerCase().includes(text.toLowerCase()) ||
+            supplier.supplier_email.toLowerCase().includes(text.toLowerCase()) ||
+            supplier.supplier_website.toLowerCase().includes(text.toLowerCase())
+        );
+        setFilteredSupplierData(filtered);
+    };
+
+    const filterContracts = (text: string) => {
+        const filtered = contractData.filter(contract =>
+            contract.supplier_id.toLowerCase().includes(text.toLowerCase()) ||
+            contract.contract_end_date.toLowerCase().includes(text.toLowerCase())
+        );
+        setFilteredContractData(filtered);
     };
 
     const supplierColumns = [
@@ -89,19 +137,30 @@ const Supplier: React.FC = () => {
         { key: 'contract_end_date', header: 'End Date' },
     ];
 
-    const actions = [
+    const supplierActions: TableAction<Supplier>[] = [
         {
             icon: <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />,
-            onClick: handleEditClick,
+            onClick: (row: Supplier) => handleEditClick(row),
         },
         {
             icon: <FontAwesomeIcon icon={faEye} style={{ color: 'green' }} />,
-            onClick: handleViewClick,
+            onClick: (row: Supplier) => handleViewClick(row),
         }
     ];
 
-    const totalSupplierPages = Math.ceil(supplierData.length / rowsPerPage);
-    const totalContractPages = Math.ceil(contractData.length / rowsPerPage);
+    const contractActions: TableAction<Contract>[] = [
+        {
+            icon: <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />,
+            onClick: (row: Contract) => handleEditClick(row as any), // Adjust as needed
+        },
+        {
+            icon: <FontAwesomeIcon icon={faEye} style={{ color: 'green' }} />,
+            onClick: (row: Contract) => handleViewClick(row as any), // Adjust as needed
+        }
+    ];
+
+    const totalSupplierPages = Math.ceil(filteredSupplierData.length / rowsPerPage);
+    const totalContractPages = Math.ceil(filteredContractData.length / rowsPerPage);
 
     return (
         <div className='container-fluid row'>
@@ -119,7 +178,11 @@ const Supplier: React.FC = () => {
                     >
                         Contracts
                     </span>
+                    <div>
+                        <SearchBar searchText={searchText} setSearchText={setSearchText}/>
+                    </div>
                 </div>
+
                 <div className="button-container">
                     <Button
                         onClick={() => {
@@ -144,13 +207,12 @@ const Supplier: React.FC = () => {
                     </Button>
                 </div>
             </div>
-
             {activeTab === 'suppliers' && (
                 <div className="table-container _body">
                     <Table
-                        data={supplierData}
+                        data={filteredSupplierData}
                         columns={supplierColumns}
-                        actions={actions}
+                        actions={supplierActions}
                         currentPage={currentPage}
                         rowsPerPage={rowsPerPage}
                         emptyMessage="No suppliers found."
@@ -168,9 +230,9 @@ const Supplier: React.FC = () => {
             {activeTab === 'contracts' && (
                 <div className="table-container _body">
                     <Table
-                        data={contractData}
+                        data={filteredContractData}
                         columns={contractColumns}
-                        actions={actions}
+                        actions={contractActions}
                         currentPage={currentPage}
                         rowsPerPage={rowsPerPage}
                         emptyMessage="No contracts found."
@@ -206,3 +268,4 @@ const Supplier: React.FC = () => {
 };
 
 export default Supplier;
+
