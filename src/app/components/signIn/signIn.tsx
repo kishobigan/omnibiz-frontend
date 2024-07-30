@@ -145,7 +145,7 @@ const SignIn: React.FC<ContentProps> = ({
                 </div>
                 {errorMessage && <p className="error">{errorMessage}</p>}
                 <p className="forgot-password-link">
-                    <a href="/forgot-password" style={{ color: "#737373" }}>
+                    <a href="/pages/forgotPassword" style={{ color: "#737373" }}>
                         Forgot Password?
                     </a>
                 </p>

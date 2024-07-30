@@ -14,7 +14,7 @@ html, body, #__next, .container-fluid, .row {
     background-color: var(--blackColor);
 }
 .gradient-bg {
-    background: linear-gradient(to bottom right, #D3D3D3, white); /* Dark at top left to light at bottom right */
+    background: linear-gradient(to bottom right, #e7e6e6, white); /* Dark at top left to light at bottom right */
     height: 100%;
 }
 
