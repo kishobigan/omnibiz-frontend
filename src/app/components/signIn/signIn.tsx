@@ -56,8 +56,10 @@ const SignIn: React.FC<ContentProps> = ({
                         router.push(`/pages/admin/dashboard/${user_id}`);
                     } else if (user_role === 'staff') {
                         router.push(`/pages/staff/${user_id}`);
-                    } else if (!owner_created && user_role === "owner") {
-                        router.push("/pages/createOwner");
+                    } else if (!owner_created && user_role === 'owner') {
+                        router.push('/pages/createOwner');
+                    } else if (user_role === 'higher-staff') {
+                        router.push(`/pages/higher-staff/${user_id}`);
                     }
                 } else {
                     console.log("Login failed!", response.data.message);
