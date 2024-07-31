@@ -1,5 +1,5 @@
 'use client'
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 
 interface TabItem {
     label: string;
@@ -8,11 +8,23 @@ interface TabItem {
 
 interface TabProps {
     tabItems: TabItem[];
-    defaultActiveTab?: number;
 }
 
-const Tabs: React.FC<TabProps> = ({tabItems, defaultActiveTab = 0}) => {
-    const [activeTab, setActiveTab] = useState<number>(defaultActiveTab);
+const Tabs: React.FC<TabProps> = ({tabItems}) => {
+    const [activeTab, setActiveTab] = useState<number>(0);
+
+    useEffect(() => {
+        const savedActiveTab = localStorage.getItem("activeTab");
+        if (savedActiveTab) {
+            setActiveTab(parseInt(savedActiveTab, 10));
+        }
+    }, []);
+
+    const handleTabClick = (index: number) => {
+        setActiveTab(index);
+        localStorage.setItem("activeTab", index.toString());
+    };
+
     return (
         <div className='vh-100'>
             <ul className="nav nav-tabs">
@@ -20,7 +32,7 @@ const Tabs: React.FC<TabProps> = ({tabItems, defaultActiveTab = 0}) => {
                     <li className="nav-item" key={index}>
                         <button
                             className={`nav-link _font_black ${index === activeTab ? 'active' : ''}`}
-                            onClick={() => setActiveTab(index)}
+                            onClick={() => handleTabClick(index)}
                         >
                             {item.label}
                         </button>
@@ -31,7 +43,7 @@ const Tabs: React.FC<TabProps> = ({tabItems, defaultActiveTab = 0}) => {
                 {tabItems[activeTab] && tabItems[activeTab].component}
             </div>
         </div>
-    )
+    );
 }
 
 export default Tabs;

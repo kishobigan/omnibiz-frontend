@@ -9,6 +9,7 @@ const useLogout = () => {
         console.log("Logout tab clicked")
         Cookies.remove(ACCESS_TOKEN);
         Cookies.remove(REFRESH_TOKEN);
+        localStorage.removeItem("activeTab");
         router.push('/pages/signin');
     };
 
