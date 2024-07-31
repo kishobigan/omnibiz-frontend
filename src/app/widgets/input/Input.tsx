@@ -10,9 +10,10 @@ interface InputProps {
     type?: string;
     name?: string;
     className?: string;
+    readOnly?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({placeholder, label, icon, value, onChange, type = "text", name, className}) => {
+const Input: React.FC<InputProps> = ({ placeholder, label, icon, value, onChange, type = "text", name, className, readOnly }) => {
     return (
         <div className={`mb-3 ${className}`}>
             <div className="row">
@@ -27,6 +28,7 @@ const Input: React.FC<InputProps> = ({placeholder, label, icon, value, onChange,
                             value={value}
                             onChange={onChange}
                             name={name}
+                            readOnly={readOnly}
                         />
                     </div>
                 </div>
