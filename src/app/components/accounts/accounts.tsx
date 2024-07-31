@@ -71,25 +71,25 @@ function Accounts() {
             title: "Total Income",
             cost: "12,000",
             percentage: "5%",
-            color: "#DFF0D8"
+            color: "#D8BFD8"
         },
         {
             title: "Total Expenses",
             cost: "12,000",
             percentage: "5%",
-            color: "#F2DEDE"
+            color: "#FFC0CB"
         },
         {
             title: "Total Profit",
             cost: "12,000",
             percentage: "5%",
-            color: "#D9EDF7"
+            color: "#98FB98"
         },
         {
             title: "Total Loss",
             cost: "12,000",
             percentage: "5%",
-            color: "#FCF8E4"
+            color: "#BCFFF2"
         },
     ];
 
