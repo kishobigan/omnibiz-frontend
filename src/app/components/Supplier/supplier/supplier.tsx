@@ -151,11 +151,11 @@ const Supplier: React.FC = () => {
     const contractActions: TableAction<Contract>[] = [
         {
             icon: <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />,
-            onClick: (row: Contract) => handleEditClick(row as any), // Adjust as needed
+            onClick: (row: Contract) => handleEditClick(row as any),
         },
         {
             icon: <FontAwesomeIcon icon={faEye} style={{ color: 'green' }} />,
-            onClick: (row: Contract) => handleViewClick(row as any), // Adjust as needed
+            onClick: (row: Contract) => handleViewClick(row as any),
         }
     ];
 

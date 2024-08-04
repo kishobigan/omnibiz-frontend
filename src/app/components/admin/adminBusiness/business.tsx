@@ -1,42 +1,67 @@
-'use client'
-import React, {useEffect, useState} from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import Layout from "@/app/widgets/layout/layout";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowsAltH} from "@fortawesome/free-solid-svg-icons";
-import Search from "@/app/widgets/search/search";
-import './adminBusiness.css'
-import {DateSelector} from "@/app/widgets/datepicker/datepicker";
+import './adminBusiness.css';
 import Table from "@/app/widgets/table/Table";
 import Pagination from "@/app/widgets/pagination/pagination";
 import api from "@/app/utils/Api/api";
+import SearchBar from "@/app/widgets/searchBar/searchBar";
+import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faUnlock } from "@fortawesome/free-solid-svg-icons";
+import Cookies from "js-cookie";
+import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
+import Notification from "@/app/widgets/notification/notification";
+
+interface Business {
+    business_id: string;
+    business_name: string;
+    business_address: string;
+    owner: string;
+    phone_number: string;
+    subscription_count: number;
+    subscription_trial_ended_at: string;
+    blocked: boolean;
+}
 
 const AdminBusiness: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [businessData, setBusinessData] = useState([])
+    const [businessData, setBusinessData] = useState<Business[]>([]);
+    const [filteredBusinessData, setFilteredBusinessData] = useState<Business[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
+    const [showDialog, setShowDialog] = useState(false);
+    const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+    const [actionType, setActionType] = useState<'block' | 'unblock'>('block');
     const rowsPerPage = 10;
-    const role = 'admin'
+    const role = 'admin';
+    const token = Cookies.get(ACCESS_TOKEN);
 
     const columns = [
-        {key: 'business_name', header: 'Business name'},
-        {key: 'business_address', header: 'Address'},
-        {key: 'owner', header: 'Owner name'},
-        {key: 'phone_number', header: 'Phone number'},
-        {key: 'subscription_count', header: 'Subscription count'},
-        {key: 'subscription_trial_ended_at', header: 'Trial end'},
+        { key: 'business_name', header: 'Business name' },
+        { key: 'business_address', header: 'Address' },
+        { key: 'owner', header: 'Owner name' },
+        { key: 'phone_number', header: 'Phone number' },
+        { key: 'subscription_count', header: 'Subscription count' },
+        { key: 'subscription_trial_ended_at', header: 'Trial end' },
+        { key: 'action', header: 'Actions' },
     ];
+
     useEffect(() => {
         const fetchBusinessData = async () => {
             try {
                 const response = await api.get('/super/get-businesses');
                 const businessData = response.data.map((item: any) => ({
+                    business_id: item.business_id,
                     business_name: item.business_name,
                     business_address: item.business_address,
-                    owner: item.owner.owner,
+                    owner: item.owner[0].owner,
                     phone_number: item.phone_number,
                     subscription_count: item.subscription_count,
-                    subscription_trial_ended_at: item.subscription_trial_ended_at,
+                    subscription_trial_ended_at: new Date(item.subscription_trial_ended_at).toLocaleDateString('en-GB'),
+                    blocked: item.blocked,
                 }));
                 setBusinessData(businessData);
+                setFilteredBusinessData(businessData);
             } catch (error) {
                 console.error('Error fetching business data:', error);
             }
@@ -44,33 +69,92 @@ const AdminBusiness: React.FC = () => {
 
         fetchBusinessData();
     }, []);
-    const totalPages = Math.ceil(businessData.length / rowsPerPage);
+
+    useEffect(() => {
+        filterBusinesses(searchText);
+    }, [searchText, businessData]);
+
+    const filterBusinesses = (text: string) => {
+        const filtered = businessData.filter(business =>
+            business.business_name.toLowerCase().includes(text.toLowerCase()) ||
+            business.business_address.toLowerCase().includes(text.toLowerCase()) ||
+            business.owner.toLowerCase().includes(text.toLowerCase()) ||
+            business.phone_number.includes(text) ||
+            business.subscription_count.toString().includes(text) ||
+            business.subscription_trial_ended_at.includes(text)
+        );
+        setFilteredBusinessData(filtered);
+    };
+
+    const handleLockClick = (business: Business, action: 'block' | 'unblock') => {
+        setSelectedBusiness(business);
+        setActionType(action);
+        setShowDialog(true);
+    };
+
+    const handleConfirmAction = async () => {
+        if (selectedBusiness) {
+            try {
+                const endpoint = actionType === 'block'
+                    ? `/business/action-business/block/${selectedBusiness.business_id}`
+                    : `/business/action-business/unblock/${selectedBusiness.business_id}`;
+
+                await api.get(endpoint,{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                setBusinessData(prevData => prevData.map(business =>
+                    business.business_id === selectedBusiness.business_id
+                        ? { ...business, blocked: actionType === 'block' }
+                        : business
+                ));
+            } catch (error) {
+                console.error(`Error ${actionType === 'block' ? 'blocking' : 'unblocking'} business:`, error);
+            } finally {
+                setShowDialog(false);
+                setSelectedBusiness(null);
+            }
+        }
+    };
+
+    const actions = [
+        {
+            icon: (row: Business) => (
+                <FontAwesomeIcon
+                    icon={row.blocked ? faLock : faUnlock}
+                    style={{ color: row.blocked ? 'red' : 'blue' }}
+                />
+            ),
+            onClick: (row: Business) => handleLockClick(row, row.blocked ? 'unblock' : 'block')
+        }
+    ];
+
+    const totalPages = Math.ceil(filteredBusinessData.length / rowsPerPage);
 
     return (
         <Layout role={role}>
-            <div className='container-fluid row mt-3'>
+            <div className='container-fluid row mt-2'>
                 <div className="">
                     <div className='topic'>
                         <h5><strong>Business</strong></h5>
                     </div>
+                    <Notification/>
                     <div className="filter-container">
-                    <span>
-                        {/*<FontAwesomeIcon icon={faArrowsAltH} className="filter-icon"/>*/}
-                        Filter by:</span>
                         <div className="search">
-                            <Search/>
-                        </div>
-                        <div className="selector-container">
-                            {/*<DateSelector/>*/}
+                            <SearchBar searchText={searchText} setSearchText={setSearchText} />
                         </div>
                     </div>
                 </div>
                 <div className="table-container mt-5">
-                    <Table data={businessData}
-                           columns={columns}
-                           currentPage={currentPage}
-                           rowsPerPage={rowsPerPage}
-                           emptyMessage='business'
+                    <Table
+                        data={filteredBusinessData}
+                        columns={columns}
+                        actions={actions}
+                        currentPage={currentPage}
+                        rowsPerPage={rowsPerPage}
+                        emptyMessage='business'
                     />
                     <Pagination
                         currentPage={currentPage}
@@ -79,6 +163,12 @@ const AdminBusiness: React.FC = () => {
                     />
                 </div>
             </div>
+            <ConfirmationDialog
+                show={showDialog}
+                onHide={() => setShowDialog(false)}
+                onConfirm={handleConfirmAction}
+                message={`Are you sure you want to ${actionType} this business?`}
+            />
         </Layout>
     );
 };

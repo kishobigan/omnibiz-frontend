@@ -4,14 +4,7 @@
     padding: 10px;
     justify-content: space-between;
 }
-.filter-container {
-    display: flex;
-    align-items: center;
-    margin-left: 20px;
-}
-.filter-icon{
-    margin-right: 10px;
-}
+
 .search {
     margin-left: 10px;
     margin-right: 10px;
