@@ -43,7 +43,7 @@ function Sidebar({userId, role}: SidebarProps) {
     const adminMenuItems: MenuItem[] = [
         {label: "Home", icon: faHome, link: `/pages/admin/dashboard/${userId}`},
         {label: "Business Owners", icon: faUsers, link: `/pages/admin/owners/${userId}`},
-        {label: "Business", icon: faGear, link: `/pages/admin/business/${userId}`},
+        {label: "Business", icon: faBriefcase, link: `/pages/admin/business/${userId}`},
     ];
 
     const staffMenuItems: MenuItem[] = [
