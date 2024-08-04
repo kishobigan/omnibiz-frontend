@@ -17,9 +17,10 @@ const tabItems = [
 ]
 interface DashboardLayoutProps {
     role: 'owner' | 'admin' | 'staff' | 'higher_staff';
+    tabItems: { label: string, component: JSX.Element }[];
 }
 
-export default function DashboardLayout({role}: DashboardLayoutProps) {
+export default function DashboardLayout({role, tabItems}: DashboardLayoutProps) {
     return (
         <div className='vh-100'>
             <Layout role={role}>

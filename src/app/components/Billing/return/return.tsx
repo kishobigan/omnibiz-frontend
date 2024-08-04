@@ -1,11 +1,11 @@
 import React from 'react';
 
-function Page() {
+function Return() {
     return (
         <div>
-            Staff page
+            This is return page.
         </div>
     );
 }
 
-export default Page;
+export default Return;
