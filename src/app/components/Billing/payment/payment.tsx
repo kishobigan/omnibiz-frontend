@@ -9,6 +9,7 @@ import {useParams} from "next/navigation";
 import api from "@/app/utils/Api/api";
 import Loader from "@/app/widgets/loader/loader";
 import Table from "@/app/widgets/table/Table";
+import InvoiceModal from "@/app/components/Billing/InvoiceModal/invoiceModal";
 
 interface PaymentProps {
     subtotal: string;
@@ -22,13 +23,19 @@ interface Draft {
     business_id: string;
     amount: number;
     invoice_status: string;
+    customer: string | null;
+    payment_type: string;
+    payee_name: string | null;
+    cheque_number: string | null;
+    due_date: string | null;
     invoice_items: {
-        category: string;
-        item: string;
+        category: number;
+        item: number;
         price: number;
         quantity: number;
     }[];
 }
+
 
 const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, customerResponse}) => {
     const [activeTab, setActiveTab] = useState('cash');
@@ -36,7 +43,40 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [drafts, setDrafts] = useState<Draft[]>([]);
+    const [showModal, setShowModal] = useState(false)
     const {business_id} = useParams();
+
+    const [billingData, setBillingData] = useState<{
+        balance: string;
+        discount: string;
+        items: { itemId: number; itemName: string; quantity: number; unitPrice: number; amount: number; }[];
+        recipientAmount: string;
+        subTotal: string;
+        total: string;
+        business_id: string;
+        amount: number;
+        invoice_status: string;
+        customer: string | null;
+        payment_type: string;
+        payee_name: string | null;
+        cheque_number: string | null;
+        due_date: string | null;
+    }>({
+        balance: '0.00',
+        discount: '0.00',
+        items: [],
+        recipientAmount: '0.00',
+        subTotal: '0.00',
+        total: '0.00',
+        business_id: "",
+        amount: 0.00,
+        invoice_status: "paid",
+        customer: null,
+        payment_type: "cash",
+        payee_name: null,
+        cheque_number: null,
+        due_date: null,
+    });
 
     const {handleChange, handleSubmit, values, errors, setValue} = FormHandler(
         async () => {
@@ -46,6 +86,11 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
                     business_id: business_id as string,
                     amount: parseFloat(total),
                     invoice_status: "paid",
+                    customer: customerResponse ? customerResponse.id : null,
+                    payment_type: activeTab,
+                    payee_name: activeTab === 'cheque' ? values.cheque?.name || null : null,
+                    cheque_number: activeTab === 'cheque' ? values.cheque?.cheque_no || null : null,
+                    due_date: activeTab === 'cheque' ? values.cheque?.dueDate || null : null,
                     invoice_items: tableData.map(item => ({
                         category: item.categoryId,
                         item: item.itemId,
@@ -53,15 +98,42 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
                         quantity: item.quantity,
                     })),
                 };
+
                 try {
+                    setBillingData({
+                        balance: balance,
+                        discount: discount || '0.00',
+                        items: tableData.map(item => ({
+                            itemId: item.itemId,
+                            itemName: item.itemName,
+                            quantity: item.quantity,
+                            unitPrice: item.unitPrice,
+                            amount: item.unitPrice * item.quantity,
+                        })),
+                        recipientAmount: values.cash?.recipientAmount || '0.00',
+                        subTotal: subtotal || '0.00',
+                        total: total,
+                        business_id: business_id as string,
+                        amount: parseFloat(total),
+                        invoice_status: "paid",
+                        customer: customerResponse?.customerId || null,
+                        payment_type: activeTab,
+                        payee_name: values.cheque?.name || null,
+                        cheque_number: values.cheque?.cheque_no || null,
+                        due_date: values.cheque?.dueDate || null,
+                    });
+
                     const response = await api.post("billing/create-bill", requestData);
                     if (response.status === 201) {
+                        // setShowModal(true)
                         console.log("Billing created successfully", response.data);
                     } else {
+                        setShowModal(true)
                         setErrorMessage("Oops! Something went wrong, try again later.");
                         console.error("Error in creating billing", response.data.message);
                     }
                 } catch (error) {
+                    setShowModal(true)
                     setErrorMessage("Oops! Something went wrong, try again later.");
                     console.error("Error in creating billing", error);
                 } finally {
@@ -90,10 +162,14 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
             business_id: business_id as string,
             amount: parseFloat(total),
             invoice_status: "draft",
+            customer: null,
+            payment_type: activeTab,
+            payee_name: null,
+            cheque_number: null,
+            due_date: null,
             invoice_items: tableData.map(item => ({
                 category: item.categoryId,
                 item: item.itemId,
-                itemName: item.itemName,
                 price: item.unitPrice,
                 quantity: item.quantity,
             })),
@@ -102,7 +178,6 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
         const existingDrafts: Draft[] = JSON.parse(localStorage.getItem("billingDraft-Omnibiz") ?? '[]');
         existingDrafts.push(newDraft);
         localStorage.setItem('billingDraft-Omnibiz', JSON.stringify(existingDrafts));
-        // setDrafts(existingDrafts)
         alert("Draft saved successfully!");
     };
 
@@ -167,10 +242,10 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
     }, []);
 
     const columns = [
-        { key: 'business_id', header: 'Business ID' },
-        { key: 'amount', header: 'Amount' },
-        { key: 'invoice_status', header: 'Invoice Status' },
-        { key: 'itemsList', header: 'Invoice Items' },
+        {key: 'business_id', header: 'Business ID'},
+        {key: 'amount', header: 'Amount'},
+        {key: 'invoice_status', header: 'Invoice Status'},
+        {key: 'itemsList', header: 'Invoice Items'},
     ];
 
     return (
@@ -295,7 +370,11 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
                     </div>
                 </div>
             </div>
-            {/*<Invoice subtotal={subtotal} discount={discount} total={total} tableData={tableData} customerResponse={customerResponse} />*/}
+            <InvoiceModal
+                billingData={billingData}
+                show={showModal}
+                onHide={() => setShowModal(false)}
+            />
         </div>
     );
 }

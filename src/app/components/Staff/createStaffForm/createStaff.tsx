@@ -13,12 +13,7 @@ import Button from "@/app/widgets/Button/Button";
 import Loader from "@/app/widgets/loader/loader";
 
 type CheckboxState = {
-    Manager: boolean;
-    Stock_Management: boolean;
-    Billing: boolean;
-    Store_Keeping: boolean;
-    Assistance: boolean;
-    Other: boolean;
+    [key: string]: boolean;
 };
 
 interface AddStaffProps {
@@ -33,19 +28,10 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
     const [loading, setLoading] = useState<boolean>(false);
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [accessData, setAccessData] = useState<{ value: string; name: string }[]>([]);
+    const [checkedState, setCheckedState] = useState<CheckboxState>({});
     const token = Cookies.get(ACCESS_TOKEN);
     const {business_id} = useParams();
-
-    const initialCheckboxState: CheckboxState = {
-        Manager: false,
-        Stock_Management: false,
-        Billing: false,
-        Store_Keeping: false,
-        Assistance: false,
-        Other: false,
-    };
-
-    const [checkedState, setCheckedState] = useState<CheckboxState>(initialCheckboxState);
 
     const initialInputs = {
         role_name: "",
@@ -60,18 +46,53 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
     );
 
     useEffect(() => {
+        const fetchAccess = async () => {
+            try {
+                const response = await api.get(`super/get-access`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                if (response.status === 200) {
+                    const fetchedData = response.data.access_records.map((access: any) => ({
+                        name: access.description,
+                        value: access.permission,
+                    }));
+                    setAccessData(fetchedData);
+
+                    const initialCheckboxState: CheckboxState = fetchedData.reduce((acc: CheckboxState, curr: {
+                        value: string;
+                        name: string
+                    }) => {
+                        acc[curr.value] = false;
+                        return acc;
+                    }, {});
+                    setCheckedState(initialCheckboxState);
+                } else {
+                    console.log("Error in fetching access", response.data.message);
+                }
+            } catch (error) {
+                console.error("Error in fetching access", error);
+            }
+        };
+
+        fetchAccess();
+    }, [token]);
+
+    useEffect(() => {
         if (initialValues) {
             initForm(initialValues);
             const initialPermissions = initialValues.permissions.reduce(
                 (acc: CheckboxState, permission: string) => {
-                    acc[permission as keyof CheckboxState] = true;
+                    acc[permission] = true;
                     return acc;
                 },
                 {...checkedState}
             );
             setCheckedState(initialPermissions);
         }
-    }, [initialValues]);
+    }, [initialValues, checkedState, initForm]);
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, checked} = e.target;
@@ -82,24 +103,29 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
         if (!isSubmit) {
             return;
         }
+
         const submitData = async () => {
             setLoading(true);
             try {
                 const permissions = Object.keys(checkedState).filter(
-                    (key) => checkedState[key as keyof CheckboxState]
+                    (key) => checkedState[key]
                 );
+
                 const requestData = {
                     business_id: [business_id],
                     email: values.email,
                     permissions: permissions,
                     role_name: values.role_name
                 };
+                console.log("create staff data", requestData)
+
                 if (type === 'Add') {
                     const response = await api.post("auth/create-staff", requestData, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
+
                     if (response.status === 201) {
                         console.log("Staff created successfully", response.data);
                         onHide();
@@ -114,6 +140,7 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
                             Authorization: `Bearer ${token}`,
                         },
                     });
+
                     if (response.status === 201) {
                         console.log("Staff updated successfully", response.data);
                         onHide();
@@ -130,9 +157,10 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
                 setLoading(false);
                 setIsSubmit(false);
                 initForm(initialInputs);
-                setCheckedState(initialCheckboxState);
+                setCheckedState({});
             }
         };
+
         submitData();
     }, [isSubmit]);
 
@@ -143,15 +171,6 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
             },
         } as React.FormEvent<HTMLFormElement>);
     };
-
-    const items = [
-        "Manager",
-        "Stock Management",
-        "Billing",
-        "Store Keeping",
-        "Assistance",
-        "Other",
-    ];
 
     const errorStyle = {
         color: "red",
@@ -167,7 +186,7 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
                 initForm(initialInputs);
                 onHide();
                 setErrorMessage(null);
-                setCheckedState(initialCheckboxState);
+                setCheckedState({});
             }}
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
@@ -210,14 +229,15 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
                         </div>
                     </div>
                     <p>Staff Privileges</p>
-                    {items.map((item, index) => (
+                    {accessData.map((access, index) => (
                         <div className="col-md-4" key={index}>
                             <Checkbox
-                                label={item}
-                                name={item}
-                                checked={checkedState[item as keyof CheckboxState]}
+                                label={access.name}
+                                name={access.value}
+                                checked={checkedState[access.value] || false}
                                 handleChange={handleCheckboxChange}
-                                value={item}/>
+                                value={access.value}
+                            />
                         </div>
                     ))}
                 </form>
@@ -228,7 +248,7 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
                     onClick={() => {
                         if (type !== "View") {
                             initForm(initialInputs);
-                            setCheckedState(initialCheckboxState);
+                            setCheckedState({});
                         }
                         onHide();
                         setErrorMessage(null);

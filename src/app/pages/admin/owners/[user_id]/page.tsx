@@ -1,11 +1,12 @@
 import React from 'react';
 import AdminBusinessOwner from "@/app/components/admin/adminBusinessOwner/owner";
+import ProtectedRoute from "@/app/utils/Routing/ProtectedRoute";
 
 function Page() {
     return (
-        <div>
+        <ProtectedRoute>
             <AdminBusinessOwner/>
-        </div>
+        </ProtectedRoute>
     );
 }
 
