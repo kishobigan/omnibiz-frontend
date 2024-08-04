@@ -38,6 +38,7 @@ const SignUp: React.FC<ContentProps> = ({
                 };
                 const res = await api.post("auth/create-owner", requestData);
                 if (res.status === 201) {
+                    alert("Please check your email to activate account")
                     router.push('/pages/signin');
                     console.log("Sign up successfully", res.data);
                 } else {
