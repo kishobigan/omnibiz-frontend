@@ -1,5 +1,6 @@
 'use client'
 import React, {useState, useEffect} from "react";
+import Notification from "@/app/widgets/notification/notification";
 
 interface TabItem {
     label: string;
@@ -39,6 +40,7 @@ const Tabs: React.FC<TabProps> = ({tabItems}) => {
                     </li>
                 ))}
             </ul>
+            <Notification/>
             <div>
                 {tabItems[activeTab] && tabItems[activeTab].component}
             </div>

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import './notification.css';
-import { FaBell } from 'react-icons/fa';
+import { FaBell} from 'react-icons/fa';
 import axios from 'axios';
 
 interface Notification {

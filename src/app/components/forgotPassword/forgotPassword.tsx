@@ -9,27 +9,51 @@ import FormHandler from "@/app/utils/FormHandler/Formhandler";
 import Image from "next/image";
 import img from "public/img/Forgot password.svg";
 import emailImage from "public/img/Mail-amico.svg";
-import { forgotPasswordSchema, validate } from "@/app/utils/Validation/validations" // Adjust the path as necessary
+import api from "@/app/utils/Api/api";
+import { forgotPasswordSchema, validate } from "@/app/utils/Validation/validations";
+import Loader from "@/app/widgets/loader/loader";
 
 const ForgotPassword: React.FC = () => {
   const [showNotification, setShowNotification] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const callback = () => {
-    console.log("Form submitted successfully");
-    setShowNotification(true);
+  const validateForm = (values: { [key: string]: any }) => {
+    return validate(values, forgotPasswordSchema);
   };
 
-  const { handleChange, handleSubmit, initForm, values, errors } = FormHandler(
-    callback,
-    (values) => validate(values, forgotPasswordSchema),
-    {}
+  const { handleChange, handleSubmit, values, errors } = FormHandler(
+    async () => {
+      setLoading(true);
+      try {
+        const response = await api.post("/auth/reset-account-request", { email: values.email });
+        if (response.status === 200) {
+          setShowNotification(true);
+        } else {
+          setErrorMessage("Oops! Something went wrong.");
+        }
+      } catch (error) {
+        setErrorMessage("Oops! Something went wrong.");
+        console.error("Error resetting password", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    validateForm,
+    { email: "" }
   );
 
   const handleResetClick = () => {
-    console.log("Reset password clicked");
     handleSubmit({
       preventDefault: () => {},
     } as React.FormEvent<HTMLFormElement>);
+  };
+
+  const errorStyle = {
+    color: "red",
+    fontSize: "13px",
+    marginTop: "5px",
+    marginBottom: "10px",
   };
 
   return (
@@ -46,9 +70,9 @@ const ForgotPassword: React.FC = () => {
             />
             <h5>Forgot your password?</h5>
             <p>
-              Enter your e-mail address and we'll send you <br /> a link to reset
-              your password
+              Enter your e-mail address and we'll send you <br /> a link to reset your password
             </p>
+            {errorMessage && <div style={errorStyle}>{errorMessage}</div>}
             <form onSubmit={handleSubmit}>
               <div>
                 <div className="form-group">
@@ -64,7 +88,7 @@ const ForgotPassword: React.FC = () => {
                     value={values.email}
                     onChange={handleChange}
                   />
-                  {errors.email && <span className="error">{errors.email}</span>}
+                  {errors.email && <span style={errorStyle}>{errors.email}</span>}
                 </div>
                 <div className="row">
                   <div className="col-6">
@@ -80,7 +104,7 @@ const ForgotPassword: React.FC = () => {
                       onClick={handleResetClick}
                       variant="dark"
                     >
-                      Reset
+                      {loading ? <Loader /> : "Reset"}
                     </Button>
                   </div>
                 </div>
