@@ -1,19 +1,28 @@
 'use client'
 import React, {useEffect, useState} from 'react';
 import Layout from "@/app/widgets/layout/layout";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowsAltH} from "@fortawesome/free-solid-svg-icons";
-import Search from "@/app/widgets/search/search";
 import './adminBusinessOwner.css'
 import Table from "@/app/widgets/table/Table";
 import Pagination from "@/app/widgets/pagination/pagination";
 import api from "@/app/utils/Api/api";
+import SearchBar from "@/app/widgets/searchBar/searchBar";
+import Notification from "@/app/widgets/notification/notification";
+
+interface Owner {
+    owner_name: string;
+    business_names: string;
+    business_count: number;
+    phone_number: string;
+    subscription_amount: number;
+}
 
 const AdminBusinessOwner: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
-    const [ownerData, setOwnerData] = useState([])
-    const role = 'admin'
+    const [ownerData, setOwnerData] = useState<Owner[]>([]);
+    const [filteredOwnerData, setFilteredOwnerData] = useState<Owner[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
+    const role = 'admin';
 
     const columns = [
         {key: 'owner_name', header: 'Owner name'},
@@ -35,16 +44,33 @@ const AdminBusinessOwner: React.FC = () => {
                     subscription_amount: item.subscription_amount,
                 }));
                 setOwnerData(businessOwnersData);
-                console.log("business owners data", response.data)
-                console.log("business owners data", businessOwnersData)
+                setFilteredOwnerData(businessOwnersData);
+                console.log("business owners data", response.data);
+                console.log("business owners data", businessOwnersData);
             } catch (error) {
-                console.log("Error in fetching business owners data", error)
+                console.log("Error in fetching business owners data", error);
             }
         };
 
         fetchData();
     }, []);
-    const totalPages = Math.ceil(ownerData.length / rowsPerPage);
+
+    useEffect(() => {
+        filterOwners(searchText);
+    }, [searchText, ownerData]);
+
+    const filterOwners = (text: string) => {
+        const filtered = ownerData.filter(owner =>
+            owner.owner_name.toLowerCase().includes(text.toLowerCase()) ||
+            owner.business_names.toLowerCase().includes(text.toLowerCase()) ||
+            owner.phone_number.includes(text) ||
+            owner.business_count.toString().includes(text) ||
+            owner.subscription_amount.toString().includes(text)
+        );
+        setFilteredOwnerData(filtered);
+    };
+
+    const totalPages = Math.ceil(filteredOwnerData.length / rowsPerPage);
 
     return (
         <Layout role={role}>
@@ -53,24 +79,15 @@ const AdminBusinessOwner: React.FC = () => {
                     <div className='topic'>
                         <h5><strong>Business Owner</strong></h5>
                     </div>
+                    <Notification/>
                     <div className="filter-container">
-                    <span>
-                        {/*<FontAwesomeIcon icon={faArrowsAltH} className="filter-icon"/>*/}
-                        Filter by:</span>
                         <div className="search">
-                            <Search/>
+                            <SearchBar searchText={searchText} setSearchText={setSearchText} />
                         </div>
-                        {/*<div className="selector-container">*/}
-                        {/*    <select className="form-select custom-select" aria-label="Default select example">*/}
-                        {/*        <option selected>Subscription Type</option>*/}
-                        {/*        <option value="1">Monthly</option>*/}
-                        {/*        <option value="2">Monthly</option>*/}
-                        {/*    </select>*/}
-                        {/*</div>*/}
                     </div>
                 </div>
                 <div className="table-container">
-                    <Table data={ownerData}
+                    <Table data={filteredOwnerData}
                            columns={columns}
                            currentPage={currentPage}
                            rowsPerPage={rowsPerPage}
