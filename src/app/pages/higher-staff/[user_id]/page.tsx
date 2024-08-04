@@ -1,10 +1,11 @@
 import React from 'react';
+import ProtectedRoute from "@/app/utils/Routing/ProtectedRoute";
 
 function Page() {
     return (
-        <div>
+        <ProtectedRoute>
             This is higher staff page
-        </div>
+        </ProtectedRoute>
     );
 }
 

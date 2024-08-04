@@ -55,7 +55,7 @@ const SignIn: React.FC<ContentProps> = ({
                     } else if (user_role === 'admin') {
                         router.push(`/pages/admin/dashboard/${user_id}`);
                     } else if (user_role === 'staff') {
-                        router.push(`/pages/staff/${user_id}`);
+                        router.push(`/pages/staff/business/${user_id}/72y3r1p5`);
                     } else if (!owner_created && user_role === 'owner') {
                         router.push('/pages/createOwner');
                     } else if (user_role === 'higher-staff') {

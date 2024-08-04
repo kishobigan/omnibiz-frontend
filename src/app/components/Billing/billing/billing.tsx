@@ -11,7 +11,7 @@ import InputDropdown from "@/app/widgets/productInput/inputDropdown";
 import {billingSchema, validate} from "@/app/utils/Validation/validations";
 import './billing.css'
 import api from "@/app/utils/Api/api";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 
@@ -29,6 +29,7 @@ const Billing: React.FC = () => {
     const [billingData, setBillingData] = useState<any>(null);
     const [customerResponse, setCustomerResponse] = useState<any>(null);
     const {business_id} = useParams()
+    const router = useRouter()
     const token = Cookies.get(ACCESS_TOKEN);
 
     useEffect(() => {
@@ -152,12 +153,23 @@ const Billing: React.FC = () => {
 
     return (
         <div className='container-fluid mt-3'>
-            <div className=''>
+            <div>
                 <form onSubmit={handleCustomerSubmit}>
                     <div>
-                        <div className='d-flex flex-row '>
-                            <FontAwesomeIcon className='me-2' icon={faUser}/>
-                            <p className='fw-large p_tag'>Customer Details</p>
+                        <div className='d-flex flex-row justify-content-between'>
+                            <div className='d-flex flex-row '>
+                                <FontAwesomeIcon className='me-2' icon={faUser}/>
+                                <p className='fw-large p_tag'>Customer Details</p>
+                            </div>
+                            <div>
+                                <Button
+                                    variant="dark"
+                                    className="buttonWithPadding"
+                                    onClick={() => router.push('/return')}
+                                >
+                                    Return
+                                </Button>
+                            </div>
                         </div>
                         <div className='row'>
                             <div className='d-flex flex-column flex-sm-row gap-md-5 gap-sm-3 gap-1'>

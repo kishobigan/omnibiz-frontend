@@ -20,7 +20,7 @@ const Businesses = () => {
     const [update, setUpdate] = useState(false);
 
     const [businessData, setBusinessData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const {user_id} = useParams();
@@ -49,7 +49,7 @@ const Businesses = () => {
         router.push(`/pages/dashboard/busi/${user_id}/${businessId}`);
     };
 
-    if (loading) return <Loader/>;
+    // if (loading) return <Loader/>;
     if (error) return <p className='error'>{error}</p>;
 
     return (
