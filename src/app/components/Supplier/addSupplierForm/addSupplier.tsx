@@ -1,7 +1,6 @@
 'use client'
 import React, {useEffect, useState} from 'react';
 import Input from "@/app/widgets/input/Input";
-import {DateSelector} from "@/app/widgets/datepicker/datepicker";
 import './addSupplier.css'
 import FormHandler from "@/app/utils/FormHandler/Formhandler";
 import {addSupplierSchema, validate} from '@/app/utils/Validation/validations';
@@ -26,17 +25,16 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                                                  }) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [isSubmit, setIsSubmit] = useState<boolean>(false)
-    const [status, setStatus] = useState('Pending');
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const token = Cookies.get(ACCESS_TOKEN)
     const {business_id} = useParams()
 
     const initValues = {
-        supplier_name: "",
-        supplier_address: "",
-        supplier_phone: "",
-        supplier_email: "",
-        supplier_website: ""
+        supplierName: "",
+        supplierAddress: "",
+        phone: "",
+        email: "",
+        supplierWebsite: ""
     }
 
     const {
@@ -44,10 +42,18 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
     } = FormHandler(() => setIsSubmit(true), validate, addSupplierSchema)
 
     useEffect(() => {
-        if (type === 'Edit' && selectedSupplier) {
-            initForm(selectedSupplier)
+        if ((type === 'Edit' || type === 'View') && selectedSupplier) {
+            const supplierData = {
+                supplier_id: selectedSupplier.supplier_id,
+                supplierName: selectedSupplier.supplier_name || "",
+                supplierAddress: selectedSupplier.supplier_address || "",
+                phone: selectedSupplier.supplier_phone || "",
+                email: selectedSupplier.supplier_email || "",
+                supplierWebsite: selectedSupplier.supplier_website || "",
+            };
+            initForm(supplierData);
         }
-    }, [initForm, selectedSupplier, type]);
+    }, [selectedSupplier, type]);
 
     useEffect(() => {
         if (!isSubmit) return;
@@ -77,7 +83,8 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                         console.log("Error in creating supplier", response.data.message)
                     }
                 } else if (type === 'Edit') {
-                    const response = await api.put(`suppliers/update-supplier/${selectedSupplier.id}`, requestData, {
+                    console.log("supplier-id", selectedSupplier.id)
+                    const response = await api.put(`suppliers/update-supplier/${selectedSupplier.supplier_id}`, requestData, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -106,11 +113,9 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         handleSubmit({
-            preventDefault: () => {
-            }
+            preventDefault: () => {}
         } as React.FormEvent<HTMLFormElement>);
     };
-
     return (
         <Modal
             show={show}
@@ -137,10 +142,12 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                         <div className="form-group">
                             <Input label='Name'
                                    name='supplierName'
-                                   placeholder="Enter Suppier name"
+                                   placeholder="Enter Supplier name"
                                    type={"text"}
                                    value={values.supplierName || ""}
-                                   onChange={handleChange}/>
+                                   onChange={handleChange}
+                                   readOnly={type === 'View'}
+                            />
                             {errors.supplierName && <span className="error">{errors.supplierName}</span>}
                         </div>
                     </div>
@@ -148,10 +155,12 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                         <div className="form-group">
                             <Input label='Address'
                                    name='supplierAddress'
-                                   placeholder="Enter Suppier address"
+                                   placeholder="Enter Supplier address"
                                    type={"text"}
                                    value={values.supplierAddress || ""}
-                                   onChange={handleChange}/>
+                                   onChange={handleChange}
+                                   readOnly={type === 'View'}
+                            />
                             {errors.supplierAddress && <span className="error">{errors.supplierAddress}</span>}
                         </div>
                     </div>
@@ -161,8 +170,10 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                                    name='phone'
                                    placeholder="Enter Contact Number"
                                    type={"text"}
-                                   value={values.phone}
-                                   onChange={handleChange}/>
+                                   value={values.phone || ""}
+                                   onChange={handleChange}
+                                   readOnly={type === 'View'}
+                            />
                             {errors.phone && <span className="error">{errors.phone}</span>}
                         </div>
                     </div>
@@ -172,8 +183,10 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                                    name='email'
                                    placeholder="Enter Email Address"
                                    type={"email"}
-                                   value={values.email}
-                                   onChange={handleChange}/>
+                                   value={values.email || ""}
+                                   onChange={handleChange}
+                                   readOnly={type === 'View'}
+                            />
                             {errors.email && <span className="error">{errors.email}</span>}
                         </div>
                     </div>
@@ -183,37 +196,13 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                                    name='supplierWebsite'
                                    placeholder="Enter website url"
                                    type={"text"}
-                                   value={values.supplierWebsite}
-                                   onChange={handleChange}/>
+                                   value={values.supplierWebsite || ""}
+                                   onChange={handleChange}
+                                   readOnly={type === 'View'}
+                            />
                             {errors.supplierWebsite && <span className="error">{errors.supplierWebsite}</span>}
                         </div>
                     </div>
-
-                    {/*<div className="col-md-6">*/}
-                    {/*    <div className="form-group">*/}
-                    {/*        <Input label='Total Amount'*/}
-                    {/*               name='amount'*/}
-                    {/*               placeholder="Enter Total Ammount"*/}
-                    {/*               type={"text"}*/}
-                    {/*               value={values.amount}*/}
-                    {/*               onChange={handleChange}/>*/}
-                    {/*        {errors.amount && <span className="error">{errors.amount}</span>}*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div className="col-md-6">*/}
-                    {/*    <label htmlFor="payback-period" className="form-label">Payback period</label>*/}
-                    {/*    <DateSelector/>*/}
-                    {/*</div>*/}
-                    {/*<div className="col-md-6">*/}
-                    {/*    <label htmlFor="payback-period" className="form-label">Status</label>*/}
-                    {/*    <select className="form-select custom-select" aria-label="Default select example"*/}
-                    {/*            value={status}*/}
-                    {/*            onChange={(e) => setStatus(e.target.value)}*/}
-                    {/*    >*/}
-                    {/*        <option selected>Pending</option>*/}
-                    {/*        <option value="1">Paid</option>*/}
-                    {/*    </select>*/}
-                    {/*</div>*/}
                     {errorMessage && <p className='error'>{errorMessage}</p>}
                 </form>
             </Modal.Body>

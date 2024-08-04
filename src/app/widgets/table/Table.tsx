@@ -1,44 +1,40 @@
 'use client'
 import React from "react";
 
-interface TableData {
-    [key: string]: any;
-}
-
 interface TableColumn {
     key: string;
     header: string;
 }
 
-interface TableAction {
+interface TableAction<T> {
     icon: React.ReactNode;
-    onClick: (row: TableData) => void;
+    onClick: (row: T) => void;
 }
 
-interface TableProps {
-    data: TableData[];
+interface TableProps<T> {
+    data: T[];
     columns?: TableColumn[];
-    actions?: TableAction[];
+    actions?: TableAction<T>[];
     currentPage?: number;
     rowsPerPage?: number;
     handleStatusChange?: (id: number, status: boolean) => void;
     emptyMessage?: string;
 }
 
-const Table: React.FC<TableProps> = ({
-                                         data,
-                                         columns = [],
-                                         actions = [],
-                                         currentPage = 1,
-                                         rowsPerPage = 10,
-                                         handleStatusChange,
-                                         emptyMessage
-                                     }) => {
+const Table = <T extends Record<string, any>>({
+                                                  data,
+                                                  columns = [],
+                                                  actions = [],
+                                                  currentPage = 1,
+                                                  rowsPerPage = 10,
+                                                  handleStatusChange,
+                                                  emptyMessage
+                                              }: TableProps<T>) => {
     const startRow = (currentPage - 1) * rowsPerPage;
     const endRow = startRow + rowsPerPage;
     const currentData = data.slice(startRow, endRow);
 
-    const renderCellContent = (columnKey: string, cellData: any, row: TableData) => {
+    const renderCellContent = (columnKey: string, cellData: any, row: T) => {
         if (columnKey === 'action' && actions.length > 0) {
             return (
                 <div className="action-icons">
@@ -57,9 +53,9 @@ const Table: React.FC<TableProps> = ({
                     <input
                         className="form-check-input"
                         type="checkbox"
-                        id={`switch-${row.staffId}`}
+                        id={`switch-${(row as any).staffId}`}
                         checked={cellData === 'on'}
-                        onChange={() => handleStatusChange(row.staffId, cellData === 'off')}
+                        onChange={() => handleStatusChange((row as any).staffId, cellData === 'off')}
                     />
                 </div>
             );
