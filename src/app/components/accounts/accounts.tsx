@@ -6,6 +6,7 @@ import Card from "@/app/widgets/card/card";
 import api from "@/app/utils/Api/api";
 import {useParams} from "next/navigation";
 import {format, parseISO, isValid} from "date-fns";
+import "./accounts.css"
 
 interface AccountItem {
     description: string;
@@ -71,25 +72,29 @@ function Accounts() {
             title: "Total Income",
             cost: "12,000",
             percentage: "5%",
-            color: "#D8BFD8"
+            color: "#4fe399",
+            className: "card-income"
         },
         {
             title: "Total Expenses",
             cost: "12,000",
             percentage: "5%",
-            color: "#FFC0CB"
+            color: "#B7B7B7",
+            className: "card-expenses"
         },
         {
             title: "Total Profit",
             cost: "12,000",
             percentage: "5%",
-            color: "#98FB98"
+            color: "#b699c2",
+            className: "card-profit"
         },
         {
             title: "Total Loss",
             cost: "12,000",
             percentage: "5%",
-            color: "#BCFFF2"
+            color: "#f5f77e",
+            className: "card-loss"
         },
     ];
 
@@ -114,7 +119,7 @@ function Accounts() {
                                     </p>
                                 </div>
                             }
-                            color={data.color}
+                            className={data.className}
                         />
                     </div>
                 ))}

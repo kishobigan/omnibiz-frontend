@@ -1,0 +1,15 @@
+.card-income {
+    background: linear-gradient(to bottom, #4fe399, white);
+}
+
+.card-expenses {
+    background: linear-gradient(to bottom, #B7B7B7, white);
+}
+
+.card-profit {
+    background: linear-gradient(to bottom, #b699c2, white);
+}
+
+.card-loss {
+    background: linear-gradient(to bottom, #f5f77e, white);
+}

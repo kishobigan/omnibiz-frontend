@@ -85,7 +85,6 @@ const CreateAccessForm: React.FC<CreateAccessProps> = ({
                 onHide();
                 setErrorMessage(null);
             }}
-            size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop
@@ -97,7 +96,7 @@ const CreateAccessForm: React.FC<CreateAccessProps> = ({
             </Modal.Header>
             <Modal.Body>
                 <form onSubmit={handleSubmit} className="row g-3 ms-5 me-5">
-                    <div className="col-md-7">
+                    <div className="col-md-12">
                         <div className="form-group">
                             <Input
                                 label="Permission"
@@ -110,7 +109,7 @@ const CreateAccessForm: React.FC<CreateAccessProps> = ({
                             {errors.permission && <span style={errorStyle}>{errors.permission}</span>}
                         </div>
                     </div>
-                    <div className="col-md-7">
+                    <div className="col-md-12">
                         <div className="form-group">
                             <Input
                                 label="Description"

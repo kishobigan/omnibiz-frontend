@@ -6,9 +6,8 @@ import Pagination from "@/app/widgets/pagination/pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Button from "@/app/widgets/Button/Button";
-import CreateInventoryForm from "@/app/components/Inventory/createInventoryForm/createInventory";
 import CreateOrderForm from "@/app/components/Inventory/createOrderForm/createOrder";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation"; 
 import api from "@/app/utils/Api/api";
 
 interface InventoryItem {
@@ -36,12 +35,12 @@ function Inventory() {
     const rowsPerPage = 10;
 
     const [modalType, setModalType] = useState<"Add" | "Edit" | "View">("Add");
-    const [showInventoryModal, setShowInventoryModal] = useState(false);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [selectedInventory, setSelectedInventory] = useState<InventoryItem | null>(null);
     const [orderData, setOrderData] = useState<OrderItem[]>([]);
     const [update, setUpdate] = useState(false);
-    const { business_id } = useParams();
+    const { user_id, business_id } = useParams();
+    const router = useRouter(); // Initialize useRouter
     const [activeTab, setActiveTab] = useState<"Inventory" | "Order">("Inventory");
 
     useEffect(() => {
@@ -100,13 +99,11 @@ function Inventory() {
     const handleViewClick = (selectedInventory: InventoryItem) => {
         setSelectedInventory(selectedInventory);
         setModalType("View");
-        setShowInventoryModal(true);
     };
 
     const handleEditClick = (selectedInventory: InventoryItem) => {
         setSelectedInventory(selectedInventory);
         setModalType("Edit");
-        setShowInventoryModal(true);
     };
 
     const actions = [
@@ -142,10 +139,7 @@ function Inventory() {
                     Create Order
                 </Button>
                 <Button
-                    onClick={() => {
-                        setModalType("Add");
-                        setShowInventoryModal(true);
-                    }}
+                    onClick={() => router.push(`/pages/dashboard/busi/${user_id}/${business_id}/inventory`)}
                     variant="dark"
                     className="me-2 buttonWithPadding"
                     type="button"
@@ -206,16 +200,6 @@ function Inventory() {
                 </>
             )}
 
-            <CreateInventoryForm
-                show={showInventoryModal}
-                type={modalType}
-                selectedInventory={selectedInventory}
-                update={() => setUpdate(!update)}
-                onHide={() => {
-                    setShowInventoryModal(false);
-                    setSelectedInventory(null);
-                }}
-            />
             <CreateOrderForm
                 show={showOrderModal}
                 type={modalType}

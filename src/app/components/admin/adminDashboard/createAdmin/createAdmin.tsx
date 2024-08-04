@@ -84,7 +84,6 @@ const CreateAdminForm: React.FC<CreateAdminProps> = ({
                 onHide();
                 setErrorMessage(null);
             }}
-            size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
             backdrop
@@ -96,7 +95,7 @@ const CreateAdminForm: React.FC<CreateAdminProps> = ({
             </Modal.Header>
             <Modal.Body>
                 <form onSubmit={handleSubmit} className="row g-3 ms-5 me-5">
-                    <div className="col-md-6">
+                    <div className="col-md-12">
                         <div className="form-group">
                             <Input
                                 label="Email"
