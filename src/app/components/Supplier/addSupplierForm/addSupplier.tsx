@@ -71,7 +71,7 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                 if (type === 'Add') {
                     const response = await api.post("suppliers/create-supplier", requestData, {
                         headers: {
-                            Authorization: `Bearer ${token}`,
+                                Authorization: `Bearer ${token}`,
                         }
                     })
                     if (response.status === 201) {
