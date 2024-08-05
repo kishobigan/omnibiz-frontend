@@ -1,20 +1,20 @@
 'use client';
 import dynamic from 'next/dynamic';
-import {ApexOptions} from 'apexcharts';
-import {getLast10Days} from "@/app/utils/DateUtils/dateUtils";
+import { ApexOptions } from 'apexcharts';
+import { getLast10Days } from "@/app/utils/DateUtils/dateUtils";
 
-const ApexChart = dynamic(() => import('react-apexcharts'), {ssr: false});
+const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface ColumnChartProps {
     series: { name: string; data: number[] }[];
 }
 
-export function ColumnChart({series}: ColumnChartProps) {
+export function ColumnChart({ series }: ColumnChartProps) {
     const last10Days = getLast10Days();
     const options: ApexOptions = {
         chart: {
             type: 'bar',
-            height: 350,
+            height: 200,
             toolbar: {
                 show: false,
             }
@@ -59,7 +59,8 @@ export function ColumnChart({series}: ColumnChartProps) {
 
     return (
         <div>
-            <ApexChart type="bar" options={options} series={series} height={350} width={600}/>
+            <ApexChart type="bar" options={options} series={series} height={250} width={500} />
         </div>
     );
 }
+
