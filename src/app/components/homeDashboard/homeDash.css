@@ -1,0 +1,31 @@
+.container-fluid {
+    padding-top: 10px;
+}
+
+.row.mb-2 {
+    margin-bottom: 10px;
+}
+
+.card {
+    margin-bottom: 5px;
+}
+
+p.fs-5 {
+    margin-bottom: 5px;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.flex-column {
+    flex-direction: column !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.flex-grow-1 {
+    flex-grow: 1 !important;
+}
