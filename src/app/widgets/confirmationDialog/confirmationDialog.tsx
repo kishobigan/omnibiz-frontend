@@ -24,7 +24,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ show, onHide, o
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>{message}</p>
+                <p className='fs-6'>{message}</p>
             </Modal.Body>
             <Modal.Footer>
                 <Button type='button' variant='light' onClick={onHide}>
