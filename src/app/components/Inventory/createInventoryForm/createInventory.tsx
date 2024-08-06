@@ -232,7 +232,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
   };
 
   return (
-      <div className="create-inventory-form col-md-8 justify-contents-center align-items-center">
+      <div className="create-inventory-form justify-contents-center align-items-center">
       <div className="mt-4 mb-3">
           <Button onClick={() => setShowCategoryModal(true)} variant="dark" className="me-2">
             Add Category
@@ -308,7 +308,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
               <Button onClick={handleAddInventoryItem} variant="light">
                 Add 
               </Button>
-              <Button onClick={handleFormSubmit} variant="light" className="ms-2">
+              <Button onClick={handleFormSubmit} variant="light">
                 {type === "Add" ? "Create" : "Update"}
               </Button>
               {loading && <Loader />}

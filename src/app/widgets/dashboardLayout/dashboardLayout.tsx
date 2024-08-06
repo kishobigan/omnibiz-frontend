@@ -18,14 +18,16 @@ const tabItems = [
 interface DashboardLayoutProps {
     role: 'owner' | 'admin' | 'staff' | 'higher_staff';
     tabItems: { label: string, component: JSX.Element }[];
+    children?: React.ReactNode;
 }
 
-export default function DashboardLayout({role, tabItems}: DashboardLayoutProps) {
+export default function DashboardLayout({role, tabItems, children}: DashboardLayoutProps) {
     return (
         <div className='vh-100'>
             <Layout role={role}>
                 <div className=''>
                     <Tabs tabItems={tabItems}/>
+                    {children && <div>{children}</div>}
                 </div>
             </Layout>
         </div>
