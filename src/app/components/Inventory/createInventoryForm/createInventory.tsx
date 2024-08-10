@@ -167,8 +167,8 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
           suppliers: values.suppliers,
           inventory_items: [
             {
-              item: values.item,
-              category: values.category,
+              item: parseInt(values.item, 10),
+              category: parseInt(values.category, 10),
               quantity: values.quantity,
               buying_price: values.buyingPrice,
               selling_price: values.sellingPrice,

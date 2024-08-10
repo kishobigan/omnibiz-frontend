@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { ColumnChart } from "@/app/widgets/chart/columnChart";
+import {ColumnChart} from "@/app/widgets/chart/columnChart";
 import LineChart from "@/app/widgets/chart/lineChart";
 import Card2 from "@/app/widgets/Card2/Card2";
 import "./homeDash.css"
@@ -28,7 +28,7 @@ function HomeDash() {
     ];
 
     return (
-        <div className='container-fluid text-center vh-100 d-flex flex-column'>
+        <div className='container-fluid text-center d-flex flex-column'>
             <div className='row'>
                 <div className='col-md-3 col-sm-6'>
                     <Card2
@@ -55,16 +55,26 @@ function HomeDash() {
                     />
                 </div>
             </div>
-            <div className='row flex-grow-1'>
+            <div className='row flex-grow-1 mt-5'>
                 <div className='col-md-6 d-flex flex-column align-items-center'>
                     <p className='fs-5 mb-1'>Daily Sales</p>
-                    <ColumnChart series={seriesBar} />
+                    <ColumnChart series={seriesBar}/>
                 </div>
                 <div className='col-md-6 d-flex flex-column align-items-center'>
                     <p className='fs-5 mb-1'>Financial Metrics</p>
-                    <LineChart series={seriesLine} />
+                    <LineChart series={seriesLine}/>
                 </div>
             </div>
+            {/*<div className='row flex-grow-1 mt-3'>*/}
+            {/*    <div className='col-md-6 d-flex flex-column align-items-center'>*/}
+            {/*        <p className='fs-5 mb-1'>Daily Sales</p>*/}
+            {/*        <ColumnChart series={seriesBar}/>*/}
+            {/*    </div>*/}
+            {/*    <div className='col-md-6 d-flex flex-column align-items-center'>*/}
+            {/*        <p className='fs-5 mb-1'>Financial Metrics</p>*/}
+            {/*        <LineChart series={seriesLine}/>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </div>
     );
 }

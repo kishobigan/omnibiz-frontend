@@ -14,7 +14,7 @@ const nextConfig = {
         optimizeCss: true,
     },
     images: {
-        domains: ['res.cloudinary.com'],  // Add this line to allow external domains
+        domains: ['res.cloudinary.com'],
     },
 };
 

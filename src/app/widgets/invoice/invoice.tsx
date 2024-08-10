@@ -1,12 +1,22 @@
+'use client'
 import React, {useRef, forwardRef, useImperativeHandle} from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import "./invoice.css";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faFileInvoice} from "@fortawesome/free-solid-svg-icons";
 
 interface InvoiceProps {
     billingData: {
         balance: string;
         discount: string;
-        items: { itemId: number; itemName: string; quantity: number; unitPrice: number; amount: number; }[];
+        items: {
+            itemId: number;
+            itemName: string;
+            quantity: number;
+            unitPrice: number;
+            amount: number;
+        }[];
         recipientAmount: string;
         subTotal: string;
         total: string;
@@ -17,54 +27,133 @@ export interface InvoiceHandle {
     handlePrint: () => Promise<void>;
 }
 
-const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData}, ref) => {
+const dummyBillingData = {
+    balance: "$200.00",
+    discount: "$50.00",
+    items: [
+        {
+            itemId: 1,
+            itemName: "Item 1",
+            quantity: 1,
+            unitPrice: "$50.00",
+            amount: "$50.00",
+        },
+        {
+            itemId: 2,
+            itemName: "Item 2",
+            quantity: 2,
+            unitPrice: "$30.00",
+            amount: "$60.00",
+        },
+        {
+            itemId: 3,
+            itemName: "Item 3",
+            quantity: 3,
+            unitPrice: "$20.00",
+            amount: "$60.00",
+        },
+        {
+            itemId: 4,
+            itemName: "Item 4",
+            quantity: 4,
+            unitPrice: "$10.00",
+            amount: "$40.00",
+        },
+    ],
+    recipientAmount: "$150.00",
+    subTotal: "$210.00",
+    total: "$160.00",
+};
+
+const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData = dummyBillingData}, ref) => {
     const invoiceRef = useRef<HTMLDivElement>(null);
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    const cashierName = "Dell";
 
     useImperativeHandle(ref, () => ({
         handlePrint: async () => {
             if (invoiceRef.current) {
                 const canvas = await html2canvas(invoiceRef.current);
                 const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'letter');
-                pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+                const pdf = new jsPDF('p', 'mm', 'a5');
+                pdf.addImage(imgData, 'PNG', 0, 0, 148, 210);
                 pdf.save('invoice.pdf');
             }
         }
     }));
 
     return (
-        <div ref={invoiceRef} style={{padding: '20px', background: '#fff', color: '#000', width: '466px'}}>
-            <h4>Invoice</h4>
-            <h5>Items</h5>
-            <table>
-                <thead>
-                <tr>
-                    <th>Item Name</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Amount</th>
-                </tr>
-                </thead>
-                <tbody>
-                {billingData.items.map((item) => (
-                    <tr key={item.itemId}>
-                        <td>{item.itemName}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.unitPrice}</td>
-                        <td>{item.amount}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            <p>Subtotal: {billingData.subTotal}</p>
-            <p>Discount: {billingData.discount}</p>
-            <p>Total: {billingData.total}</p>
-            <p>Recipient Amount: {billingData.recipientAmount}</p>
-            <p>Balance: {billingData.balance}</p>
+        <div ref={invoiceRef} className="container-fluid d-flex justify-content-center align-items-center">
+            <div ref={invoiceRef} className="invoice-container col-sm-6">
+                <div className="header">
+                    <div className="top-line"></div>
+                    <div className="header-left">
+                        <FontAwesomeIcon icon={faFileInvoice} className="invoice-icon"/>
+                        <h2 className="invoice-title">Invoice</h2>
+                    </div>
+                    <div className="header-right">
+                        <h3>OmniBiz</h3>
+                        <p>Your Business Address</p>
+                    </div>
+                </div>
+                <div className="separator"></div>
+                <div className="billing-info">
+                    <p>Date: {currentDate}</p>
+                    <p>Time: {currentTime}</p>
+                    <p>Cashier: {cashierName}</p>
+                </div>
+                <div className="separator"></div>
+                <div className="items-table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {billingData.items.map((item) => (
+                            <tr key={item.itemId}>
+                                <td>{item.itemName}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.unitPrice}</td>
+                                <td>{item.amount}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="billing-info">
+                    <div className="billing-info-row">
+                        <span className="label">Subtotal:</span>
+                        <span className="value">{billingData.subTotal}</span>
+                    </div>
+                    <div className="billing-info-row">
+                        <span className="label">Discount:</span>
+                        <span className="value">{billingData.discount}</span>
+                    </div>
+                    <div className="billing-info-row">
+                        <span className="label">Recipient Amount:</span>
+                        <span className="value">{billingData.recipientAmount}</span>
+                    </div>
+                    <div className="billing-info-row">
+                        <span className="label">Balance:</span>
+                        <span className="value">{billingData.balance}</span>
+                    </div>
+                </div>
+                <div className="total">
+                    <h6>TOTAL</h6>
+                    <h2>
+                        <b>{billingData.total}</b>
+                    </h2>
+                </div>
+            </div>
         </div>
     );
 });
-
 Invoice.displayName = 'Invoice';
 
 export default Invoice;

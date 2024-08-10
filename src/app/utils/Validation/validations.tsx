@@ -204,7 +204,6 @@ export const createOrderSchema: ValidationSchema = {
     },
     supplier: {
         required: true,
-        pattern: /^[a-zA-Z0-9]+$/, // Assuming supplier ID is alphanumeric
     }
 }
 
@@ -309,13 +308,11 @@ export const createAccessSchema: ValidationSchema = {
     }
 }
 
-export const contractSchema: ValidationSchema={
-
-}
+export const contractSchema: ValidationSchema = {}
 
 export const forgotPasswordSchema: ValidationSchema = {
     email: {
-      required: true,
-      pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+        required: true,
+        pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
     },
-  };
+};
