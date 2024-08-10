@@ -29,15 +29,6 @@ function AdminDashboard() {
             title: "Total Loss",
             text: "14,000",
         },
-        {
-            title: "Total Income",
-            text: "11,000",
-        },
-        {
-            title: "Total Expenses",
-            text: "12,000",
-        },
-
     ];
 
     return (

@@ -1,19 +1,19 @@
 "use client";
-import React, {useState, useEffect } from "react";
-import { Modal } from "react-bootstrap";
+import React, {useState, useEffect} from "react";
+import {Modal} from "react-bootstrap";
 import Input from "@/app/widgets/input/Input";
 import Dropdown from "@/app/widgets/dropdown/dropdown";
 import FormHandler from "@/app/utils/FormHandler/Formhandler";
-import { validate, createOrderSchema } from "@/app/utils/Validation/validations";
+import {validate, createOrderSchema} from "@/app/utils/Validation/validations";
 import Cookies from "js-cookie";
-import { ACCESS_TOKEN } from "@/app/utils/Constants/constants";
-import { useParams } from "next/navigation";
+import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
+import {useParams} from "next/navigation";
 import api from "@/app/utils/Api/api";
 import Button from "@/app/widgets/Button/Button";
 import Loader from "@/app/widgets/loader/loader";
 
 interface CreateOrderProps {
-    type: 'Add' | 'Edit' | 'View';
+    type: "Add" | "Edit" | "View";
     show: boolean;
     onHide: () => void;
     selectedOrder?: any;
@@ -21,16 +21,18 @@ interface CreateOrderProps {
 }
 
 const CreateOrderForm: React.FC<CreateOrderProps> = ({
-    type, show, onHide, selectedOrder, update
-}) => {
+                                                         type,
+                                                         show,
+                                                         onHide,
+                                                         selectedOrder,
+                                                         update,
+                                                     }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [suppliers, setSuppliers] = useState<{ value: string, label: string }[]>([]);
+    const [suppliers, setSuppliers] = useState<{ value: string; label: string }[]>([]);
     const token = Cookies.get(ACCESS_TOKEN);
-    const { business_id } = useParams();
-
-    type FormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+    const {business_id} = useParams();
 
     const initValues = {
         delivery_date: "",
@@ -40,11 +42,16 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
         supplier: "",
     };
 
-    const { handleChange, handleSubmit, values, setValue, errors, initForm } = FormHandler(() => setIsSubmit(true),
-        validate, createOrderSchema, initValues);
+    const {handleChange, handleSubmit, values, setValue, errors, initForm} =
+        FormHandler(
+            () => setIsSubmit(true),
+            validate,
+            createOrderSchema,
+            initValues
+        );
 
     useEffect(() => {
-        if (type === 'Edit' && selectedOrder) {
+        if (type === "Edit" && selectedOrder) {
             initForm(selectedOrder);
         }
     }, [initForm, selectedOrder, type]);
@@ -74,8 +81,8 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
     }, [business_id, token, update]);
 
     useEffect(() => {
-        const submitData = async () => {           
-            if (!isSubmit) return;
+        if (!isSubmit) return;
+        const submitData = async () => {
             setLoading(true);
             try {
                 const requestData = {
@@ -84,21 +91,25 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                     amount_ordered: values.amount_ordered,
                     amount_paid: values.amount_paid,
                     amount_due_date: values.amount_due_date,
-                    supplier: values.supplier,
+                    supplier_id: values.supplier,
                 };
                 let response;
-                if (type === 'Add') {
-                    response = await api.post("orders/create-order", requestData, {
+                if (type === "Add") {
+                    response = await api.post("suppliers/create-order", requestData, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
-                } else if (type === 'Edit') {
-                    response = await api.put(`orders/update-order/${selectedOrder.id}`, requestData, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
+                } else if (type === "Edit") {
+                    response = await api.put(
+                        `suppliers/create-order/${selectedOrder.id}`,
+                        requestData,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
                 }
 
                 if (response?.status === 201 || response?.status === 200) {
@@ -116,14 +127,15 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
             }
         };
         submitData();
-    }, [isSubmit, update, values, business_id, token, type, selectedOrder, onHide, initForm, initValues]);
+    }, [
+        isSubmit,
+        update,
+    ]);
 
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        handleSubmit({
-            preventDefault: () => {}
-        } as React.FormEvent<HTMLFormElement>);
-    };   
+        setIsSubmit(true);
+    };
 
     const errorStyle = {
         color: "red",
@@ -136,7 +148,7 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
         <Modal
             show={show}
             onHide={() => {
-                if (type !== 'View') initForm(initValues);
+                if (type !== "View") initForm(initValues);
                 onHide();
                 setErrorMessage(null);
             }}
@@ -153,7 +165,13 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <form onSubmit={handleSubmit} className="row g-3 ms-5 me-5">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSubmit(e);
+                    }}
+                    className="row g-3 ms-5 me-5"
+                >
                     <div className="col-md-6">
                         <div className="form-group">
                             <Input
@@ -164,7 +182,9 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                                 value={values.delivery_date}
                                 onChange={handleChange}
                             />
-                            {errors.delivery_date && <span style={errorStyle}>{errors.delivery_date}</span>}
+                            {errors.delivery_date && (
+                                <span style={errorStyle}>{errors.delivery_date}</span>
+                            )}
                         </div>
                     </div>
                     <div className="col-md-6">
@@ -177,7 +197,9 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                                 value={values.amount_ordered}
                                 onChange={handleChange}
                             />
-                            {errors.amount_ordered && <span style={errorStyle}>{errors.amount_ordered}</span>}
+                            {errors.amount_ordered && (
+                                <span style={errorStyle}>{errors.amount_ordered}</span>
+                            )}
                         </div>
                     </div>
                     <div className="col-md-6">
@@ -190,7 +212,9 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                                 value={values.amount_paid}
                                 onChange={handleChange}
                             />
-                            {errors.amount_paid && <span style={errorStyle}>{errors.amount_paid}</span>}
+                            {errors.amount_paid && (
+                                <span style={errorStyle}>{errors.amount_paid}</span>
+                            )}
                         </div>
                     </div>
                     <div className="col-md-6">
@@ -203,7 +227,9 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                                 value={values.amount_due_date}
                                 onChange={handleChange}
                             />
-                            {errors.amount_due_date && <span style={errorStyle}>{errors.amount_due_date}</span>}
+                            {errors.amount_due_date && (
+                                <span style={errorStyle}>{errors.amount_due_date}</span>
+                            )}
                         </div>
                     </div>
                     <div className="col-md-12">
@@ -215,9 +241,12 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                                 options={suppliers}
                                 onChange={handleChange}
                             />
+                            {errors.supplier && (
+                                <span style={errorStyle}>{errors.supplier}</span>
+                            )}
                         </div>
                     </div>
-                    {errorMessage && <p className='error'>{errorMessage}</p>}
+                    {errorMessage && <p className="error">{errorMessage}</p>}
                 </form>
             </Modal.Body>
             <Modal.Footer>
@@ -232,16 +261,14 @@ const CreateOrderForm: React.FC<CreateOrderProps> = ({
                     Cancel
                 </Button>
                 {type !== "View" && (
-                    <Button
-                        variant="dark"
-                        onClick={handleFormSubmit}
-                    >
-                        {loading ? <Loader /> : type === "Add" ? "Create" : "Update"}
+                    <Button variant="dark" onClick={handleFormSubmit}>
+                        {loading ? <Loader/> : type === "Add" ? "Create" : "Update"}
                     </Button>
                 )}
             </Modal.Footer>
         </Modal>
     );
-}
+};
 
 export default CreateOrderForm;
+

@@ -36,7 +36,6 @@ interface Draft {
     }[];
 }
 
-
 const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, customerResponse}) => {
     const [activeTab, setActiveTab] = useState('cash');
     const [balance, setBalance] = useState('0.00');
@@ -125,15 +124,13 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
 
                     const response = await api.post("billing/create-bill", requestData);
                     if (response.status === 201) {
-                        // setShowModal(true)
+                        setShowModal(true)
                         console.log("Billing created successfully", response.data);
                     } else {
-                        setShowModal(true)
                         setErrorMessage("Oops! Something went wrong, try again later.");
                         console.error("Error in creating billing", response.data.message);
                     }
                 } catch (error) {
-                    setShowModal(true)
                     setErrorMessage("Oops! Something went wrong, try again later.");
                     console.error("Error in creating billing", error);
                 } finally {

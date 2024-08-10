@@ -9,7 +9,9 @@ function Page() {
     return (
         <ProtectedRoute>
             <Layout role={role}>
-                <HomeDash/>
+                <div className='mt-5'>
+                    <HomeDash/>
+                </div>
             </Layout>
         </ProtectedRoute>
     );

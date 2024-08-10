@@ -10,6 +10,7 @@ import CreateInventoryForm from "@/app/components/Inventory/createInventoryForm/
 import CreateOrderForm from "@/app/components/Inventory/createOrderForm/createOrder";
 import { useParams } from "next/navigation";
 import api from "@/app/utils/Api/api";
+import {formatDate} from "@/app/utils/DateUtils/dateUtils";
 
 interface InventoryItem {
     item: string;
@@ -18,6 +19,21 @@ interface InventoryItem {
     buyingPrice: number;
     sellingPrice: number;
     suppliers: string;
+}
+
+interface Inventory {
+    created_at: string;
+    created_by: string;
+    inventory_id: string;
+    supplier: string;
+    inventory_items: InventoryItem[];
+}
+
+interface FlattenedInventoryItem extends InventoryItem {
+    created_at: string;
+    created_by: string;
+    inventory_id: string;
+    supplier: string;
 }
 
 interface OrderItem {
@@ -30,15 +46,15 @@ interface OrderItem {
 
 function Inventory() {
     const [searchText, setSearchText] = useState<string>("");
-    const [inventoryData, setInventoryData] = useState<InventoryItem[]>([]);
-    const [filteredData, setFilteredData] = useState<InventoryItem[]>([]);
+    const [inventoryData, setInventoryData] = useState<FlattenedInventoryItem[]>([]);
+    const [filteredData, setFilteredData] = useState<FlattenedInventoryItem[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
 
     const [modalType, setModalType] = useState<"Add" | "Edit" | "View">("Add");
     const [showInventoryModal, setShowInventoryModal] = useState(false);
     const [showOrderModal, setShowOrderModal] = useState(false);
-    const [selectedInventory, setSelectedInventory] = useState<InventoryItem | null>(null);
+    const [selectedInventory, setSelectedInventory] = useState<FlattenedInventoryItem | null>(null);
     const [orderData, setOrderData] = useState<OrderItem[]>([]);
     const [update, setUpdate] = useState(false);
     const { business_id } = useParams();
@@ -47,9 +63,20 @@ function Inventory() {
     useEffect(() => {
         const fetchInventoryData = async () => {
             try {
-                const response = await api.get(`inventory/list-inventory/${business_id}`);
-                setInventoryData(response.data);
-                setFilteredData(response.data);
+                const response = await api.get<Inventory[]>(`inventory/list-inventory/${business_id}`);
+                const flattenedData: FlattenedInventoryItem[] = response.data
+                    .map((inventory: Inventory) => {
+                        return inventory.inventory_items.map((item: InventoryItem) => ({
+                            ...item,
+                            created_at: inventory.created_at,
+                            created_by: inventory.created_by,
+                            inventory_id: inventory.inventory_id,
+                            supplier: inventory.supplier,
+                        }));
+                    })
+                    .flat();
+                setInventoryData(flattenedData);
+                setFilteredData(flattenedData);
             } catch (error) {
                 console.error("Error fetching inventory data:", error);
             }
@@ -57,8 +84,13 @@ function Inventory() {
 
         const fetchOrderData = async () => {
             try {
-                const response = await api.get(`suppliers/list-order/${business_id}`);
-                setOrderData(response.data);
+                const response = await api.get<OrderItem[]>(`suppliers/list-order/${business_id}`);
+                const formattedOrders = response.data.map((order: OrderItem) => ({
+                    ...order,
+                    delivery_date: formatDate(order.delivery_date),
+                    amount_due_date: formatDate(order.amount_due_date),
+                }));
+                setOrderData(formattedOrders);
             } catch (error) {
                 console.error("Error fetching order data:", error);
             }
@@ -85,25 +117,26 @@ function Inventory() {
         { key: "quantity", header: "Quantity" },
         { key: "buying_price", header: "Buying Price" },
         { key: "selling_price", header: "Selling Price" },
-        { key: "suppliers", header: "Suppliers" },
+        { key: "supplier", header: "Suppliers" },
         { key: "action", header: "Actions" },
     ];
 
     const orderColumns = [
-        { key: "delivery_date", header: "Delivery Date" },
-        { key: "amount_ordered", header: "Amount Ordered" },
-        { key: "amount_paid", header: "Amount Paid" },
-        { key: "amount_due_date", header: "Amount Due Date" },
         { key: "supplier", header: "Supplier" },
+        { key: "delivery_date", header: "Delivery Date" },
+        { key: "amount_ordered", header: "Ordered amount" },
+        { key: "amount_paid", header: "Paid amount" },
+        { key: "amount_due_date", header: "Amount Due-date" },
+        { key: "order_status", header: "Order status" },
     ];
 
-    const handleViewClick = (selectedInventory: InventoryItem) => {
+    const handleViewClick = (selectedInventory: FlattenedInventoryItem) => {
         setSelectedInventory(selectedInventory);
         setModalType("View");
         setShowInventoryModal(true);
     };
 
-    const handleEditClick = (selectedInventory: InventoryItem) => {
+    const handleEditClick = (selectedInventory: FlattenedInventoryItem) => {
         setSelectedInventory(selectedInventory);
         setModalType("Edit");
         setShowInventoryModal(true);
@@ -179,6 +212,7 @@ function Inventory() {
                         columns={inventoryColumns}
                         currentPage={currentPage}
                         rowsPerPage={rowsPerPage}
+                        actions={actions}
                         emptyMessage="No inventory found"
                     />
                     <Pagination
@@ -196,6 +230,7 @@ function Inventory() {
                         columns={orderColumns}
                         currentPage={currentPage}
                         rowsPerPage={rowsPerPage}
+                        // actions={actions}
                         emptyMessage="No orders found"
                     />
                     <Pagination
