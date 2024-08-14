@@ -15,10 +15,10 @@ import Loader from "@/app/widgets/loader/loader";
 interface CreateContractProps {
     show: boolean;
     onHide: () => void;
-    updateContracts: () => void;
+    update?: () => void;
 }
 
-const CreateContractForm: React.FC<CreateContractProps> = ({ show, onHide, updateContracts }) => {
+const CreateContractForm: React.FC<CreateContractProps> = ({ show, onHide, update }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -62,7 +62,7 @@ const CreateContractForm: React.FC<CreateContractProps> = ({ show, onHide, updat
             }
         };
         fetchSuppliers();
-    }, [business_id, token]);
+    }, [business_id, update]);
 
     useEffect(() => {
         const submitData = async () => {
@@ -81,7 +81,7 @@ const CreateContractForm: React.FC<CreateContractProps> = ({ show, onHide, updat
                 });
                 if (response.status === 201) {
                     console.log("Contract created successfully", response.data);
-                    updateContracts(); // Call the updateContracts function
+                    if (update) update();
                     onHide();
                 } else {
                     setErrorMessage("Oops! Something went wrong.");
@@ -96,7 +96,7 @@ const CreateContractForm: React.FC<CreateContractProps> = ({ show, onHide, updat
             }
         };
         submitData();
-    }, [isSubmit]);
+    }, [isSubmit, update]);
 
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();

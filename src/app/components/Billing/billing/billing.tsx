@@ -14,6 +14,7 @@ import api from "@/app/utils/Api/api";
 import {useParams, useRouter} from "next/navigation";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
+import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
 
 interface Product {
     itemId: number;
@@ -28,6 +29,9 @@ const Billing: React.FC = () => {
     const [tableData, setTableData] = useState<any[]>([]);
     const [billingData, setBillingData] = useState<any>(null);
     const [customerResponse, setCustomerResponse] = useState<any>(null);
+    const [showConfirm, setShowConfirm] = useState<boolean>(false);
+    const [selectedRow, setSelectedRow] = useState<any>(null);
+    const [selectedItem, setSelectedItem] = useState<string>('');
     const {business_id} = useParams()
     const router = useRouter()
     const token = Cookies.get(ACCESS_TOKEN);
@@ -47,7 +51,6 @@ const Billing: React.FC = () => {
                     unitPrice: parseFloat(item.unit_price),
                 }));
                 setAllProducts(filteredProducts);
-                console.log("Items fetched:", filteredProducts);
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
@@ -65,7 +68,14 @@ const Billing: React.FC = () => {
     ];
 
     const handleDelete = (row: any) => {
-        setTableData(prevData => prevData.filter(data => data.itemName !== row.itemName));
+        setSelectedRow(row);
+        setShowConfirm(true);
+        setSelectedItem(row.itemName)
+    };
+
+    const confirmDelete = () => {
+        setTableData(prevData => prevData.filter(data => data.itemName !== selectedRow.itemName));
+        setShowConfirm(false);
     };
 
     const actions = [
@@ -248,6 +258,12 @@ const Billing: React.FC = () => {
                 </form>
                 <div className="scrollable_table mt-2 mb-4">
                     <Table data={tableData} columns={columns} actions={actions} emptyMessage='products'/>
+                    <ConfirmationDialog
+                        show={showConfirm}
+                        onHide={() => setShowConfirm(false)}
+                        onConfirm={confirmDelete}
+                        message={`Do you want to remove ${selectedItem} from billing?`}
+                    />
                 </div>
                 <div className='container-fluid'>
                     <div className='row row-cols-auto'>
@@ -269,14 +285,14 @@ const Billing: React.FC = () => {
                             <p>{subtotal}</p>
                         </div>
                         <div className='col fw-bold text-center pt-3 px-5'>
-                            <label>-</label>
+                            <label className='fs-3'>-</label>
                         </div>
                         <div className='col fw-bold text-center pt-3'>
                             <label>Discount</label>
                             <p>{discount}</p>
                         </div>
                         <div className='col fw-bold text-center pt-3 px-5'>
-                            <label>=</label>
+                            <label className='fs-5'>=</label>
                         </div>
                         <div className='col fw-bold text-center pt-3'>
                             <label>Total</label>

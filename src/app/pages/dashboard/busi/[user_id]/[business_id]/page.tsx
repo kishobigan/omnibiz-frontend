@@ -11,9 +11,9 @@ import Accounts from "@/app/components/accounts/accounts";
 const role = 'owner'
 const tabItems = [
     {label: "Billing", component: <Billing/>},
+    {label: "Inventory", component: <Inventory/>},
     {label: "Supplier", component: <Supplier/>},
     {label: "Staffs", component: <Staff/>},
-    {label: "Inventory", component: <Inventory/>},
     {label: "Accounts", component: <Accounts/>},
 ]
 

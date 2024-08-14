@@ -10,32 +10,8 @@ import api from "@/app/utils/Api/api";
 import Button from "@/app/widgets/Button/Button";
 import AddStaffForm from "@/app/components/Staff/createStaffForm/createStaff";
 
-const initialStaffData = [
-    {
-        staffId: 1,
-        name: "mala",
-        roleName: "manager",
-        status: "on",
-        permissions: ["managing", "store keeping"],
-    },
-    {
-        staffId: 2,
-        name: "kamal",
-        roleName: "stock manager",
-        status: "off",
-        permissions: ["stock managing"],
-    },
-    {
-        staffId: 3,
-        name: "jana",
-        roleName: "stock keeper",
-        status: "off",
-        permissions: ["store keeping"],
-    },
-];
-
 function Staff() {
-    const [staffData, setStaffData] = useState(initialStaffData);
+    const [staffData, setStaffData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
 
@@ -45,18 +21,18 @@ function Staff() {
     const [update, setUpdate] = useState(false);
     const {business_id} = useParams();
 
-    const handleStatusChange = (id: number, status: boolean) => {
-        const updatedData = staffData.map((staff) =>
-            staff.staffId === id ? {...staff, status: status ? "on" : "off"} : staff
-        );
-        setStaffData(updatedData);
-    };
+    // const handleStatusChange = (id: number, status: boolean) => {
+    //     const updatedData = staffData.map((staff) =>
+    //         staff.staffId === id ? {...staff, is_active: is_active ? "true" : "false"} : staff
+    //     );
+    //     setStaffData(updatedData);
+    // };
 
     useEffect(() => {
         const fetchStaffData = async () => {
             try {
                 const response = await api.get(`staff/get-staff/${business_id}/staff/`);
-                // setStaffData(response.data);
+                setStaffData(response.data);
             } catch (error) {
                 console.error("Error in fetching staff data:", error);
             }
@@ -66,10 +42,11 @@ function Staff() {
     }, [business_id, update]);
 
     const columns = [
-        {key: "staffId", header: "Staff Id"},
-        {key: "name", header: "Name"},
-        {key: "roleName", header: "Role Name"},
-        {key: "status", header: "Duty Status"},
+        {key: "staff_id", header: "Staff Id"},
+        {key: "firstname", header: "First name"},
+        {key: "lastname", header: "Last name"},
+        {key: "role_name", header: "Role name"},
+        {key: "is_active", header: "Duty status"},
         {
             key: "permissions",
             header: "Permissions",
@@ -135,7 +112,7 @@ function Staff() {
                 currentPage={currentPage}
                 rowsPerPage={rowsPerPage}
                 actions={actions}
-                handleStatusChange={handleStatusChange}
+                // handleStatusChange={handleStatusChange}
                 emptyMessage="staff"
             />
             <Pagination
