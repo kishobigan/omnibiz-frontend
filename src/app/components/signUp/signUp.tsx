@@ -24,32 +24,36 @@ const SignUp: React.FC<ContentProps> = ({
                                             linkUrl,
                                         }) => {
     const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
     const {handleChange, handleSubmit, values, errors} = FormHandler(
         async () => {
             setLoading(true);
             setErrorMessage(null);
+            setMessage(null);
+            const requestData = {
+                email: values.email,
+                password: values.password,
+                role: "owner",
+            };
             try {
-                const requestData = {
-                    email: values.email,
-                    password: values.password,
-                    role: "owner",
-                };
                 const res = await api.post("auth/create-owner", requestData);
                 if (res.status === 201) {
-                    alert("Please check your email to activate account")
+                    setMessage("Sign Up successfully! Check your email to activate your account.");
                     router.push('/pages/signin');
                     console.log("Sign up successfully", res.data);
-                } else {
-                    setLoading(false);
-                    setErrorMessage("Oops! Something went wrong, try again later.");
-                    console.error('SignUp failed!', res.data.status);
                 }
             } catch (error: any) {
+                if (error.response && error.response.status === 400 && error.response.data.error === 'User already exists') {
+                    setErrorMessage("User already exists!");
+                    console.error("Error details:", error.response.data);
+                } else {
+                    setErrorMessage("Oops! Something went wrong, try again later.");
+                    console.error("Error in signup request", error);
+                }
+            } finally {
                 setLoading(false);
-                setErrorMessage("Oops! Something went wrong, try again later.");
-                console.error("Error in signup request", error);
             }
         },
         validate,
@@ -99,10 +103,11 @@ const SignUp: React.FC<ContentProps> = ({
                     type="password"
                 />
                 {errors.conPassword && <p className="error">{errors.conPassword}</p>}
-                {errorMessage && <p className="error">{errorMessage}</p>}
+                {errorMessage && <p className="error fw-bold">{errorMessage}</p>}
                 <Button className='container-fluid mt-3' type="submit" variant="dark">
                     {loading ? <Loader/> : "SignUp"}
                 </Button>
+                {message && <p className="text-primary fw-bold mt-2">{message}</p>}
             </div>
         </form>
     );

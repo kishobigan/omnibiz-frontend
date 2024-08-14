@@ -122,7 +122,7 @@ function Inventory() {
     ];
 
     const orderColumns = [
-        { key: "supplier", header: "Supplier" },
+        { key: "supplier_name", header: "Supplier" },
         { key: "delivery_date", header: "Delivery Date" },
         { key: "amount_ordered", header: "Ordered amount" },
         { key: "amount_paid", header: "Paid amount" },

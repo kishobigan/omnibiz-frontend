@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import './supplier.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faEye, faLock, faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "next/navigation";
 import FeatherIcon from "feather-icons-react";
 import Button from "@/app/widgets/Button/Button";
@@ -12,8 +12,12 @@ import CreateContractForm from "@/app/components/Supplier/createContract/createC
 import Table from "@/app/widgets/table/Table";
 import Pagination from "@/app/widgets/pagination/pagination";
 import SearchBar from "@/app/widgets/searchBar/searchBar";
+import {formatDate} from "@/app/utils/DateUtils/dateUtils";
+import Cookies from "js-cookie";
+import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 
 interface Supplier {
+    supplier_id: string;
     supplier_name: string;
     supplier_address: string;
     supplier_phone: string;
@@ -24,6 +28,7 @@ interface Supplier {
 interface Contract {
     supplier_id: string;
     contract_end_date: string;
+    date_contracted: string;
 }
 
 interface TableAction<T> {
@@ -38,15 +43,18 @@ const Supplier: React.FC = () => {
     const [filteredContractData, setFilteredContractData] = useState<Contract[]>([]);
     const [searchText, setSearchText] = useState<string>("");
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 4;
+    const rowsPerPage = 10;
 
     const [modalType, setModalType] = useState<"Add" | "Edit" | "View">("Add");
     const [showModal, setShowModal] = useState(false);
     const [showContractModal, setShowContractModal] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
     const [update, setUpdate] = useState(false);
-    const { business_id } = useParams();
     const [activeTab, setActiveTab] = useState<'suppliers' | 'contracts'>('suppliers');
+    const [actionType, setActionType] = useState<'block' | 'unblock'>('block');
+    const [showDialog, setShowDialog] = useState(false);
+    const {business_id} = useParams();
+    const token = Cookies.get(ACCESS_TOKEN)
 
     useEffect(() => {
         const fetchSupplierData = async () => {
@@ -67,7 +75,8 @@ const Supplier: React.FC = () => {
                 const response = await api.get(`suppliers/get-all-contract/${business_id}`);
                 const formattedContracts = response.data.map((contract: any) => ({
                     ...contract,
-                    contract_end_date: formatDate(contract.contract_end_date)
+                    contract_end_date: formatDate(contract.contract_end_date),
+                    date_contracted: formatDate(contract.date_contracted)
                 }));
                 setContractData(formattedContracts);
                 setFilteredContractData(formattedContracts);
@@ -96,13 +105,36 @@ const Supplier: React.FC = () => {
         setShowModal(true);
     };
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    };
+    const handleBlockClick = (supplier: Supplier, action: 'block' | 'unblock') => {
+        setSelectedSupplier(supplier)
+        setActionType(action)
+        setShowDialog(true)
+    }
+
+    // const handleConfirmAction = async () => {
+    //     if (selectedSupplier) {
+    //         try {
+    //             const endpoint = actionType === 'block'
+    //                 ? `suppliers/action-supplier/block/${business_id}/${selectedSupplier.supplier_id}`
+    //                 : `suppliers/action-supplier/unblock/${business_id}/${selectedSupplier.supplier_id}`;
+    //             await api.put(endpoint, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 }
+    //             });
+    //             setSupplierData(prevData => prevData.map(supplier =>
+    //                 supplier.business_id === selectedBusiness.business_id
+    //                     ? {...business, blocked: actionType === 'block'}
+    //                     : business
+    //             ));
+    //         } catch (error) {
+    //             console.error(`Error ${actionType === 'block' ? 'blocking' : 'unblocking'} business:`, error);
+    //         } finally {
+    //             setShowDialog(false);
+    //             setSelectedSupplier(null);
+    //         }
+    //     }
+    // };
 
     const filterSuppliers = (text: string) => {
         const filtered = supplierData.filter(supplier =>
@@ -124,37 +156,47 @@ const Supplier: React.FC = () => {
     };
 
     const supplierColumns = [
-        { key: 'supplier_name', header: 'Supplier Name' },
-        { key: 'supplier_address', header: 'Address' },
-        { key: 'supplier_phone', header: 'Phone Number' },
-        { key: 'supplier_email', header: 'Email ID' },
-        { key: 'supplier_website', header: 'Website URL' },
-        { key: 'action', header: 'Actions' },
+        {key: 'supplier_name', header: 'Supplier Name'},
+        {key: 'supplier_address', header: 'Address'},
+        {key: 'supplier_phone', header: 'Phone Number'},
+        {key: 'supplier_email', header: 'Email ID'},
+        {key: 'supplier_website', header: 'Website URL'},
+        {key: 'action', header: 'Actions'},
     ];
 
     const contractColumns = [
-        { key: 'supplier_id', header: 'Supplier Name' },
-        { key: 'contract_end_date', header: 'End Date' },
+        {key: 'supplier_name', header: 'Supplier Name'},
+        {key: 'date_contracted', header: 'Contract start date'},
+        {key: 'contract_end_date', header: 'End date'},
     ];
 
     const supplierActions: TableAction<Supplier>[] = [
         {
-            icon: <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />,
+            icon: <FontAwesomeIcon icon={faEdit} style={{color: 'blue'}}/>,
             onClick: (row: Supplier) => handleEditClick(row),
         },
         {
-            icon: <FontAwesomeIcon icon={faEye} style={{ color: 'green' }} />,
+            icon: <FontAwesomeIcon icon={faEye} style={{color: 'green'}}/>,
             onClick: (row: Supplier) => handleViewClick(row),
-        }
+        },
+        // {
+        //     icon: (row: Supplier) => (
+        //         <FontAwesomeIcon
+        //             icon={row.blocked ? faLock : faUnlock}
+        //             style={{ color: row.blocked ? 'red' : 'blue' }}
+        //         />
+        //     ),
+        //     onClick: (row: Supplier) => handleBlockClick(row, row.blocked ? 'unblock' : 'block')
+        // }
     ];
 
     const contractActions: TableAction<Contract>[] = [
         {
-            icon: <FontAwesomeIcon icon={faEdit} style={{ color: 'blue' }} />,
+            icon: <FontAwesomeIcon icon={faEdit} style={{color: 'blue'}}/>,
             onClick: (row: Contract) => handleEditClick(row as any),
         },
         {
-            icon: <FontAwesomeIcon icon={faEye} style={{ color: 'green' }} />,
+            icon: <FontAwesomeIcon icon={faEye} style={{color: 'green'}}/>,
             onClick: (row: Contract) => handleViewClick(row as any),
         }
     ];
@@ -193,7 +235,7 @@ const Supplier: React.FC = () => {
                         className="me-2 buttonWithPadding"
                         type="button"
                     >
-                        <FeatherIcon className={"action-icons me-2"} icon={"plus"} />
+                        <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
                         Add Supplier
                     </Button>
                     <Button
@@ -202,7 +244,7 @@ const Supplier: React.FC = () => {
                         className="me-2 buttonWithPadding"
                         type="button"
                     >
-                        <FeatherIcon className={"action-icons me-2"} icon={"plus"} />
+                        <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
                         Create Contract
                     </Button>
                 </div>
@@ -261,7 +303,7 @@ const Supplier: React.FC = () => {
             <CreateContractForm
                 show={showContractModal}
                 onHide={() => setShowContractModal(false)}
-                updateContracts={() => setUpdate(!update)}
+                update={() => setUpdate(!update)}
             />
         </div>
     );

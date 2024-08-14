@@ -38,7 +38,7 @@ const AddItemForm: React.FC<AddItemProps> = ({show, onHide, update}) => {
         unit_price: "",
         quantity_type: "",
         stock_alert: false,
-        restock_level: "",
+        // restock_level: "",
     };
 
     useEffect(() => {
@@ -70,7 +70,7 @@ const AddItemForm: React.FC<AddItemProps> = ({show, onHide, update}) => {
             }
         };
         fetchCategories();
-    }, [business_id, token, update]);
+    }, [business_id, update]);
 
     useEffect(() => {
         if (!isSubmit) {

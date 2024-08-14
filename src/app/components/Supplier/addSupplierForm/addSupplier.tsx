@@ -108,7 +108,7 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
             }
         };
         submitData();
-    }, [isSubmit]);
+    }, [isSubmit, update]);
 
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();

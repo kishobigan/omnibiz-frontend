@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Layout from "@/app/widgets/layout/layout";
 import './adminBusiness.css';
 import Table from "@/app/widgets/table/Table";
@@ -7,8 +7,8 @@ import Pagination from "@/app/widgets/pagination/pagination";
 import api from "@/app/utils/Api/api";
 import SearchBar from "@/app/widgets/searchBar/searchBar";
 import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faUnlock } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faLock, faUnlock} from "@fortawesome/free-solid-svg-icons";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import Notification from "@/app/widgets/notification/notification";
@@ -22,6 +22,7 @@ interface Business {
     subscription_count: number;
     subscription_trial_ended_at: string;
     blocked: boolean;
+    is_active: boolean;
 }
 
 const AdminBusiness: React.FC = () => {
@@ -31,19 +32,20 @@ const AdminBusiness: React.FC = () => {
     const [searchText, setSearchText] = useState<string>("");
     const [showDialog, setShowDialog] = useState(false);
     const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
-    const [actionType, setActionType] = useState<'block' | 'unblock'>('block');
+    const [actionType, setActionType] = useState<'block' | 'unblock'>('unblock');
+    const [update, setUpdate] = useState<boolean>(false);
     const rowsPerPage = 10;
     const role = 'admin';
     const token = Cookies.get(ACCESS_TOKEN);
 
     const columns = [
-        { key: 'business_name', header: 'Business name' },
-        { key: 'business_address', header: 'Address' },
-        { key: 'owner', header: 'Owner name' },
-        { key: 'phone_number', header: 'Phone number' },
-        { key: 'subscription_count', header: 'Subscription count' },
-        { key: 'subscription_trial_ended_at', header: 'Trial end' },
-        { key: 'action', header: 'Actions' },
+        {key: 'business_name', header: 'Business name'},
+        {key: 'business_address', header: 'Address'},
+        {key: 'owner', header: 'Owner name'},
+        {key: 'phone_number', header: 'Phone number'},
+        {key: 'subscription_count', header: 'Subscription count'},
+        {key: 'subscription_trial_ended_at', header: 'Trial end'},
+        {key: 'action', header: 'Actions'},
     ];
 
     useEffect(() => {
@@ -59,6 +61,7 @@ const AdminBusiness: React.FC = () => {
                     subscription_count: item.subscription_count,
                     subscription_trial_ended_at: new Date(item.subscription_trial_ended_at).toLocaleDateString('en-GB'),
                     blocked: item.blocked,
+                    is_active: item.is_active
                 }));
                 setBusinessData(businessData);
                 setFilteredBusinessData(businessData);
@@ -68,7 +71,7 @@ const AdminBusiness: React.FC = () => {
         };
 
         fetchBusinessData();
-    }, []);
+    }, [update]);
 
     useEffect(() => {
         filterBusinesses(searchText);
@@ -99,17 +102,12 @@ const AdminBusiness: React.FC = () => {
                     ? `/business/action-business/block/${selectedBusiness.business_id}`
                     : `/business/action-business/unblock/${selectedBusiness.business_id}`;
 
-                await api.get(endpoint,{
+                await api.get(endpoint, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
                 });
-
-                setBusinessData(prevData => prevData.map(business =>
-                    business.business_id === selectedBusiness.business_id
-                        ? { ...business, blocked: actionType === 'block' }
-                        : business
-                ));
+                setUpdate(prev => !prev)
             } catch (error) {
                 console.error(`Error ${actionType === 'block' ? 'blocking' : 'unblocking'} business:`, error);
             } finally {
@@ -123,11 +121,11 @@ const AdminBusiness: React.FC = () => {
         {
             icon: (row: Business) => (
                 <FontAwesomeIcon
-                    icon={row.blocked ? faLock : faUnlock}
-                    style={{ color: row.blocked ? 'red' : 'blue' }}
+                    icon={row.is_active ? faUnlock : faLock}
+                    style={{color: row.is_active ? 'blue' : 'red'}}
                 />
             ),
-            onClick: (row: Business) => handleLockClick(row, row.blocked ? 'unblock' : 'block')
+            onClick: (row: Business) => handleLockClick(row, row.is_active ? 'block' : 'unblock')
         }
     ];
 
@@ -143,7 +141,7 @@ const AdminBusiness: React.FC = () => {
                     <Notification/>
                     <div className="filter-container">
                         <div className="search">
-                            <SearchBar searchText={searchText} setSearchText={setSearchText} />
+                            <SearchBar searchText={searchText} setSearchText={setSearchText}/>
                         </div>
                     </div>
                 </div>
@@ -174,3 +172,4 @@ const AdminBusiness: React.FC = () => {
 };
 
 export default AdminBusiness;
+

@@ -48,16 +48,16 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
     useEffect(() => {
         const fetchAccess = async () => {
             try {
-                const response = await api.get(`super/get-access`, {
+                const response = await api.get(`super/get-staff-accesses`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
                 });
 
                 if (response.status === 200) {
-                    const fetchedData = response.data.access_records.map((access: any) => ({
+                    const fetchedData = response.data.map((access: any) => ({
                         name: access.description,
-                        value: access.permission,
+                        value: access.permission_name,
                     }));
                     setAccessData(fetchedData);
 
@@ -78,12 +78,25 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
         };
 
         fetchAccess();
-    }, [token]);
+    }, []);
 
+    // useEffect(() => {
+    //     if (initialValues) {
+    //         initForm(initialValues);
+    //         const initialPermissions = initialValues.permissions.reduce(
+    //             (acc: CheckboxState, permission: string) => {
+    //                 acc[permission] = true;
+    //                 return acc;
+    //             },
+    //             {...checkedState}
+    //         );
+    //         setCheckedState(initialPermissions);
+    //     }
+    // }, [initialValues, checkedState, initForm]);
     useEffect(() => {
         if (initialValues) {
             initForm(initialValues);
-            const initialPermissions = initialValues.permissions.reduce(
+            const initialPermissions = (Array.isArray(initialValues.permissions) ? initialValues.permissions : []).reduce(
                 (acc: CheckboxState, permission: string) => {
                     acc[permission] = true;
                     return acc;
@@ -93,6 +106,7 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
             setCheckedState(initialPermissions);
         }
     }, [initialValues, checkedState, initForm]);
+
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, checked} = e.target;
