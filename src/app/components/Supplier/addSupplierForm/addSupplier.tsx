@@ -71,7 +71,7 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
                 if (type === 'Add') {
                     const response = await api.post("suppliers/create-supplier", requestData, {
                         headers: {
-                                Authorization: `Bearer ${token}`,
+                            Authorization: `Bearer ${token}`,
                         }
                     })
                     if (response.status === 201) {
@@ -113,7 +113,8 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         handleSubmit({
-            preventDefault: () => {}
+            preventDefault: () => {
+            }
         } as React.FormEvent<HTMLFormElement>);
     };
     return (
@@ -127,7 +128,7 @@ const AddSupplier: React.FC<AddSupplierProps> = ({
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
-            backdrop
+            backdrop="static"
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">

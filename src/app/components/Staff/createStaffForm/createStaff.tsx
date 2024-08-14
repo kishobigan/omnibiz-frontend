@@ -80,19 +80,6 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
         fetchAccess();
     }, []);
 
-    // useEffect(() => {
-    //     if (initialValues) {
-    //         initForm(initialValues);
-    //         const initialPermissions = initialValues.permissions.reduce(
-    //             (acc: CheckboxState, permission: string) => {
-    //                 acc[permission] = true;
-    //                 return acc;
-    //             },
-    //             {...checkedState}
-    //         );
-    //         setCheckedState(initialPermissions);
-    //     }
-    // }, [initialValues, checkedState, initForm]);
     useEffect(() => {
         if (initialValues) {
             initForm(initialValues);
@@ -106,7 +93,6 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
             setCheckedState(initialPermissions);
         }
     }, [initialValues, checkedState, initForm]);
-
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, checked} = e.target;
@@ -205,7 +191,7 @@ const AddStaffForm: React.FC<AddStaffProps> = ({type, show, onHide, update, init
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
-            backdrop
+            backdrop="static"
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
