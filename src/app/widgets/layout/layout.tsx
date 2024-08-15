@@ -6,7 +6,7 @@ import {useParams} from "next/navigation";
 
 interface LayoutProps {
     children: ReactNode;
-    role: 'owner' | 'admin' | 'staff' | 'higher_staff';
+    role: 'owner' | 'admin' | 'staff' | 'higher-staff';
 }
 
 function Layout({children, role}: LayoutProps) {

@@ -27,7 +27,7 @@ interface MenuItem {
 
 interface SidebarProps {
     userId: string;
-    role: 'owner' | 'admin' | 'staff' | 'higher_staff';
+    role: 'owner' | 'admin' | 'staff' | 'higher-staff';
 }
 
 function Sidebar({userId, role}: SidebarProps) {
@@ -52,8 +52,8 @@ function Sidebar({userId, role}: SidebarProps) {
     ];
 
     const higherStaffMenuItems: MenuItem[] = [
-        {label: "Reports", icon: faChartLine, link: `/pages/reports`},
-        {label: "Team", icon: faUsers, link: `/pages/team`},
+        {label: "Business", icon: faBriefcase, link: `/pages/higher-staff/business/${userId}`},
+        {label: "Settings", icon: faGear, link: `/pages/higher-staff/settings/${userId}`},
     ];
 
     function getMenuItems(role: string): MenuItem[] {
@@ -64,12 +64,13 @@ function Sidebar({userId, role}: SidebarProps) {
                 return adminMenuItems;
             case 'staff':
                 return staffMenuItems;
-            case 'higher_staff':
+            case 'higher-staff':
                 return higherStaffMenuItems;
             default:
                 return [];
         }
     }
+
     const menuItems = getMenuItems(role);
 
     const logoutItem: MenuItem = {label: "Log out", icon: faSignOutAlt, onClick: logout};

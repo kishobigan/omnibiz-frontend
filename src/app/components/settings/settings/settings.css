@@ -5,8 +5,7 @@
     height: 100vh;
     padding: 20px;
     box-sizing: border-box;
-    /* background: linear-gradient(to bottom, #d0fbd8 30%, #ffffff 60%);  */
-    background: linear-gradient(135deg, #FFFFFF, #E6E1C5, #A2B38B);
+    background: linear-gradient(to bottom right, #e7e6e6, white);
 }
 
 /* .settings-content {
@@ -38,7 +37,6 @@
     flex: 4;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .settings-content {
         width: 100%;
