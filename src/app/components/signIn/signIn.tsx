@@ -50,8 +50,12 @@ const SignIn: React.FC<ContentProps> = ({
                     Cookies.set(ACCESS_TOKEN, access);
                     Cookies.set(REFRESH_TOKEN, refresh);
 
-                    if (owner_created && user_role === "owner") {
-                        router.push(`/pages/dashboard/home/${user_id}`);
+                    if (user_role === 'owner') {
+                        if (owner_created) {
+                            router.push(`/pages/dashboard/home/${user_id}`);
+                        } else {
+                            router.push('/pages/createOwner');
+                        }
                     } else if (user_role === 'admin') {
                         router.push(`/pages/admin/dashboard/${user_id}`);
                     } else if (user_role === 'staff') {
@@ -61,10 +65,8 @@ const SignIn: React.FC<ContentProps> = ({
                             const business_id = '72y3r1p5';
                             router.push(`/pages/staff/business/${user_id}/${business_id}`);
                         }
-                    } else if (!owner_created && user_role === 'owner') {
-                        router.push('/pages/createOwner');
                     } else if (user_role === 'higher-staff') {
-                        router.push(`/pages/higher-staff/${user_id}`);
+                        router.push(`/pages/higher-staff/business/${user_id}`);
                     }
                 } else {
                     console.log("Login failed!", response.data.message);

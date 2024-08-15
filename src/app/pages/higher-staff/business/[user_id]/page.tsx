@@ -1,10 +1,11 @@
-import React from "react";
+import React from 'react';
+import ProtectedRoute from "@/app/utils/Routing/ProtectedRoute";
 import Layout from "@/app/widgets/layout/layout";
 import Businesses from "@/app/components/Business/businesses/businesses";
-import ProtectedRoute from "@/app/utils/Routing/ProtectedRoute";
 
-const role = 'owner'
-const businesses = () => {
+const role = 'higher-staff'
+
+const BusinessHS = () => {
     return (
         <div>
             <ProtectedRoute>
@@ -14,6 +15,6 @@ const businesses = () => {
             </ProtectedRoute>
         </div>
     );
-};
+}
 
-export default businesses;
+export default BusinessHS;

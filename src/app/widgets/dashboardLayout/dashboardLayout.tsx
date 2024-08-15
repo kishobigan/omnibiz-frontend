@@ -4,7 +4,7 @@ import Layout from "@/app/widgets/layout/layout";
 import Tabs from "@/app/widgets/tabs/Tabs";
 
 interface DashboardLayoutProps {
-    role: 'owner' | 'admin' | 'staff' | 'higher_staff';
+    role: 'owner' | 'admin' | 'staff' | 'higher-staff';
     tabItems: { label: string, component: JSX.Element }[];
 }
 

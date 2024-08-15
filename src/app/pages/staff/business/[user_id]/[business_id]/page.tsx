@@ -38,7 +38,7 @@ const StaffDashboard = () => {
     const {user_id, business_id} = useParams();
     console.log("user_id", user_id);
     const token = Cookies.get(ACCESS_TOKEN)
-    // const [tabItems, setTabItems] = useState<TabItem[]>([]);
+    const [tabItems, setTabItems] = useState<TabItem[]>([]);
     const role = 'staff';
 
     useEffect(() => {
@@ -49,16 +49,13 @@ const StaffDashboard = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
                 if (response.status === 200) {
                     const permissions = response.data.permissions;
                     console.log("Staff permissions", permissions)
-
                     const filteredTabs = allTabItems.filter(tab =>
                         permissions.includes(tab.permission)
                     );
-
-                    // setTabItems(filteredTabs);
+                    setTabItems(filteredTabs);
                 } else {
                     console.log('Failed to fetch permissions.');
                 }

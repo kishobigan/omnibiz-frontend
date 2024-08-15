@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+'use client'
+import React, {useState, useEffect} from "react";
 import Table from "@/app/widgets/table/Table";
 import SearchBar from "@/app/widgets/searchBar/searchBar";
 import "./inventory.css";
 import Pagination from "@/app/widgets/pagination/pagination";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEdit } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Button from "@/app/widgets/Button/Button";
 import CreateInventoryForm from "@/app/components/Inventory/createInventoryForm/createInventory";
 import CreateOrderForm from "@/app/components/Inventory/createOrderForm/createOrder";
-import { useParams } from "next/navigation";
+import {useParams} from "next/navigation";
 import api from "@/app/utils/Api/api";
 import {formatDate} from "@/app/utils/DateUtils/dateUtils";
 
@@ -57,7 +58,7 @@ function Inventory() {
     const [selectedInventory, setSelectedInventory] = useState<FlattenedInventoryItem | null>(null);
     const [orderData, setOrderData] = useState<OrderItem[]>([]);
     const [update, setUpdate] = useState(false);
-    const { business_id } = useParams();
+    const {business_id} = useParams();
     const [activeTab, setActiveTab] = useState<"Inventory" | "Order">("Inventory");
 
     useEffect(() => {
@@ -112,22 +113,22 @@ function Inventory() {
     }, [searchText]);
 
     const inventoryColumns = [
-        { key: "item", header: "Item" },
-        { key: "category", header: "Category" },
-        { key: "quantity", header: "Quantity" },
-        { key: "buying_price", header: "Buying Price" },
-        { key: "selling_price", header: "Selling Price" },
-        { key: "supplier", header: "Suppliers" },
-        { key: "action", header: "Actions" },
+        {key: "item", header: "Item"},
+        {key: "category", header: "Category"},
+        {key: "quantity", header: "Quantity"},
+        {key: "buying_price", header: "Buying Price"},
+        {key: "selling_price", header: "Selling Price"},
+        {key: "supplier", header: "Suppliers"},
+        {key: "action", header: "Actions"},
     ];
 
     const orderColumns = [
-        { key: "supplier_name", header: "Supplier" },
-        { key: "delivery_date", header: "Delivery Date" },
-        { key: "amount_ordered", header: "Ordered amount" },
-        { key: "amount_paid", header: "Paid amount" },
-        { key: "amount_due_date", header: "Amount Due-date" },
-        { key: "order_status", header: "Order status" },
+        {key: "supplier_name", header: "Supplier"},
+        {key: "delivery_date", header: "Delivery Date"},
+        {key: "amount_ordered", header: "Ordered amount"},
+        {key: "amount_paid", header: "Paid amount"},
+        {key: "amount_due_date", header: "Amount Due-date"},
+        {key: "order_status", header: "Order status"},
     ];
 
     const handleViewClick = (selectedInventory: FlattenedInventoryItem) => {
@@ -144,11 +145,11 @@ function Inventory() {
 
     const actions = [
         {
-            icon: <FontAwesomeIcon icon={faEdit} style={{ color: "blue" }} />,
+            icon: <FontAwesomeIcon icon={faEdit} style={{color: "blue"}}/>,
             onClick: handleEditClick,
         },
         {
-            icon: <FontAwesomeIcon icon={faEye} style={{ color: "green" }} />,
+            icon: <FontAwesomeIcon icon={faEye} style={{color: "green"}}/>,
             onClick: handleViewClick,
         },
     ];
@@ -202,7 +203,7 @@ function Inventory() {
                         Order
                     </div>
                 </div>
-                <SearchBar searchText={searchText} setSearchText={setSearchText} />
+                <SearchBar searchText={searchText} setSearchText={setSearchText}/>
             </div>
 
             {activeTab === "Inventory" && (
