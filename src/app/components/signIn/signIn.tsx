@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Link from "next/link";
-import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
+import {FaLock, FaEnvelope, FaEye, FaEyeSlash} from "react-icons/fa";
 import "./signIn.css";
 import Button from "@/app/widgets/Button/Button";
 import FormHandler from "@/app/utils/FormHandler/Formhandler";
 import api from "@/app/utils/Api/api";
 import Cookies from 'js-cookie';
-import { validate, signinSchema } from "@/app/utils/Validation/validations";
-import { useRouter } from "next/navigation";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/app/utils/Constants/constants";
+import {validate, signinSchema} from "@/app/utils/Validation/validations";
+import {useRouter} from "next/navigation";
+import {ACCESS_TOKEN, REFRESH_TOKEN} from "@/app/utils/Constants/constants";
 import Loader from "@/app/widgets/loader/loader";
 
 interface ContentProps {
@@ -19,11 +19,11 @@ interface ContentProps {
 }
 
 const SignIn: React.FC<ContentProps> = ({
-    title,
-    buttonText,
-    linkText,
-    linkUrl,
-}) => {
+                                            title,
+                                            buttonText,
+                                            linkText,
+                                            linkUrl,
+                                        }) => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,7 +31,7 @@ const SignIn: React.FC<ContentProps> = ({
     const access_token = Cookies.get(ACCESS_TOKEN);
     const refresh_token = Cookies.get(REFRESH_TOKEN);
 
-    const { handleChange, handleSubmit, values, errors } = FormHandler(
+    const {handleChange, handleSubmit, values, errors} = FormHandler(
         async () => {
             setLoading(true);
             setErrorMessage(null);
@@ -45,7 +45,7 @@ const SignIn: React.FC<ContentProps> = ({
                     password: values.password,
                 });
                 if (response.status === 200) {
-                    const { access, refresh, owner_created, user_id, user_role } =
+                    const {access, refresh, owner_created, user_id, user_role, message} =
                         response.data;
                     Cookies.set(ACCESS_TOKEN, access);
                     Cookies.set(REFRESH_TOKEN, refresh);
@@ -55,7 +55,12 @@ const SignIn: React.FC<ContentProps> = ({
                     } else if (user_role === 'admin') {
                         router.push(`/pages/admin/dashboard/${user_id}`);
                     } else if (user_role === 'staff') {
-                        router.push(`/pages/staff/business/${user_id}/72y3r1p5`);
+                        if (message === "Welcome, first-time user!") {
+                            router.push(`/pages/staff/change-password/${user_id}`);
+                        } else if (message === "Welcome back!") {
+                            const business_id = '72y3r1p5';
+                            router.push(`/pages/staff/business/${user_id}/${business_id}`);
+                        }
                     } else if (!owner_created && user_role === 'owner') {
                         router.push('/pages/createOwner');
                     } else if (user_role === 'higher-staff') {
@@ -91,14 +96,14 @@ const SignIn: React.FC<ContentProps> = ({
     return (
         <form onSubmit={handleSubmit}>
             <div className="container signInContent">
-                <h3 style={{ marginBottom: "2rem" }}>
+                <h3 style={{marginBottom: "2rem"}}>
                     <b>{title}</b>
                 </h3>
                 <p className="mb-3">
                     If you don’t have an account,{" "}
                     <Link href="/pages/signup">
                         <span
-                            style={{ color: "blue", cursor: "pointer", textDecoration: "none" }}
+                            style={{color: "blue", cursor: "pointer", textDecoration: "none"}}
                         >
                             Register Here!
                         </span>
@@ -108,7 +113,7 @@ const SignIn: React.FC<ContentProps> = ({
                     <label className="form-label">Email</label>
                     <div className="input-group">
                         <span className="input-group-text">
-                            <FaEnvelope />
+                            <FaEnvelope/>
                         </span>
                         <input
                             type="text"
@@ -125,7 +130,7 @@ const SignIn: React.FC<ContentProps> = ({
                     <label className="form-label">Password</label>
                     <div className="input-group">
                         <span className="input-group-text">
-                            <FaLock />
+                            <FaLock/>
                         </span>
                         <input
                             type={showPassword ? "text" : "password"}
@@ -138,21 +143,21 @@ const SignIn: React.FC<ContentProps> = ({
                         <span
                             className="input-group-text"
                             onClick={togglePasswordVisibility}
-                            style={{ cursor: "pointer" }}
+                            style={{cursor: "pointer"}}
                         >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            {showPassword ? <FaEyeSlash/> : <FaEye/>}
                         </span>
                     </div>
                     {errors.password && <p className="error">{errors.password}</p>}
                 </div>
                 {errorMessage && <p className="error">{errorMessage}</p>}
                 <p className="forgot-password-link">
-                    <a href="/pages/forgotPassword" style={{ color: "#737373" }}>
+                    <a href="/pages/forgotPassword" style={{color: "#737373"}}>
                         Forgot Password?
                     </a>
                 </p>
                 <Button className="container-fluid mt-4" type="submit" variant="dark">
-                    {loading ? <Loader /> : "Sign In"}
+                    {loading ? <Loader/> : "Sign In"}
                 </Button>
             </div>
         </form>
