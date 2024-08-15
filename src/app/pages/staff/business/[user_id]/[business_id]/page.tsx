@@ -35,7 +35,8 @@ const tabItems: TabItem[] = [
 ];
 
 const StaffDashboard = () => {
-    const {user_id} = useParams();
+    const {user_id, business_id} = useParams();
+    console.log("user_id", user_id);
     const token = Cookies.get(ACCESS_TOKEN)
     // const [tabItems, setTabItems] = useState<TabItem[]>([]);
     const role = 'staff';
@@ -43,7 +44,7 @@ const StaffDashboard = () => {
     useEffect(() => {
         const fetchPermissions = async () => {
             try {
-                const response = await api.get(`staff/get-permissions/${user_id}`, {
+                const response = await api.get(`staff/list-staff-access/${user_id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -51,6 +52,7 @@ const StaffDashboard = () => {
 
                 if (response.status === 200) {
                     const permissions = response.data.permissions;
+                    console.log("Staff permissions", permissions)
 
                     const filteredTabs = allTabItems.filter(tab =>
                         permissions.includes(tab.permission)
@@ -66,7 +68,7 @@ const StaffDashboard = () => {
         };
 
         fetchPermissions();
-    }, [user_id, token]);
+    }, []);
 
     return (
         <ProtectedRoute>
