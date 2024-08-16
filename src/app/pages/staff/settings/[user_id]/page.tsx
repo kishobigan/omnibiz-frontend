@@ -1,5 +1,4 @@
 import React from 'react';
-import Settings from "@/app/components/settings/settings/settings";
 import ProtectedRoute from "@/app/utils/Routing/ProtectedRoute";
 import Layout from "@/app/widgets/layout/layout";
 import ChangePassword from "@/app/components/settings/changePassword/changePassword";

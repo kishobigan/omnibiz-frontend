@@ -10,6 +10,7 @@ import {validate, signinSchema} from "@/app/utils/Validation/validations";
 import {useRouter} from "next/navigation";
 import {ACCESS_TOKEN, REFRESH_TOKEN} from "@/app/utils/Constants/constants";
 import Loader from "@/app/widgets/loader/loader";
+import {encryptId} from "@/app/utils/Encryption/encryption";
 
 interface ContentProps {
     title: string;
@@ -49,6 +50,7 @@ const SignIn: React.FC<ContentProps> = ({
                         response.data;
                     Cookies.set(ACCESS_TOKEN, access);
                     Cookies.set(REFRESH_TOKEN, refresh);
+                    // const encUser_id = encodeURIComponent(encryptId(user_id))
 
                     if (user_role === 'owner') {
                         if (owner_created) {
@@ -66,7 +68,11 @@ const SignIn: React.FC<ContentProps> = ({
                             router.push(`/pages/staff/business/${user_id}/${business_id}`);
                         }
                     } else if (user_role === 'higher-staff') {
-                        router.push(`/pages/higher-staff/business/${user_id}`);
+                        if (message === "Welcome, first-time user!") {
+                            router.push(`/pages/higher-staff/change-password/${user_id}`);
+                        } else if (message === "Welcome back!") {
+                            router.push(`/pages/higher-staff/business/${user_id}`);
+                        }
                     }
                 } else {
                     console.log("Login failed!", response.data.message);

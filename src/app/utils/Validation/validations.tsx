@@ -17,6 +17,39 @@ type ValidationErrors = {
     [field: string]: string;
 }
 
+// export const validate = (formData: { [key: string]: any }, schema: ValidationSchema): ValidationErrors => {
+//     const errors: ValidationErrors = {};
+//
+//     Object.keys(schema).forEach((field) => {
+//         const value = formData[field];
+//         const rules = schema[field];
+//
+//         if (rules.required && isEmpty(value)) {
+//             errors[field] = 'This field is required.';
+//         } else if (value !== undefined) {
+//             if (rules.minLength && value.length < rules.minLength) {
+//                 errors[field] = `Must be at least ${rules.minLength} characters long`;
+//             }
+//
+//             if (rules.maxLength && value.length > rules.maxLength) {
+//                 errors[field] = `Must be no more than ${rules.maxLength} characters long`;
+//             }
+//
+//             if (rules.pattern && !rules.pattern.test(value)) {
+//                 errors[field] = 'Invalid format';
+//             }
+//
+//             if (rules.custom) {
+//                 const customError = rules.custom(value, formData);
+//                 if (customError) {
+//                     errors[field] = customError;
+//                 }
+//             }
+//         }
+//     });
+//     return errors;
+// };
+
 export const validate = (formData: { [key: string]: any }, schema: ValidationSchema): ValidationErrors => {
     const errors: ValidationErrors = {};
 
@@ -24,8 +57,14 @@ export const validate = (formData: { [key: string]: any }, schema: ValidationSch
         const value = formData[field];
         const rules = schema[field];
 
-        if (rules.required && isEmpty(value)) {
-            errors[field] = 'This field is required.';
+        if (rules.required) {
+            if (Array.isArray(value)) {
+                if (value.length === 0) {
+                    errors[field] = 'At least one option must be selected.';
+                }
+            } else if (isEmpty(value)) {
+                errors[field] = 'This field is required.';
+            }
         } else if (value !== undefined) {
             if (rules.minLength && value.length < rules.minLength) {
                 errors[field] = `Must be at least ${rules.minLength} characters long`;
@@ -94,16 +133,6 @@ export const addSupplierSchema: ValidationSchema = {
     supplierWebsite: {
         required: true
     }
-    // amount: {
-    //     required: true,
-    //     pattern: /^(?:[1-9]\d*|0)?(?:\.\d{1,2})?$/,
-    // },
-    // paybackPeriod: {
-    //     required: true,
-    // },
-    // status: {
-    //     required: true,
-    // }
 };
 
 export const businessSchema: ValidationSchema = {
@@ -140,11 +169,9 @@ export const staffSchema: ValidationSchema = {
 export const createOwnerSchema: ValidationSchema = {
     firstname: {
         required: true,
-
     },
     lastname: {
         required: true,
-
     },
     phone: {
         required: true,
@@ -154,8 +181,6 @@ export const createOwnerSchema: ValidationSchema = {
         required: true,
         pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
     },
-
-
 };
 
 export const inventorySchema: ValidationSchema = {
@@ -212,12 +237,11 @@ export const highStaffSchema: ValidationSchema = {
         required: true,
         pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
     },
-    selectedBusinesses: {
-        required: true,
-        custom: (value) => (!value || value.length === 0 ? 'At least one business must be selected' : null),
+    business_id: {
+        // required: true,
+        // custom: (value) => (!value || value.length === 0 ? 'At least one business must be selected' : null),
     }
 };
-
 
 export const createItemSchema: ValidationSchema = {
     name: {
