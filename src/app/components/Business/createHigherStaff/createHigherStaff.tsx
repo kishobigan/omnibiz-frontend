@@ -107,11 +107,11 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
                     const userId = selectedHigherStaff.id;
                     const requestData = {
                         email: values.email,
-                        business_id: values.business_id,
+                        business_id: selectedBusinesses,
                         role: 'higher-staff'
                     };
                     const response = await api.put(`auth/update-higher-staff/${userId}`, requestData);
-                    if (response.status === 201) {
+                    if (response.status === 200) {
                         console.log("Higher-staff is updated successfully", response.data);
                         if (update) update();
                         onHide();
@@ -140,6 +140,7 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
         }
         setSelectedBusinesses(tempData)
     };
+
     const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         handleSubmit({
@@ -199,7 +200,7 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
                                     <div key={business.value} className="col-md-4">
                                         <Checkbox
                                             label={business.name}
-                                            name={"selectedBusinesses" + i}
+                                            name={"business_id" + i}
                                             value={business.value}
                                             checked={selectedBusinesses.includes(business.value)}
                                             handleChange={handleCheckboxChange}
@@ -207,7 +208,7 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
                                     </div>
                                 ))}
                             </div>
-                            {errors.selectedBusinesses && <span style={errorStyle}>{errors.selectedBusinesses}</span>}
+                            {errors.business_id && <span style={errorStyle}>{errors.business_id}</span>}
                         </div>
                     </div>
                 </form>

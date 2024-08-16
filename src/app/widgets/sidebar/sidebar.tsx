@@ -9,10 +9,8 @@ import {
     faHome,
     faGear,
     faBriefcase,
-    faFlask,
     faSignOutAlt,
     faUsers,
-    faChartLine
 } from '@fortawesome/free-solid-svg-icons';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
 import {usePathname} from 'next/navigation';
