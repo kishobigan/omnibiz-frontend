@@ -28,10 +28,10 @@ function Accounts() {
     const [accountData, setAccountData] = useState<AccountItem[]>([]);
     const {business_id} = useParams();
     const [summaryData, setSummaryData] = useState([
-        {title: "Total Income", cost: "0", percentage: "", color: "#D8BFD8"},
-        {title: "Total Expenses", cost: "0", percentage: "", color: "#FFC0CB"},
-        {title: "Total Profit", cost: "0", percentage: "", color: "#98FB98"},
-        {title: "Total Loss", cost: "0", percentage: "", color: "#BCFFF2"},
+        {title: "Total Income", cost: "0", percentage: ""},
+        {title: "Total Expenses", cost: "0", percentage: ""},
+        {title: "Total Profit", cost: "0", percentage: ""},
+        {title: "Total Loss", cost: "0", percentage: ""},
     ]);
 
     useEffect(() => {
@@ -59,19 +59,17 @@ function Accounts() {
                 const totalLoss = totalProfit < 0 ? Math.abs(totalProfit) : 0;
 
                 setSummaryData([
-                    {title: "Total Income", cost: totalIncome, percentage: "5%", color: "#D8BFD8"},
-                    {title: "Total Expenses", cost: totalExpenses, percentage: "5%", color: "#FFC0CB"},
+                    {title: "Total Income", cost: totalIncome, percentage: "5%"},
+                    {title: "Total Expenses", cost: totalExpenses, percentage: "5%"},
                     {
                         title: "Total Profit",
                         cost: totalProfit > 0 ? totalProfit.toLocaleString() : "0",
                         percentage: "5%",
-                        color: "#98FB98"
                     },
                     {
                         title: "Total Loss",
                         cost: totalLoss > 0 ? totalLoss.toLocaleString() : "0",
                         percentage: "5%",
-                        color: "#BCFFF2"
                     },
                 ]);
             } catch (error) {
@@ -105,6 +103,7 @@ function Accounts() {
                 {summaryData.map((data, index) => (
                     <div className="col-12 col-md-6 col-lg-3 mb-3" key={index}>
                         <Card
+                            className='cardWithBorderRadius shadow'
                             title={data.title}
                             body={
                                 <div>
@@ -116,7 +115,7 @@ function Accounts() {
                                     </p>
                                 </div>
                             }
-                            color={data.color}
+                            color={'#ffffff'}
                         />
                     </div>
                 ))}

@@ -111,12 +111,12 @@ const Businesses: React.FC<BusinessesProps> = ({user_role}) => {
                     </>
                 )}
             </div>
-            <div className="row d-flex justify-content-center">
+            <div className="row">
                 {businessData.length > 0 ? businessData.map((business, index) => (
-                    <div key={index} className="col-12 col-md-6 col-lg-3 mb-3">
+                    <div key={index} className="col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
                         <div onClick={() => handleBusinessNavigate(business.business_id)}>
                             <Card
-                                className="cardWithBorderRadius"
+                                className="cardWithBorderRadius shadow"
                                 title={business.business_name}
                                 body={
                                     <div className="mb-2">
@@ -128,6 +128,7 @@ const Businesses: React.FC<BusinessesProps> = ({user_role}) => {
                                 actions={
                                     <FontAwesomeIcon
                                         icon={faEdit}
+                                        className='text-white'
                                         style={{cursor: "pointer"}}
                                         onClick={(e) => {
                                             e.stopPropagation();

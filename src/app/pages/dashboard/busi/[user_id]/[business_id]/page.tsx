@@ -7,8 +7,10 @@ import Supplier from "@/app/components/Supplier/supplier/supplier";
 import Staff from "@/app/components/Staff/staff/staff";
 import Inventory from "@/app/components/Inventory/inventory/inventory";
 import Accounts from "@/app/components/accounts/accounts";
+import {useParams} from "next/navigation";
+import Cookies from "js-cookie";
+import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 
-const role = 'owner'
 const tabItems = [
     {label: "Billing", component: <Billing/>},
     {label: "Inventory", component: <Inventory/>},
@@ -18,10 +20,14 @@ const tabItems = [
 ]
 
 function Dashboard() {
+    const role = 'owner'
+    const {business_id} = useParams();
+    const businessId = Array.isArray(business_id) ? business_id[0] : business_id ?? '';
+    const token = Cookies.get(ACCESS_TOKEN) || ''
     return (
         <div className='vh-100'>
             <ProtectedRoute>
-                <DashboardLayout role={role} tabItems={tabItems}/>
+                <DashboardLayout role={role} tabItems={tabItems} business_id={businessId} token={token}/>
             </ProtectedRoute>
         </div>
     );

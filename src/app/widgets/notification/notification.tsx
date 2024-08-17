@@ -1,15 +1,20 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import './notification.css';
-import { FaBell} from 'react-icons/fa';
-import axios from 'axios';
+import {FaBell} from 'react-icons/fa';
+import api from "@/app/utils/Api/api";
 
 interface Notification {
     id: number;
     message: string;
 }
 
-const Notification: React.FC = () => {
+interface NotificationProps {
+    business_id: string;
+    token: string;
+}
+
+const Notification: React.FC<NotificationProps> = ({business_id, token}) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -23,8 +28,13 @@ const Notification: React.FC = () => {
 
     const fetchNotifications = async () => {
         try {
-            const response = await axios.get('/api/notifications');
+            const response = await api.get(`notification/list-notifications/${business_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setNotifications(response.data);
+            console.log("Notifications fetched:", notifications);
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
@@ -57,7 +67,7 @@ const Notification: React.FC = () => {
 
     return (
         <div className='notification' ref={dropdownRef}>
-            <FaBell className='bellIcon' onClick={toggleDropdown} />
+            <FaBell className='bellIcon' onClick={toggleDropdown}/>
             {notifications.length > 0 && (
                 <span className='badge'>{notifications.length}</span>
             )}

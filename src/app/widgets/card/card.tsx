@@ -31,7 +31,7 @@ const Card: React.FC<CardProps> = ({ title, logo, body, footer, actions, style, 
                             />
                         </div>
                     )}
-                    <h6 className="card-title">{title}</h6>
+                    <h6 className="card-title fw-bold">{title}</h6>
                 </div>
                 <div className="card-text">{body}</div>
                 {footer && <div className="card-footer">{footer}</div>}

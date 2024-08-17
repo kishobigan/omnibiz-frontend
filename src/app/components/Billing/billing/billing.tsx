@@ -15,6 +15,7 @@ import {useParams, useRouter} from "next/navigation";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
+import ReturnModal from "@/app/components/Billing/returnModal/return";
 
 interface Product {
     itemId: number;
@@ -32,6 +33,7 @@ const Billing: React.FC = () => {
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
     const [selectedRow, setSelectedRow] = useState<any>(null);
     const [selectedItem, setSelectedItem] = useState<string>('');
+    const [showReturnModal, setShowReturnModal] = useState<boolean>(false)
     const {business_id} = useParams()
     const router = useRouter()
     const token = Cookies.get(ACCESS_TOKEN);
@@ -175,9 +177,12 @@ const Billing: React.FC = () => {
                                 <Button
                                     variant="dark"
                                     className="buttonWithPadding"
-                                    onClick={() => router.push('/return')}
+                                    onClick={() => {
+                                        setShowReturnModal(true)
+                                    }}
+                                    type="button"
                                 >
-                                    Return
+                                    Return Bill
                                 </Button>
                             </div>
                         </div>
@@ -302,6 +307,12 @@ const Billing: React.FC = () => {
                 </div>
                 <Payment subtotal={subtotal} discount={discount} total={total} tableData={tableData}
                          customerResponse={customerResponse}/>
+                <ReturnModal
+                    show={showReturnModal}
+                    onHide={() => {
+                        setShowReturnModal(false)
+                    }}
+                />
             </div>
         </div>
     );

@@ -20,6 +20,7 @@ interface TableProps<T> {
     handleStatusChange?: (id: number, status: boolean) => void;
     emptyMessage?: string;
     cellRenderer?: (columnKey: string, cellData: any, row: T) => React.ReactNode;
+    onRowClick?: (row: T) => void;
 }
 
 const Table = <T extends Record<string, any>>({
@@ -30,7 +31,8 @@ const Table = <T extends Record<string, any>>({
                                                   rowsPerPage = 10,
                                                   handleStatusChange,
                                                   emptyMessage,
-                                                  cellRenderer
+                                                  cellRenderer,
+                                                  onRowClick
                                               }: TableProps<T>) => {
     const startRow = (currentPage - 1) * rowsPerPage;
     const endRow = startRow + rowsPerPage;
