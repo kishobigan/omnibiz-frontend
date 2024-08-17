@@ -9,9 +9,11 @@ interface TabItem {
 
 interface TabProps {
     tabItems: TabItem[];
+    business_id: string;
+    token: string;
 }
 
-const Tabs: React.FC<TabProps> = ({tabItems}) => {
+const Tabs: React.FC<TabProps> = ({tabItems, business_id, token}) => {
     const [activeTab, setActiveTab] = useState<number>(0);
 
     useEffect(() => {
@@ -40,7 +42,7 @@ const Tabs: React.FC<TabProps> = ({tabItems}) => {
                     </li>
                 ))}
             </ul>
-            <Notification/>
+            <Notification business_id={business_id} token={token}/>
             <div>
                 {tabItems[activeTab] && tabItems[activeTab].component}
             </div>

@@ -6,6 +6,7 @@
     padding: 20px;
     box-sizing: border-box;
     background: linear-gradient(to bottom right, #e7e6e6, white);
+    /*background: red;*/
 }
 
 /* .settings-content {
@@ -24,8 +25,8 @@
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 50px;
+    margin-bottom: 60px;
     box-sizing: border-box;
 }
 

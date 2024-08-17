@@ -8,10 +8,10 @@ const Settings: React.FC = () => {
         <div className="settings-container">
             <div className="settings-content">
                 <div className="form-box update-owner-container">
-                    <UpdateOwner />
+                    <UpdateOwner/>
                 </div>
                 <div className="form-box change-password-container">
-                    <ChangePassword />
+                    <ChangePassword/>
                 </div>
             </div>
         </div>
