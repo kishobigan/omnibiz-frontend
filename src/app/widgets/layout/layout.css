@@ -15,7 +15,7 @@ html, body, #__next, .container-fluid, .row {
 }
 
 .gradient-bg {
-    background: linear-gradient(to bottom right, #e7e6e6, white);
+    background: var(--background_gradient);
     height: 100%;
 }
 
