@@ -36,7 +36,8 @@ const AdminBusiness: React.FC = () => {
     const [update, setUpdate] = useState<boolean>(false);
     const rowsPerPage = 10;
     const role = 'admin';
-    const token = Cookies.get(ACCESS_TOKEN);
+    const token = Cookies.get(ACCESS_TOKEN) || '';
+    const business_id = ''
 
     const columns = [
         {key: 'business_name', header: 'Business name'},
@@ -138,7 +139,7 @@ const AdminBusiness: React.FC = () => {
                     <div className='topic'>
                         <h5><strong>Business</strong></h5>
                     </div>
-                    <Notification/>
+                    <Notification business_id={business_id} token={token}/>
                     <div className="filter-container">
                         <div className="search">
                             <SearchBar searchText={searchText} setSearchText={setSearchText}/>

@@ -34,7 +34,8 @@ const AdminBusinessOwner: React.FC = () => {
     const [actionType, setActionType] = useState<'block' | 'unblock'>('unblock')
     const [update, setUpdate] = useState<boolean>(false)
     const role = 'admin';
-    const token = Cookies.get(ACCESS_TOKEN)
+    const token = Cookies.get(ACCESS_TOKEN) || '';
+    const business_id = '';
 
     const columns = [
         {key: 'owner_name', header: 'Owner name'},
@@ -140,7 +141,7 @@ const AdminBusinessOwner: React.FC = () => {
                     <div className='topic'>
                         <h5><strong>Business Owner</strong></h5>
                     </div>
-                    <Notification/>
+                    <Notification business_id={business_id} token={token}/>
                     <div className="filter-container">
                         <div className="search">
                             <SearchBar searchText={searchText} setSearchText={setSearchText}/>
