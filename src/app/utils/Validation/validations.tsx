@@ -17,39 +17,6 @@ type ValidationErrors = {
     [field: string]: string;
 }
 
-// export const validate = (formData: { [key: string]: any }, schema: ValidationSchema): ValidationErrors => {
-//     const errors: ValidationErrors = {};
-//
-//     Object.keys(schema).forEach((field) => {
-//         const value = formData[field];
-//         const rules = schema[field];
-//
-//         if (rules.required && isEmpty(value)) {
-//             errors[field] = 'This field is required.';
-//         } else if (value !== undefined) {
-//             if (rules.minLength && value.length < rules.minLength) {
-//                 errors[field] = `Must be at least ${rules.minLength} characters long`;
-//             }
-//
-//             if (rules.maxLength && value.length > rules.maxLength) {
-//                 errors[field] = `Must be no more than ${rules.maxLength} characters long`;
-//             }
-//
-//             if (rules.pattern && !rules.pattern.test(value)) {
-//                 errors[field] = 'Invalid format';
-//             }
-//
-//             if (rules.custom) {
-//                 const customError = rules.custom(value, formData);
-//                 if (customError) {
-//                     errors[field] = customError;
-//                 }
-//             }
-//         }
-//     });
-//     return errors;
-// };
-
 export const validate = (formData: { [key: string]: any }, schema: ValidationSchema): ValidationErrors => {
     const errors: ValidationErrors = {};
 
@@ -309,10 +276,6 @@ export const changePasswordSchema: ValidationSchema = {
         required: true,
         minLength: 5,
     },
-    // confirmPassword: {
-    //     required: true,
-    //     custom: (value, formData) => value !== formData.newPassword ? 'New passwords do not match' : null,
-    // },
 };
 
 

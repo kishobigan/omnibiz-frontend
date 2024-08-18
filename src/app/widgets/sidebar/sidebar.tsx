@@ -50,6 +50,7 @@ function Sidebar({userId, role}: SidebarProps) {
     ];
 
     const higherStaffMenuItems: MenuItem[] = [
+        {label: "Home", icon: faHome, link: `/pages/higher-staff/home/${userId}`},
         {label: "Business", icon: faBriefcase, link: `/pages/higher-staff/business/${userId}`},
         {label: "Settings", icon: faGear, link: `/pages/higher-staff/settings/${userId}`},
     ];
