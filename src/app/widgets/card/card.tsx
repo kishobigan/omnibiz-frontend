@@ -11,23 +11,23 @@ interface CardProps {
     actions?: React.ReactNode;
     className?: string;
     style?: React.CSSProperties;
-    color?:string
+    color?: string
 }
 
-const Card: React.FC<CardProps> = ({ title, logo, body, footer, actions, style, className, color }) => {
+const Card: React.FC<CardProps> = ({title, logo, body, footer, actions, style, className, color}) => {
     return (
-        <div className={`card mb-4 card-custom ${logo ? 'with-logo' : ''} ${className}`} style={{...style, backgroundColor: color}}>
+        <div className={`card mb-4 card-custom ${logo ? 'with-logo' : ''} ${className}`}
+             style={{...style, backgroundColor: color}}>
             <div className="card-body">
                 <div className="header">
-                {logo && (
+                    {logo && (
                         <div className="card-logo-container">
-                            <Image 
-                                src={logo} 
-                                alt="Business Logo" 
-                                className="card-logo" 
-                                width={50} 
-                                height={50} 
-                                layout="fixed" 
+                            <Image
+                                src={logo}
+                                alt="Business Logo"
+                                className="card-logo"
+                                width={50}
+                                height={50}
                             />
                         </div>
                     )}
