@@ -12,7 +12,7 @@ import CreateContractForm from "@/app/components/Supplier/createContract/createC
 import Table from "@/app/widgets/table/Table";
 import Pagination from "@/app/widgets/pagination/pagination";
 import SearchBar from "@/app/widgets/searchBar/searchBar";
-import {formatDate} from "@/app/utils/DateUtils/dateUtils";
+import {formatDate} from "@/app/utils/UtilFunctions/dateUtils";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 

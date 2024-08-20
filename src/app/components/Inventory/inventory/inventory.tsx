@@ -11,7 +11,7 @@ import CreateInventoryForm from "@/app/components/Inventory/createInventoryForm/
 import CreateOrderForm from "@/app/components/Inventory/createOrderForm/createOrder";
 import {useParams} from "next/navigation";
 import api from "@/app/utils/Api/api";
-import {formatDate} from "@/app/utils/DateUtils/dateUtils";
+import {formatDate} from "@/app/utils/UtilFunctions/dateUtils";
 
 interface InventoryItem {
     item: string;

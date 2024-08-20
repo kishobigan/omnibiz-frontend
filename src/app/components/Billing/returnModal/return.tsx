@@ -43,34 +43,80 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
         errors,
     } = FormHandler(() => setIsSubmit(true), validate, returnBillSchema, initValues);
 
+    // useEffect(() => {
+    //     const fetchAllBillData = async () => {
+    //         setLoading(true);
+    //         try {
+    //             const response = await api.get(`billing/list-bill/${business_id}`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`
+    //                 }
+    //             });
+    //             if (response.status === 200) {
+    //                 setAllBillData(response.data);
+    //             }
+    //         } catch (error: any) {
+    //             console.error("Error in fetch all bill data", error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     }
+    //
+    //     fetchAllBillData();
+    // }, []);
+
+    // useEffect(() => {
+    // }, [allBillData]);
+
+    // useEffect(() => {
+    //     if (values.invoice_id) {
+    //         const filteredData = allBillData.filter(bill => bill.invoice_id === values.invoice_id);
+    //         setFilteredBillData(filteredData);
+    //         console.log("FilteredBillData is", filteredData)
+    //     }
+    // }, [values.invoice_id, allBillData]);
+
+    // useEffect(() => {
+    //     if (values.invoice_id) {
+    //         const filteredData = allBillData.filter(bill =>
+    //             bill.invoice_id.trim().toLowerCase() === values.invoice_id.trim().toLowerCase()
+    //         );
+    //         setFilteredBillData(filteredData);
+    //         console.log("FilteredBillData is", filteredData);
+    //     }
+    // }, [values.invoice_id, allBillData]);
+
+    // useEffect(() => {
+    // }, [filteredBillData]);
+    // console.log("invoice_id is", values.invoice_id)
+
     useEffect(() => {
         const fetchAllBillData = async () => {
             setLoading(true);
             try {
-                const response = await api.get(`billing/list-bill/${business_id}`, {
+                const response = await api.get(`/api/business/${business_id}/invoices`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                if (response.status === 200) {
-                    setAllBillData(response.data);
-                }
-            } catch (error: any) {
-                console.error("Error in fetch all bill data", error);
+                setAllBillData(response.data); // Assuming response.data is the array of invoices
+                setFilteredBillData(response.data); // Set the filtered data initially
+            } catch (error) {
+                setErrorMessage('Failed to fetch billing data');
             } finally {
                 setLoading(false);
             }
-        }
+        };
 
         fetchAllBillData();
-    }, []);
+    }, [business_id, token]);
 
-    useEffect(() => {
-        if (values.invoice_id) {
-            const filteredData = allBillData.filter(bill => bill.invoice_id === values.invoice_id);
-            setFilteredBillData(filteredData);
-        }
-    }, [values.invoice_id, allBillData]);
+// Handle the filtering
+    const handleFilterChange = (invoice_id: string) => {
+        const filtered = allBillData.filter((bill) => bill.invoice_id === invoice_id);
+        setFilteredBillData(filtered);
+    };
+
 
     const handleItemSelect = (sales_id: string) => {
         setSelectedSalesIds(prevState =>
@@ -180,23 +226,23 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                             </div>
                         </div>
                     </form>
-                    {filteredBillData.length > 0 && (
-                        <div className="scrollable_table mt-2 mb-4">
-                            <Table
-                                data={filteredBillData}
-                                columns={columns}
-                                actions={actions}
-                                emptyMessage='items'
-                                onRowClick={(row) => handleItemSelect(row.sales_id)}
-                            />
-                            <ConfirmationDialog
-                                show={showConfirm}
-                                onHide={() => setShowConfirm(false)}
-                                onConfirm={confirmSelect}
-                                message={`Do you want to return ${selectedItem} from billing?`}
-                            />
-                        </div>
-                    )}
+                    {/*{filteredBillData.length > 0 && (*/}
+                    <div className="scrollable_table mt-2 mb-4">
+                        <Table
+                            data={filteredBillData}
+                            columns={columns}
+                            actions={actions}
+                            emptyMessage='items'
+                            onRowClick={(row) => handleItemSelect(row.sales_id)}
+                        />
+                        <ConfirmationDialog
+                            show={showConfirm}
+                            onHide={() => setShowConfirm(false)}
+                            onConfirm={confirmSelect}
+                            message={`Do you want to return ${selectedItem} from billing?`}
+                        />
+                    </div>
+                    {/*)}*/}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button

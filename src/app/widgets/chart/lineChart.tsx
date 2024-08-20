@@ -2,7 +2,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
-import {getLast10Days} from "@/app/utils/DateUtils/dateUtils";
+import {getDatesInRange} from "@/app/utils/UtilFunctions/dateUtils";
 
 const ApexChart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
@@ -13,10 +13,13 @@ interface SeriesData {
 
 interface LineChartProps {
     series: SeriesData[];
+    earliestDate: Date;
 }
 
-const LineChart: React.FC<LineChartProps> = ({series}) => {
-    const last10Days = getLast10Days();
+const LineChart: React.FC<LineChartProps> = ({series, earliestDate}) => {
+    const now = new Date();
+    const dateRange = getDatesInRange(earliestDate, now);
+
     const options: ApexOptions = {
         chart: {
             type: 'area',
@@ -24,12 +27,17 @@ const LineChart: React.FC<LineChartProps> = ({series}) => {
             width: '100%',
             height: 'auto',
         },
+        colors: ['#0000FF', '#FF3131', '#0BDA51'],
         dataLabels: {enabled: false},
         stroke: {curve: 'smooth'},
         xaxis: {
-            categories: last10Days,
-            title: {text: 'Last 10 Days'},
+            categories: dateRange,
+            title: {text: 'Date'},
+            tickAmount: 11,
         },
+        yaxis: {
+            title: {text: 'Amount'},
+        }
     };
 
     return (
@@ -40,3 +48,4 @@ const LineChart: React.FC<LineChartProps> = ({series}) => {
 };
 
 export default LineChart;
+
