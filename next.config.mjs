@@ -8,6 +8,10 @@ const nextConfig = {
                 source: '/@:user_id',
                 destination: '/pages/dashboard/:user_id',
             },
+            {
+                source: '/api/:path*',
+                destination: 'http://127.0.0.1:8000/api/:path*',
+            },
         ];
     },
     experimental: {

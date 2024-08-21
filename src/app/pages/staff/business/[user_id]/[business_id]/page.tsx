@@ -35,11 +35,12 @@ const tabItems: TabItem[] = [
 ];
 
 const StaffDashboard = () => {
-    const {user_id, business_id} = useParams();
+    const {user_id} = useParams();
     console.log("user_id", user_id);
-    const token = Cookies.get(ACCESS_TOKEN)
-    const [tabItems, setTabItems] = useState<TabItem[]>([]);
+    const token = Cookies.get(ACCESS_TOKEN) || '';
+    // const [tabItems, setTabItems] = useState<TabItem[]>([]);
     const role = 'staff';
+    const business_id = '72y3r1p5'
 
     useEffect(() => {
         const fetchPermissions = async () => {
@@ -55,7 +56,7 @@ const StaffDashboard = () => {
                     const filteredTabs = allTabItems.filter(tab =>
                         permissions.includes(tab.permission)
                     );
-                    setTabItems(filteredTabs);
+                    // setTabItems(filteredTabs);
                 } else {
                     console.log('Failed to fetch permissions.');
                 }
@@ -69,7 +70,7 @@ const StaffDashboard = () => {
 
     return (
         <ProtectedRoute>
-            <DashboardLayout role={role} tabItems={tabItems}/>
+            <DashboardLayout role={role} tabItems={tabItems} business_id={business_id} token={token}/>
         </ProtectedRoute>
     );
 }

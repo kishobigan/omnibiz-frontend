@@ -6,8 +6,11 @@ import Staff from "@/app/components/Staff/staff/staff";
 import Accounts from "@/app/components/accounts/accounts";
 import ProtectedRoute from "@/app/utils/Routing/ProtectedRoute";
 import DashboardLayout from "@/app/widgets/dashboardLayout/dashboardLayout";
+import Cookies from "js-cookie";
 
 const role = 'higher-staff'
+const business_id = ''
+const token = Cookies.get("accessToken") || '';
 const tabItems = [
     {label: "Billing", component: <Billing/>},
     {label: "Inventory", component: <Inventory/>},
@@ -20,7 +23,7 @@ const DashboardHS = () => {
     return (
         <div className='min-vh-100'>
             <ProtectedRoute>
-                <DashboardLayout role={role} tabItems={tabItems}/>
+                <DashboardLayout role={role} tabItems={tabItems} business_id={business_id} token={token}/>
             </ProtectedRoute>
         </div>
     );
