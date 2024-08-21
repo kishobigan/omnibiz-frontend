@@ -79,7 +79,7 @@ const SignIn: React.FC<ContentProps> = ({
                         if (message === "Welcome, first-time user!") {
                             router.push(`/pages/higher-staff/change-password/${user_id}`);
                         } else if (message === "Welcome back!") {
-                            router.push(`/pages/higher-staff/business/${user_id}`);
+                            router.push(`/pages/higher-staff/home/${user_id}`);
                         }
                     }
                 } else {
