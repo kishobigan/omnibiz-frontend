@@ -1,6 +1,8 @@
+'use client'
 import axios from "axios"
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
+import {router} from "next/client";
 
 const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
@@ -20,6 +22,16 @@ api.interceptors.request.use(
     (error) => {
         return Promise.reject(error);
     }
-)
+);
+
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            router.push('/pages/signin');
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default api

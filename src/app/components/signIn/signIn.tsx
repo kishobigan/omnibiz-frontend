@@ -29,7 +29,6 @@ const SignIn: React.FC<ContentProps> = ({
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
-    const [business_id, setBusiness_id] = useState<string | null>(null);
     const access_token = Cookies.get(ACCESS_TOKEN);
     const refresh_token = Cookies.get(REFRESH_TOKEN);
 
@@ -62,17 +61,15 @@ const SignIn: React.FC<ContentProps> = ({
                     } else if (user_role === 'admin') {
                         router.push(`/pages/admin/dashboard/${user_id}`);
                     } else if (user_role === 'staff') {
-                        // const staffProfileResponse = await api.get(`staff/get-staff-profile/${user_id}`, {
-                        //     headers: {
-                        //         Authorization: `Bearer ${access_token}`,
-                        //     }
-                        // });
-                        // const {business_id} = staffProfileResponse.data;
-                        // setBusiness_id(business_id)
+                        const staffProfileResponse = await api.get(`staff/get-staff-profile/${user_id}/`, {
+                            headers: {
+                                Authorization: `Bearer ${access}`,
+                            },
+                        });
+                        const {business_id} = staffProfileResponse.data;
                         if (message === "Welcome, first-time user!") {
                             router.push(`/pages/staff/change-password/${user_id}`);
                         } else if (message === "Welcome back!") {
-                            const business_id = '72y3r1p5'
                             router.push(`/pages/staff/business/${user_id}/${business_id}`);
                         }
                     } else if (user_role === 'higher-staff') {

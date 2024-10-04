@@ -38,6 +38,7 @@ const StaffDashboard = () => {
     const {user_id} = useParams();
     console.log("user_id", user_id);
     const token = Cookies.get(ACCESS_TOKEN) || '';
+    console.log("token: ", token)
     // const [tabItems, setTabItems] = useState<TabItem[]>([]);
     const role = 'staff';
     const business_id = '72y3r1p5'
@@ -48,7 +49,7 @@ const StaffDashboard = () => {
                 const response = await api.get(`staff/list-staff-access/${user_id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                    },
+                    }
                 });
                 if (response.status === 200) {
                     const permissions = response.data.permissions;
