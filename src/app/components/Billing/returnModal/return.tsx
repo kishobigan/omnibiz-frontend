@@ -68,12 +68,31 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
     }, [allBillData]);
     console.log("all bill data", allBillData)
 
+    // const handleFilterChange = (invoice_id: string) => {
+    //     const filtered = allBillData.filter(bill =>
+    //         bill.invoice_id.replace(/-/g, '').includes(invoice_id)
+    //     );
+    //     console.log("handleFilterChange function invoice_id", invoice_id);
+    //     console.log("handleFilterChange function filtered bill data", filtered);
+    //     setFilteredBillData(filtered);
+    // };
+
     const handleFilterChange = (invoice_id: string) => {
-        const filtered = allBillData.filter(bill => bill.invoice_id.includes(invoice_id));
+        const filtered = allBillData
+            .filter(bill => bill.invoice_id.replace(/-/g, '').includes(invoice_id))
+            .flatMap(bill =>
+                bill.items.map((item: any) => ({
+                    sales_id: item.sales_id,
+                    item: item.item,
+                    quantity: item.quantity,
+                    unitPrice: parseFloat(item.price),
+                    amount: parseFloat(item.price) * parseInt(item.quantity, 10),
+                }))
+            );
+
         console.log("handleFilterChange function invoice_id", invoice_id);
-        console.log("handleFilterChange function bill data", filtered);
+        console.log("handleFilterChange function filtered bill data", filtered);
         setFilteredBillData(filtered);
-        // setAllBillData(filtered);
     };
 
     useEffect(() => {
@@ -82,15 +101,17 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
     console.log("filtered bill data", filteredBillData)
 
     const handleItemSelect = (sales_id: string) => {
-        setSelectedSalesIds(prevState =>
-            prevState.includes(sales_id)
-                ? prevState.filter(id => id !== sales_id)
-                : [...prevState, sales_id]
+        setSelectedSalesIds((prevSelected) =>
+            prevSelected.includes(sales_id)
+                ? prevSelected.filter((id) => id !== sales_id)
+                : [...prevSelected, sales_id]
         );
     };
+    console.log("selected sales ids: ", selectedSalesIds)
 
     useEffect(() => {
         if (isSubmit && selectedSalesIds.length > 0) {
+            console.log("selected sales ids: ", selectedSalesIds)
             const submitReturnRequests = async () => {
                 setLoading(true);
                 try {
@@ -105,6 +126,11 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                                 Authorization: `Bearer ${token}`
                             }
                         });
+                        if (response.status === 201) {
+                            console.log(`Item with sales_id ${sales_id} returned successfully.`);
+                        } else {
+                            console.error(`Error returning item with sales_id ${sales_id}`);
+                        }
                     }
                 } catch (error: any) {
                     console.error("Error in returning items", error);
@@ -133,18 +159,20 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
     };
 
     const columns = [
-        {key: 'invoice_id', header: 'Invoice id'},
+        {key: 'sales_id', header: 'Sales ID'},
+        {key: 'item', header: 'Product'},
         {key: 'quantity', header: 'Quantity'},
         {key: 'unitPrice', header: 'Unit Price'},
         {key: 'amount', header: 'Amount'},
-        {key: 'action', header: 'Action'},
+        {key: 'select', header: 'Select'},
+        // {key: 'action', header: 'Action'},
     ];
 
     const actions: any[] = [
-        {
-            icon: <FontAwesomeIcon icon={faTrash} style={{color: 'red'}}/>,
-            onClick: handleItemSelect,
-        }
+        // {
+        //     icon: <FontAwesomeIcon icon={faTrash} style={{color: 'red'}}/>,
+        //     onClick: handleItemSelect,
+        // }
     ];
 
     return (
@@ -154,6 +182,8 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                 onHide={() => {
                     initForm(initValues);
                     onHide();
+                    setFilteredBillData([]);
+                    setSelectedSalesIds([]);
                     setErrorMessage(null);
                 }}
                 size="lg"
@@ -190,14 +220,24 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                             </div>
                         </div>
                     </form>
-                    {allBillData.length > 0 && (
+                    {filteredBillData.length > 0 && (
                         <div className="scrollable_table mt-2 mb-4">
                             <Table
-                                data={allBillData}
+                                // data={filteredBillData}
+                                data={filteredBillData.map((row) => ({
+                                    ...row,
+                                    select: (
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSalesIds.includes(row.sales_id)}
+                                            onChange={() => handleItemSelect(row.sales_id)}
+                                        />
+                                    ),
+                                }))}
                                 columns={columns}
                                 actions={actions}
                                 emptyMessage='items'
-                                onRowClick={(row) => handleItemSelect(row.sales_id)}
+                                // onRowClick={(row) => handleItemSelect(row.sales_id)}
                             />
                             <ConfirmationDialog
                                 show={showConfirm}
@@ -214,6 +254,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                         onClick={() => {
                             initForm(initValues)
                             onHide()
+                            setFilteredBillData([]);
                             setErrorMessage(null)
                         }}
                     >
