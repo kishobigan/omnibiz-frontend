@@ -10,7 +10,7 @@ import api from "@/app/utils/Api/api";
 import Input from "@/app/widgets/input/Input";
 import Button from "@/app/widgets/Button/Button";
 import Table from "@/app/widgets/table/Table";
-import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
+import Loader from "@/app/widgets/loader/loader";
 
 interface ReturnBillProps {
     show: boolean;
@@ -24,6 +24,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
     const [filteredBillData, setFilteredBillData] = useState<any[]>([]);
     const [selectedSalesIds, setSelectedSalesIds] = useState<string[]>([]);
     const [invoiceId, setInvoiceId] = useState<string>('');
+    const [searchTriggered, setSearchTriggered] = useState<boolean>(false)
     const token = Cookies.get(ACCESS_TOKEN);
     const {business_id} = useParams();
 
@@ -34,42 +35,44 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
     const {
         handleChange,
         initForm,
-        values,
         errors,
     } = FormHandler(() => {
     }, validate, returnBillSchema, initValues);
 
-    useEffect(() => {
-        const fetchAllBillData = async () => {
-            setLoading(true);
-            try {
-                const response = await api.get(`billing/list-bill/${business_id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                setAllBillData(response.data);
-            } catch (error) {
-                setErrorMessage('Failed to fetch billing data');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchAllBillData = async () => {
+        setLoading(true);
+        try {
+            const response = await api.get(`billing/list-bill/${business_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setAllBillData(response.data);
+        } catch (error) {
+            setErrorMessage('Failed to fetch billing data');
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchAllBillData();
     }, [business_id, token]);
 
     const handleFilterChange = (invoice_id: string) => {
+        setSearchTriggered(true)
         const filtered = allBillData
             .filter(bill => bill.invoice_id.replace(/-/g, '').includes(invoice_id))
             .flatMap(bill =>
-                bill.items.map((item: any) => ({
-                    sales_id: item.sales_id,
-                    item: item.item,
-                    quantity: item.quantity,
-                    unitPrice: parseFloat(item.price),
-                    amount: parseFloat(item.price) * parseInt(item.quantity, 10),
-                }))
+                bill.items.filter((item: any) => item.return_status === false)
+                    .map((item: any) => ({
+                        sales_id: item.sales_id,
+                        item: item.item,
+                        quantity: item.quantity,
+                        unitPrice: parseFloat(item.price),
+                        amount: parseFloat(item.price) * parseInt(item.quantity, 10),
+                        return_status: item.return_status
+                    }))
             );
 
         setFilteredBillData(filtered);
@@ -110,8 +113,11 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
             setInvoiceId('')
             setSelectedSalesIds([])
             setFilteredBillData([])
+            setSearchTriggered(false)
+            await fetchAllBillData();
         } catch (error: any) {
             console.error("Error in returning items", error);
+            setErrorMessage("Something went wrong in return item")
         } finally {
             setLoading(false);
             onHide();
@@ -119,12 +125,11 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
     };
 
     const columns = [
-        {key: 'sales_id', header: 'Sales ID'},
         {key: 'item', header: 'Product'},
         {key: 'quantity', header: 'Quantity'},
         {key: 'unitPrice', header: 'Unit Price'},
         {key: 'amount', header: 'Amount'},
-        {key: 'select', header: 'Select'},
+        {key: 'select', header: 'Select to return'},
     ];
 
     return (
@@ -137,6 +142,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                     setFilteredBillData([]);
                     setSelectedSalesIds([]);
                     setInvoiceId('')
+                    setSearchTriggered(false)
                     setErrorMessage(null);
                 }}
                 size="lg"
@@ -172,7 +178,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                         </div>
                     </form>
 
-                    {filteredBillData.length > 0 && (
+                    {filteredBillData.length > 0 ? (
                         <div className="scrollable_table mt-2 mb-4">
                             <Table
                                 data={filteredBillData.map((row) => ({
@@ -189,7 +195,10 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                                 emptyMessage='No items found'
                             />
                         </div>
+                    ) : searchTriggered && (
+                        <p className='fw-bold text-danger'>No items available for return</p>
                     )}
+                    {errorMessage && <p className='text-danger fw-bold'>{errorMessage}</p>}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -199,6 +208,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                             onHide();
                             setFilteredBillData([]);
                             setInvoiceId('')
+                            setSearchTriggered(false)
                             setErrorMessage(null);
                         }}
                     >
@@ -208,7 +218,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                         variant="dark"
                         onClick={handleReturnSubmit}
                     >
-                        Return Items
+                        {loading ? <Loader/> : "Return Items"}
                     </Button>
                 </Modal.Footer>
             </Modal>
