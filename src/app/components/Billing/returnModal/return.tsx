@@ -11,8 +11,6 @@ import Input from "@/app/widgets/input/Input";
 import Button from "@/app/widgets/Button/Button";
 import Table from "@/app/widgets/table/Table";
 import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
 interface ReturnBillProps {
     show: boolean;
@@ -21,13 +19,11 @@ interface ReturnBillProps {
 
 const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [allBillData, setAllBillData] = useState<any[]>([]);
     const [filteredBillData, setFilteredBillData] = useState<any[]>([]);
     const [selectedSalesIds, setSelectedSalesIds] = useState<string[]>([]);
-    const [showConfirm, setShowConfirm] = useState<boolean>(false);
-    const [selectedItem, setSelectedItem] = useState<string | null>(null);
+    const [invoiceId, setInvoiceId] = useState<string>('');
     const token = Cookies.get(ACCESS_TOKEN);
     const {business_id} = useParams();
 
@@ -37,11 +33,11 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
 
     const {
         handleChange,
-        handleSubmit,
         initForm,
         values,
         errors,
-    } = FormHandler(() => setIsSubmit(true), validate, returnBillSchema, initValues);
+    } = FormHandler(() => {
+    }, validate, returnBillSchema, initValues);
 
     useEffect(() => {
         const fetchAllBillData = async () => {
@@ -53,7 +49,6 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                     }
                 });
                 setAllBillData(response.data);
-                // setFilteredBillData(response.data);
             } catch (error) {
                 setErrorMessage('Failed to fetch billing data');
             } finally {
@@ -63,19 +58,6 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
 
         fetchAllBillData();
     }, [business_id, token]);
-
-    useEffect(() => {
-    }, [allBillData]);
-    console.log("all bill data", allBillData)
-
-    // const handleFilterChange = (invoice_id: string) => {
-    //     const filtered = allBillData.filter(bill =>
-    //         bill.invoice_id.replace(/-/g, '').includes(invoice_id)
-    //     );
-    //     console.log("handleFilterChange function invoice_id", invoice_id);
-    //     console.log("handleFilterChange function filtered bill data", filtered);
-    //     setFilteredBillData(filtered);
-    // };
 
     const handleFilterChange = (invoice_id: string) => {
         const filtered = allBillData
@@ -90,15 +72,8 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                 }))
             );
 
-        console.log("handleFilterChange function invoice_id", invoice_id);
-        console.log("handleFilterChange function filtered bill data", filtered);
         setFilteredBillData(filtered);
     };
-
-    useEffect(() => {
-        console.log("Filtered Bill Data updated:", filteredBillData);
-    }, [filteredBillData]);
-    console.log("filtered bill data", filteredBillData)
 
     const handleItemSelect = (sales_id: string) => {
         setSelectedSalesIds((prevSelected) =>
@@ -107,55 +82,40 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                 : [...prevSelected, sales_id]
         );
     };
-    console.log("selected sales ids: ", selectedSalesIds)
 
-    useEffect(() => {
-        if (isSubmit && selectedSalesIds.length > 0) {
-            console.log("selected sales ids: ", selectedSalesIds)
-            const submitReturnRequests = async () => {
-                setLoading(true);
-                try {
-                    const requestData = {
-                        business_id: business_id,
-                        invoice_id: values.invoice_id,
-                    };
-
-                    for (const sales_id of selectedSalesIds) {
-                        const response = await api.post(`billing/return-item/${sales_id}`, requestData, {
-                            headers: {
-                                Authorization: `Bearer ${token}`
-                            }
-                        });
-                        if (response.status === 201) {
-                            console.log(`Item with sales_id ${sales_id} returned successfully.`);
-                        } else {
-                            console.error(`Error returning item with sales_id ${sales_id}`);
-                        }
-                    }
-                } catch (error: any) {
-                    console.error("Error in returning items", error);
-                } finally {
-                    setLoading(false);
-                    setIsSubmit(false);
-                }
+    const handleReturnSubmit = async () => {
+        if (selectedSalesIds.length === 0) {
+            console.log("No items selected for return");
+            return;
+        }
+        setLoading(true);
+        try {
+            const requestData = {
+                business_id: business_id,
+                invoice_id: invoiceId,
             };
 
-            submitReturnRequests();
+            for (const sales_id of selectedSalesIds) {
+                const response = await api.put(`billing/return-item/${sales_id}`, requestData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.status === 201) {
+                    console.log(`Item with sales_id ${sales_id} returned successfully.`);
+                } else {
+                    console.error(`Error returning item with sales_id ${sales_id}`);
+                }
+            }
+            setInvoiceId('')
+            setSelectedSalesIds([])
+            setFilteredBillData([])
+        } catch (error: any) {
+            console.error("Error in returning items", error);
+        } finally {
+            setLoading(false);
+            onHide();
         }
-    }, [isSubmit]);
-
-    const handleFormSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.preventDefault();
-        handleSubmit({
-            preventDefault: () => {
-            },
-        } as React.FormEvent<HTMLFormElement>);
-        console.log("invoice id is", values.invoice_id)
-        handleFilterChange(values.invoice_id);
-    };
-
-    const confirmSelect = () => {
-        setShowConfirm(false)
     };
 
     const columns = [
@@ -165,14 +125,6 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
         {key: 'unitPrice', header: 'Unit Price'},
         {key: 'amount', header: 'Amount'},
         {key: 'select', header: 'Select'},
-        // {key: 'action', header: 'Action'},
-    ];
-
-    const actions: any[] = [
-        // {
-        //     icon: <FontAwesomeIcon icon={faTrash} style={{color: 'red'}}/>,
-        //     onClick: handleItemSelect,
-        // }
     ];
 
     return (
@@ -184,6 +136,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                     onHide();
                     setFilteredBillData([]);
                     setSelectedSalesIds([]);
+                    setInvoiceId('')
                     setErrorMessage(null);
                 }}
                 size="lg"
@@ -197,7 +150,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <form className='row' onSubmit={handleSubmit}>
+                    <form className='row'>
                         <div className="col-md-6">
                             <div className="form-group">
                                 <Input
@@ -205,25 +158,23 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                                     placeholder="Enter invoice id"
                                     type="text"
                                     name="invoice_id"
-                                    value={values.invoice_id}
-                                    onChange={handleChange}
+                                    value={invoiceId}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setInvoiceId(value);
+                                        handleChange(e);
+                                        handleFilterChange(value);
+                                    }}
                                 />
                                 {errors.invoice_id &&
                                     <span className="error text-danger">{errors.invoice_id}</span>}
                             </div>
                         </div>
-                        <div className='col-md-6'>
-                            <div>
-                                <Button variant="dark" className='mt-4' type='submit' onClick={handleFormSubmit}>
-                                    Get invoice
-                                </Button>
-                            </div>
-                        </div>
                     </form>
+
                     {filteredBillData.length > 0 && (
                         <div className="scrollable_table mt-2 mb-4">
                             <Table
-                                // data={filteredBillData}
                                 data={filteredBillData.map((row) => ({
                                     ...row,
                                     select: (
@@ -235,15 +186,7 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                                     ),
                                 }))}
                                 columns={columns}
-                                actions={actions}
-                                emptyMessage='items'
-                                // onRowClick={(row) => handleItemSelect(row.sales_id)}
-                            />
-                            <ConfirmationDialog
-                                show={showConfirm}
-                                onHide={() => setShowConfirm(false)}
-                                onConfirm={confirmSelect}
-                                message={`Do you want to return ${selectedItem} from billing?`}
+                                emptyMessage='No items found'
                             />
                         </div>
                     )}
@@ -252,17 +195,18 @@ const ReturnModal: React.FC<ReturnBillProps> = ({show, onHide}) => {
                     <Button
                         variant="light"
                         onClick={() => {
-                            initForm(initValues)
-                            onHide()
+                            initForm(initValues);
+                            onHide();
                             setFilteredBillData([]);
-                            setErrorMessage(null)
+                            setInvoiceId('')
+                            setErrorMessage(null);
                         }}
                     >
                         Cancel
                     </Button>
                     <Button
                         variant="dark"
-                        onClick={() => setIsSubmit(true)}
+                        onClick={handleReturnSubmit}
                     >
                         Return Items
                     </Button>
