@@ -6,10 +6,11 @@ import {useParams} from "next/navigation";
 
 interface LayoutProps {
     children: ReactNode;
+    business_id: string;
     role: 'owner' | 'admin' | 'staff' | 'higher-staff';
 }
 
-function Layout({children, role}: LayoutProps) {
+function Layout({children, business_id, role}: LayoutProps) {
     const {user_id} = useParams();
     const userId = Array.isArray(user_id) ? user_id[0] : user_id;
     return (
@@ -29,7 +30,7 @@ function Layout({children, role}: LayoutProps) {
                             </button>
                         </div>
                         <div className='offcanvas-body'>
-                            <Sidebar userId={userId} role={role}/>
+                            <Sidebar userId={userId} business_id={business_id} role={role}/>
                         </div>
                     </div>
                 </div>

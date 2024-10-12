@@ -67,6 +67,7 @@ const SignIn: React.FC<ContentProps> = ({
                             },
                         });
                         const {business_id} = staffProfileResponse.data;
+                        console.log("staff business id", business_id)
                         if (message === "Welcome, first-time user!") {
                             router.push(`/pages/staff/change-password/${user_id}`);
                         } else if (message === "Welcome back!") {
