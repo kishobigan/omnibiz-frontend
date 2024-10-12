@@ -25,10 +25,11 @@ interface MenuItem {
 
 interface SidebarProps {
     userId: string;
+    business_id: string;
     role: 'owner' | 'admin' | 'staff' | 'higher-staff';
 }
 
-function Sidebar({userId, role}: SidebarProps) {
+function Sidebar({userId, business_id, role}: SidebarProps) {
     const currentPath = usePathname();
     const {logout} = useLogout();
 
@@ -45,7 +46,8 @@ function Sidebar({userId, role}: SidebarProps) {
     ];
 
     const staffMenuItems: MenuItem[] = [
-        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${userId}/72y3r1p5`},
+        // {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${userId}/72y3r1p5`},
+        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${userId}/${business_id}`},
         {label: "Settings", icon: faGear, link: `/pages/staff/settings/${userId}`},
     ];
 
