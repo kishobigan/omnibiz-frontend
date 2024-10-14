@@ -11,6 +11,7 @@ function AdminDashboard() {
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showAccessModal, setShowAccessModal] = useState(false);
     const role = 'admin'
+    const business_id = ''
 
     const data = [
         {
@@ -33,7 +34,7 @@ function AdminDashboard() {
 
     return (
         <div className='vh-100'>
-            <Layout role={role}>
+            <Layout role={role} business_id={business_id}>
                 <div className='container-fluid row mt-5 overflow-auto'>
                     <div className='d-flex justify-content-end mb-5'>
                         <Button

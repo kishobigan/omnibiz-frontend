@@ -48,6 +48,9 @@ const UpdateOwner: React.FC = () => {
             if (response.status === 200) {
                 setSuccessMessage("Update successfully.");
                 setIsVisible(true);
+                setTimeout(() => {
+                    setIsVisible(false);
+                }, 2000);
             } else {
                 console.error(response.data.message);
                 setLoading(false);
@@ -88,7 +91,7 @@ const UpdateOwner: React.FC = () => {
         if (successMessage) {
             const timer = setTimeout(() => {
                 setIsVisible(false);
-            }, 3000);
+            }, 2000);
 
             return () => clearTimeout(timer);
         }

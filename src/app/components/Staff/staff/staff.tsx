@@ -9,6 +9,7 @@ import {useParams} from "next/navigation";
 import api from "@/app/utils/Api/api";
 import Button from "@/app/widgets/Button/Button";
 import AddStaffForm from "@/app/components/Staff/createStaffForm/createStaff";
+import FeatherIcon from "feather-icons-react";
 
 function Staff() {
     const [staffData, setStaffData] = useState([]);
@@ -100,6 +101,7 @@ function Staff() {
                     className="me-2 buttonWithPadding"
                     type="button"
                 >
+                    <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
                     Create Staff
                 </Button>
             </div>

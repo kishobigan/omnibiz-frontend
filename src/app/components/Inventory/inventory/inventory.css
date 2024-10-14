@@ -1,46 +1,45 @@
-
 .button-container .buttonWithPadding {
-  margin: 10px; 
-  padding: 8px 16px; 
+    margin: 10px;
+    padding: 8px 16px;
 }
 
 .button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
 }
 
 .search-and-tabs-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 10px;
-  margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .tabs-container {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .tab {
-  flex: 0 0 150px; 
-  padding: 10px 0;
-  text-align: center;
-  cursor: pointer;
-  font-size: 16px; 
-  color: #333; 
-  transition: color 0.5s;
-  border-bottom: 2px solid #d5d4d4;
+    flex: 0 0 150px;
+    padding: 10px 0;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    transition: color 0.5s;
+    border-bottom: 2px solid #d5d4d4;
 }
 
 .tab.active {
-  font-weight: bold;
-  color: black; 
-  border-bottom: 3px solid #178932;
+    font-weight: bold;
+    color: black;
+    border-bottom: 3px solid #178932;
 }
 
 .tab:hover {
-  color: #000;
+    color: #000;
 }

@@ -12,6 +12,7 @@ import CreateOrderForm from "@/app/components/Inventory/createOrderForm/createOr
 import {useParams} from "next/navigation";
 import api from "@/app/utils/Api/api";
 import {formatDate} from "@/app/utils/UtilFunctions/dateUtils";
+import FeatherIcon from "feather-icons-react";
 
 interface InventoryItem {
     item: string;
@@ -170,9 +171,10 @@ function Inventory() {
             <div className="button-container">
                 <Button
                     onClick={() => setShowOrderModal(true)}
-                    variant="light"
+                    variant="dark"
                     className="buttonWithPadding"
                 >
+                    <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
                     Create Order
                 </Button>
                 <Button
@@ -184,10 +186,10 @@ function Inventory() {
                     className="me-2 buttonWithPadding"
                     type="button"
                 >
+                    <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
                     Create Inventory
                 </Button>
             </div>
-
             <div className="search-and-tabs-container">
                 <div className="tabs-container">
                     <div
@@ -207,7 +209,7 @@ function Inventory() {
             </div>
 
             {activeTab === "Inventory" && (
-                <>
+                <div>
                     <Table
                         data={currentInventoryData}
                         columns={inventoryColumns}
@@ -221,17 +223,16 @@ function Inventory() {
                         totalPages={totalPages}
                         onPageChange={handlePageChange}
                     />
-                </>
+                </div>
             )}
 
             {activeTab === "Order" && (
-                <>
+                <div>
                     <Table
                         data={currentOrderData}
                         columns={orderColumns}
                         currentPage={currentPage}
                         rowsPerPage={rowsPerPage}
-                        // actions={actions}
                         emptyMessage="No orders found"
                     />
                     <Pagination
@@ -239,7 +240,7 @@ function Inventory() {
                         totalPages={Math.ceil(orderData.length / rowsPerPage)}
                         onPageChange={handlePageChange}
                     />
-                </>
+                </div>
             )}
 
             <CreateInventoryForm
