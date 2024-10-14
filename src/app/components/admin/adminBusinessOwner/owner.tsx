@@ -135,7 +135,7 @@ const AdminBusinessOwner: React.FC = () => {
     const totalPages = Math.ceil(filteredOwnerData.length / rowsPerPage);
 
     return (
-        <Layout role={role}>
+        <Layout role={role} business_id={business_id}>
             <div className='container-fluid row mt-4'>
                 <div className="header-container">
                     <div className='topic'>

@@ -10,6 +10,7 @@ import api from "@/app/utils/Api/api";
 import Loader from "@/app/widgets/loader/loader";
 import Table from "@/app/widgets/table/Table";
 import InvoiceModal from "@/app/components/Billing/InvoiceModal/invoiceModal";
+import FeatherIcon from "feather-icons-react";
 
 interface PaymentProps {
     subtotal: string;
@@ -352,9 +353,14 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
                         </div>
                         {loading ? <Loader/> : (
                             <div>
-                                <Button type='submit' variant='dark' className='mt-2'>Submit Bill</Button>
-                                <Button type='button' variant='dark' className='mt-2 ms-5' onClick={saveDraft}>Save as
-                                    Draft</Button>
+                                <Button type='submit' variant='dark' className='mt-2'>
+                                    <FeatherIcon className={"action-icons me-2"} icon={"file-text"}/>
+                                    Submit Bill
+                                </Button>
+                                <Button type='button' variant='dark' className='mt-2 ms-5' onClick={saveDraft}>
+                                    <FeatherIcon className={"action-icons me-2"} icon={"paperclip"}/>
+                                    Save as Draft
+                                </Button>
                             </div>
                         )}
                         {errorMessage && <p className="error">{errorMessage}</p>}

@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
 import ReturnModal from "@/app/components/Billing/returnModal/return";
+import FeatherIcon from "feather-icons-react";
 
 interface Product {
     itemId: number;
@@ -182,6 +183,7 @@ const Billing: React.FC = () => {
                                     }}
                                     type="button"
                                 >
+                                    <FeatherIcon className={"action-icons me-2"} icon={"rotate-ccw"}/>
                                     Return Bill
                                 </Button>
                             </div>
@@ -216,8 +218,15 @@ const Billing: React.FC = () => {
                                     type="text"
                                 />
                                 <div className='d-flex align-items-center'>
-                                    <Button type='submit' variant='dark' className='mt-2'>Create
-                                        Customer
+                                    <Button type='submit' variant='dark' className='mt-2'>
+                                        <span className="d-sm-flex d-md-none">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Customer
+                                        </span>
+                                        <span className="d-none d-md-block">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Create Customer
+                                        </span>
                                     </Button>
                                 </div>
                             </div>
@@ -253,8 +262,14 @@ const Billing: React.FC = () => {
                                 />
                                 <div className='d-flex align-items-center'>
                                     <Button type='submit' variant='dark'>
-                                        <span className="d-sm-flex d-md-none">Add</span>
-                                        <span className="d-none d-md-block">Add to Bill</span>
+                                        <span className="d-sm-flex d-md-none">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Add
+                                        </span>
+                                        <span className="d-none d-md-block">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Add to Bill
+                                        </span>
                                     </Button>
                                 </div>
                             </div>
