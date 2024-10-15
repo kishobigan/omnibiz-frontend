@@ -7,6 +7,7 @@ interface DropdownProps {
     // onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     name: string;
+    readOnly?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({label, options, value, onChange, name}) => {
