@@ -9,6 +9,7 @@ const Transaction: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 10;
     const role = 'admin'
+    const business_id = ''
 
     const columns = [
         {key: 'id', header: 'Id'},
@@ -17,6 +18,7 @@ const Transaction: React.FC = () => {
         {key: 'date', header: 'Date & Time'},
         {key: 'debit', header: 'Debit'},
     ];
+
     const data = [
         {id: 1, owner: 'John Doe', description: 'Lorem ipsum dolor sit amet', date: '2024-06-03 10:00:00', debit: 100},
         {
@@ -80,8 +82,8 @@ const Transaction: React.FC = () => {
     const totalPages = Math.ceil(data.length / rowsPerPage);
 
     return (
-        <div className='container-fluid row vh-100'>
-            <Layout role={role}>
+        <Layout role={role} business_id={business_id}>
+            <div className='container-fluid row mt-2'>
                 <div className="header-container">
                     <div className='topic'>
                         <h5><strong>Transactions</strong></h5>
@@ -100,8 +102,8 @@ const Transaction: React.FC = () => {
                         onPageChange={setCurrentPage}
                     />
                 </div>
-            </Layout>
-        </div>
+            </div>
+        </Layout>
     );
 };
 

@@ -7,52 +7,62 @@ import FormHandler from "@/app/utils/FormHandler/Formhandler";
 import {validate, createOwnerSchema} from "@/app/utils/Validation/validations";
 import api from "@/app/utils/Api/api";
 import Cookies from "js-cookie";
-import {useRouter, useParams} from "next/navigation";
+import {useParams} from "next/navigation";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import Loader from "@/app/widgets/loader/loader";
 
 const UpdateOwner: React.FC = () => {
-    const router = useRouter();
     const {user_id} = useParams();
     const [loading, setLoading] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
+    const [isVisible, setIsVisible] = useState(true);
 
-    const validateForm = (values: { [key: string]: any }) => {
-        return validate(values, createOwnerSchema);
-    };
+    const {
+        handleChange,
+        handleSubmit,
+        values,
+        errors,
+        setValue,
+    } = FormHandler(() => {
+    }, validate, createOwnerSchema);
 
-    const {handleChange, handleSubmit, values, errors, setValue} = FormHandler(
-        async () => {
-            setLoading(true);
-            try {
-                console.log("update ownere button clicked")
-                const token = Cookies.get(ACCESS_TOKEN);
-                const response = await api.put(
-                    `owner/updateOwner/${user_id}/`,
-                    {
-                        first_name: values.firstname,
-                        last_name: values.lastname,
-                        phone_number: values.phone,
+    const handleUpdateOwner = async () => {
+        setLoading(true);
+        try {
+            console.log("update owner button clicked")
+            const token = Cookies.get(ACCESS_TOKEN);
+            const response = await api.put(
+                `owner/updateOwner/${user_id}/`,
+                {
+                    first_name: values.firstname,
+                    last_name: values.lastname,
+                    phone_number: values.phone,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                if (response.status === 200) {
-                    // router.push("/some-success-page");
-                } else {
-                    console.error(response.data.message);
-                    setLoading(false);
                 }
-            } catch (error) {
-                console.error("Error in updating owner", error);
+            );
+            if (response.status === 200) {
+                setSuccessMessage("Update successfully.");
+                setIsVisible(true);
+                setTimeout(() => {
+                    setIsVisible(false);
+                }, 2000);
+            } else {
+                console.error(response.data.message);
                 setLoading(false);
             }
-        },
-        validateForm,
-        createOwnerSchema
-    );
+        } catch (error: any) {
+            console.error("Error in updating owner", error);
+            setLoading(false);
+            setErrorMessage("Oops! Something went wrong")
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchOwnerData = async () => {
@@ -77,11 +87,27 @@ const UpdateOwner: React.FC = () => {
         fetchOwnerData();
     }, [user_id]);
 
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => {
+                setIsVisible(false);
+            }, 2000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
+
     const errorStyle = {
         color: "red",
         fontSize: "13px",
         marginTop: "5px",
         marginBottom: "10px",
+    };
+
+    const fadeStyles = {
+        opacity: isVisible ? 1 : 0,
+        transition: "opacity 1s ease-in-out",
+        height: isVisible ? "auto" : 0,
     };
 
     return (
@@ -130,9 +156,18 @@ const UpdateOwner: React.FC = () => {
                     type="text"
                 />
                 {errors.phone && <span style={errorStyle}>{errors.phone}</span>}
-                <Button type="button" variant="dark">
+                <Button type="submit" variant="dark" onClick={handleUpdateOwner}>
                     {loading ? <Loader/> : "Update Owner"}
                 </Button>
+                {successMessage && (
+                    <p
+                        className="text-primary fw-bold"
+                        style={fadeStyles}
+                    >
+                        {successMessage}
+                    </p>
+                )}
+                {errorMessage && <p className='text-danger fw-bold'>{errorMessage}</p>}
             </div>
         </form>
     );

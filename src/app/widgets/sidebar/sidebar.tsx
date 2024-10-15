@@ -11,6 +11,8 @@ import {
     faBriefcase,
     faSignOutAlt,
     faUsers,
+    faMoneyBillTransfer,
+    faExchangeAlt, faDollarSign
 } from '@fortawesome/free-solid-svg-icons';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
 import {usePathname} from 'next/navigation';
@@ -25,10 +27,11 @@ interface MenuItem {
 
 interface SidebarProps {
     userId: string;
+    business_id: string;
     role: 'owner' | 'admin' | 'staff' | 'higher-staff';
 }
 
-function Sidebar({userId, role}: SidebarProps) {
+function Sidebar({userId, business_id, role}: SidebarProps) {
     const currentPath = usePathname();
     const {logout} = useLogout();
 
@@ -42,10 +45,11 @@ function Sidebar({userId, role}: SidebarProps) {
         {label: "Home", icon: faHome, link: `/pages/admin/dashboard/${userId}`},
         {label: "Business Owners", icon: faUsers, link: `/pages/admin/owners/${userId}`},
         {label: "Business", icon: faBriefcase, link: `/pages/admin/business/${userId}`},
+        {label: "Transactions", icon: faExchangeAlt, link: `/pages/admin/transaction/${userId}`},
     ];
 
     const staffMenuItems: MenuItem[] = [
-        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${userId}/72y3r1p5`},
+        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${userId}/${business_id}`},
         {label: "Settings", icon: faGear, link: `/pages/staff/settings/${userId}`},
     ];
 
@@ -71,7 +75,6 @@ function Sidebar({userId, role}: SidebarProps) {
     }
 
     const menuItems = getMenuItems(role);
-
     const logoutItem: MenuItem = {label: "Log out", icon: faSignOutAlt, onClick: logout};
 
     return (

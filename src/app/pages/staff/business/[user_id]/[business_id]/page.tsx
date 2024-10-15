@@ -35,13 +35,13 @@ const tabItems: TabItem[] = [
 ];
 
 const StaffDashboard = () => {
-    const {user_id} = useParams();
+    const {user_id, business_id} = useParams() as { user_id: string, business_id: string };
     console.log("user_id", user_id);
     const token = Cookies.get(ACCESS_TOKEN) || '';
     console.log("token: ", token)
     // const [tabItems, setTabItems] = useState<TabItem[]>([]);
     const role = 'staff';
-    const business_id = '72y3r1p5'
+    // const business_id = '72y3r1p5'
 
     useEffect(() => {
         const fetchPermissions = async () => {

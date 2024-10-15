@@ -11,11 +11,12 @@ import InputDropdown from "@/app/widgets/productInput/inputDropdown";
 import {billingSchema, validate} from "@/app/utils/Validation/validations";
 import './billing.css'
 import api from "@/app/utils/Api/api";
-import {useParams, useRouter} from "next/navigation";
+import {useParams} from "next/navigation";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
 import ReturnModal from "@/app/components/Billing/returnModal/return";
+import FeatherIcon from "feather-icons-react";
 
 interface Product {
     itemId: number;
@@ -28,14 +29,12 @@ const Billing: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [tableData, setTableData] = useState<any[]>([]);
-    const [billingData, setBillingData] = useState<any>(null);
     const [customerResponse, setCustomerResponse] = useState<any>(null);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
     const [selectedRow, setSelectedRow] = useState<any>(null);
     const [selectedItem, setSelectedItem] = useState<string>('');
     const [showReturnModal, setShowReturnModal] = useState<boolean>(false)
     const {business_id} = useParams()
-    const router = useRouter()
     const token = Cookies.get(ACCESS_TOKEN);
 
     useEffect(() => {
@@ -112,7 +111,8 @@ const Billing: React.FC = () => {
             }
         },
         validate,
-        billingSchema
+        billingSchema,
+        {customerName: '', phoneNumber: '', address: ''}
     );
 
     const {
@@ -152,7 +152,8 @@ const Billing: React.FC = () => {
             }
         },
         validate,
-        billingSchema
+        billingSchema,
+        {item: '', quantity: '', discount: ''}
     );
 
     const handleDropdownChange = (name: string, value: string) => {
@@ -182,6 +183,7 @@ const Billing: React.FC = () => {
                                     }}
                                     type="button"
                                 >
+                                    <FeatherIcon className={"action-icons me-2"} icon={"rotate-ccw"}/>
                                     Return Bill
                                 </Button>
                             </div>
@@ -216,15 +218,22 @@ const Billing: React.FC = () => {
                                     type="text"
                                 />
                                 <div className='d-flex align-items-center'>
-                                    <Button type='submit' variant='dark' className='mt-2'>Create
-                                        Customer
+                                    <Button type='submit' variant='dark' className='mt-2'>
+                                        <span className="d-sm-flex d-md-none">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Customer
+                                        </span>
+                                        <span className="d-none d-md-block">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Create Customer
+                                        </span>
                                     </Button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </form>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={(e) => handleSubmit(e)}>
                     <div>
                         <div className='d-flex flex-row'>
                             <FontAwesomeIcon className='me-2 mt-1' icon={faShoppingCart}/>
@@ -253,8 +262,14 @@ const Billing: React.FC = () => {
                                 />
                                 <div className='d-flex align-items-center'>
                                     <Button type='submit' variant='dark'>
-                                        <span className="d-sm-flex d-md-none">Add</span>
-                                        <span className="d-none d-md-block">Add to Bill</span>
+                                        <span className="d-sm-flex d-md-none">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Add
+                                        </span>
+                                        <span className="d-none d-md-block">
+                                            <FeatherIcon className={"action-icons me-2"} icon={"plus"}/>
+                                                Add to Bill
+                                        </span>
                                     </Button>
                                 </div>
                             </div>
@@ -334,7 +349,3 @@ const createCustomer = async (customerData: any) => {
 };
 
 export default Billing;
-
-
-
-

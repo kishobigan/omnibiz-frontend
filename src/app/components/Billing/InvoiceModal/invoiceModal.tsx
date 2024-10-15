@@ -10,6 +10,7 @@ interface InvoiceModalProps {
     billingData: {
         balance: string;
         discount: string;
+        invoice_id: string;
         items: { itemId: number; itemName: string; quantity: number; unitPrice: number; amount: number; }[];
         recipientAmount: string;
         subTotal: string;

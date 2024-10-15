@@ -13,7 +13,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({role, tabItems, business_id, token}: DashboardLayoutProps) {
     return (
         <div className='vh-100'>
-            <Layout role={role}>
+            <Layout role={role} business_id={business_id}>
                 <div className=''>
                     <Tabs tabItems={tabItems} business_id={business_id} token={token}/>
                 </div>

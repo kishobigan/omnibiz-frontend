@@ -133,7 +133,7 @@ const AdminBusiness: React.FC = () => {
     const totalPages = Math.ceil(filteredBusinessData.length / rowsPerPage);
 
     return (
-        <Layout role={role}>
+        <Layout role={role} business_id={business_id}>
             <div className='container-fluid row mt-2'>
                 <div className="">
                     <div className='topic'>
