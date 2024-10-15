@@ -8,6 +8,7 @@ interface LayoutProps {
     children: ReactNode;
     business_id: string;
     role: 'owner' | 'admin' | 'staff' | 'higher-staff';
+    [key: string]: any;
 }
 
 function Layout({children, business_id, role}: LayoutProps) {

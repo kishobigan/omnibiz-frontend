@@ -1,5 +1,5 @@
 .custom-card {
-    background-color: #C9D9FF 		;
+    background-color: #C9D9FF;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;

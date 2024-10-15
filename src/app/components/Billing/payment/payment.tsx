@@ -47,6 +47,7 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
     const {business_id} = useParams();
 
     const [billingData, setBillingData] = useState<{
+        invoice_id: string;
         balance: string;
         discount: string;
         items: { itemId: number; itemName: string; quantity: number; unitPrice: number; amount: number; }[];
@@ -62,6 +63,7 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
         cheque_number: string | null;
         due_date: string | null;
     }>({
+        invoice_id: '',
         balance: '0.00',
         discount: '0.00',
         items: [],
@@ -101,6 +103,7 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
 
                 try {
                     setBillingData({
+                        invoice_id: '',
                         balance: balance,
                         discount: discount || '0.00',
                         items: tableData.map(item => ({
@@ -125,6 +128,12 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
 
                     const response = await api.post("billing/create-bill", requestData);
                     if (response.status === 201) {
+
+                        setBillingData((data) => ({
+                            ...data,
+                            invoice_id: response.data.invoice.invoice_id,
+                        }));
+
                         setShowModal(true)
                         console.log("Billing created successfully", response.data);
                     } else {

@@ -11,7 +11,7 @@ import InputDropdown from "@/app/widgets/productInput/inputDropdown";
 import {billingSchema, validate} from "@/app/utils/Validation/validations";
 import './billing.css'
 import api from "@/app/utils/Api/api";
-import {useParams, useRouter} from "next/navigation";
+import {useParams} from "next/navigation";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import ConfirmationDialog from "@/app/widgets/confirmationDialog/confirmationDialog";
@@ -29,14 +29,12 @@ const Billing: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [tableData, setTableData] = useState<any[]>([]);
-    const [billingData, setBillingData] = useState<any>(null);
     const [customerResponse, setCustomerResponse] = useState<any>(null);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
     const [selectedRow, setSelectedRow] = useState<any>(null);
     const [selectedItem, setSelectedItem] = useState<string>('');
     const [showReturnModal, setShowReturnModal] = useState<boolean>(false)
     const {business_id} = useParams()
-    const router = useRouter()
     const token = Cookies.get(ACCESS_TOKEN);
 
     useEffect(() => {
@@ -113,7 +111,8 @@ const Billing: React.FC = () => {
             }
         },
         validate,
-        billingSchema
+        billingSchema,
+        {customerName: '', phoneNumber: '', address: ''}
     );
 
     const {
@@ -153,7 +152,8 @@ const Billing: React.FC = () => {
             }
         },
         validate,
-        billingSchema
+        billingSchema,
+        {item: '', quantity: '', discount: ''}
     );
 
     const handleDropdownChange = (name: string, value: string) => {
@@ -233,7 +233,7 @@ const Billing: React.FC = () => {
                         </div>
                     </div>
                 </form>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={(e) => handleSubmit(e)}>
                     <div>
                         <div className='d-flex flex-row'>
                             <FontAwesomeIcon className='me-2 mt-1' icon={faShoppingCart}/>
@@ -349,7 +349,3 @@ const createCustomer = async (customerData: any) => {
 };
 
 export default Billing;
-
-
-
-

@@ -7,7 +7,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileInvoice} from "@fortawesome/free-solid-svg-icons";
 
 interface InvoiceProps {
+
     billingData: {
+        invoice_id: string;
         balance: string;
         discount: string;
         items: {
@@ -27,49 +29,11 @@ export interface InvoiceHandle {
     handlePrint: () => Promise<void>;
 }
 
-const dummyBillingData = {
-    balance: "$200.00",
-    discount: "$50.00",
-    items: [
-        {
-            itemId: 1,
-            itemName: "Item 1",
-            quantity: 1,
-            unitPrice: "$50.00",
-            amount: "$50.00",
-        },
-        {
-            itemId: 2,
-            itemName: "Item 2",
-            quantity: 2,
-            unitPrice: "$30.00",
-            amount: "$60.00",
-        },
-        {
-            itemId: 3,
-            itemName: "Item 3",
-            quantity: 3,
-            unitPrice: "$20.00",
-            amount: "$60.00",
-        },
-        {
-            itemId: 4,
-            itemName: "Item 4",
-            quantity: 4,
-            unitPrice: "$10.00",
-            amount: "$40.00",
-        },
-    ],
-    recipientAmount: "$150.00",
-    subTotal: "$210.00",
-    total: "$160.00",
-};
-
-const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData = dummyBillingData}, ref) => {
+const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData}, ref) => {
     const invoiceRef = useRef<HTMLDivElement>(null);
     const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
-    const cashierName = "Dell";
+    const cashierName = "Raja";
 
     useImperativeHandle(ref, () => ({
         handlePrint: async () => {
@@ -99,6 +63,7 @@ const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData = dummyBil
                 </div>
                 <div className="separator"></div>
                 <div className="billing-info">
+                    <p>Invoice ID: {billingData.invoice_id}</p>
                     <p>Date: {currentDate}</p>
                     <p>Time: {currentTime}</p>
                     <p>Cashier: {cashierName}</p>
