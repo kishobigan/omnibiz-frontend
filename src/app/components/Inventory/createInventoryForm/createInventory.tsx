@@ -60,7 +60,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
         FormHandler(() => setIsSubmit(true), validate, inventorySchema, initValues);
 
     useEffect(() => {
-        if (type === "Edit" && selectedInventory) {
+        if ((type === "Edit" || type === 'View') && selectedInventory) {
             initForm(selectedInventory);
         }
     }, [initForm, selectedInventory, type]);
@@ -295,6 +295,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
                                     value={values.item}
                                     onChange={handleItemChange}
                                     name="item"
+                                    readOnly={type === 'View'}
                                 />
                                 {errors.item && <span style={errorStyle}>{errors.item}</span>}
                             </div>
@@ -307,6 +308,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
                                     value={values.category}
                                     onChange={handleCategoryChange}
                                     name="category"
+                                    readOnly={type === 'View'}
                                 />
                                 {errors.category && (
                                     <span style={errorStyle}>{errors.category}</span>
@@ -322,6 +324,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
                                     name="quantity"
                                     value={values.quantity}
                                     onChange={handleChange}
+                                    readOnly={type === 'View'}
                                 />
                                 {errors.quantity && (
                                     <span style={errorStyle}>{errors.quantity}</span>
@@ -337,6 +340,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
                                     name="buyingPrice"
                                     value={values.buyingPrice}
                                     onChange={handleChange}
+                                    readOnly={type === 'View'}
                                 />
                                 {errors.buyingPrice && (
                                     <span style={errorStyle}>{errors.buyingPrice}</span>
@@ -352,6 +356,7 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
                                     name="sellingPrice"
                                     value={values.sellingPrice}
                                     onChange={handleChange}
+                                    readOnly={type === 'View'}
                                 />
                                 {errors.sellingPrice && (
                                     <span style={errorStyle}>{errors.sellingPrice}</span>
