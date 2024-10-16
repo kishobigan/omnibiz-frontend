@@ -106,7 +106,7 @@ function Inventory() {
         setFilteredData(
             inventoryData.filter(
                 (item) =>
-                    item.suppliers.toLowerCase().includes(searchText.toLowerCase()) ||
+                    item.supplier.toLowerCase().includes(searchText.toLowerCase()) ||
                     item.item.toLowerCase().includes(searchText.toLowerCase()) ||
                     item.category.toLowerCase().includes(searchText.toLowerCase())
             )
