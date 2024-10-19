@@ -106,11 +106,11 @@ function HomeDash() {
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            // setOverallData(prevData => ({
-            //     income: prevData.income + data.total_income,
-            //     expense: prevData.expense + data.total_expense,
-            //     profit: prevData.income + data.total_income - (prevData.expense + data.total_expense),
-            // }));
+            setOverallData(prevData => ({
+                income: prevData.income + data.total_income,
+                expense: prevData.expense + data.total_expense,
+                profit: prevData.income + data.total_income - (prevData.expense + data.total_expense),
+            }));
             console.log("WebSocket graph data", data);
         };
 
