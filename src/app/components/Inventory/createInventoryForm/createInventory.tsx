@@ -61,7 +61,15 @@ const CreateInventoryForm: React.FC<CreateInventoryProps> = ({
 
     useEffect(() => {
         if ((type === "Edit" || type === 'View') && selectedInventory) {
-            initForm(selectedInventory);
+            const inventoryData={
+                item: selectedInventory.item,
+                category: selectedInventory.category || "",
+                quantity: selectedInventory.quantity || "",
+                buyingPrice: selectedInventory.buying_price || "",
+                sellingPrice: selectedInventory.selling_price || "",
+                suppliers: selectedInventory.suppliers || "",
+            };
+            initForm(inventoryData);
         }
     }, [initForm, selectedInventory, type]);
 
