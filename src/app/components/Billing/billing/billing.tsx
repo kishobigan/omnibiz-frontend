@@ -153,7 +153,7 @@ const Billing: React.FC = () => {
         },
         validate,
         billingSchema,
-        {item: '', quantity: '', discount: ''}
+        // {item: '', quantity: ''}
     );
 
     const handleDropdownChange = (name: string, value: string) => {

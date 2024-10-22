@@ -7,8 +7,11 @@ import CreateBusinessModal from "@/app/components/Business/createBusinessModal/c
 import CreateHigherStaff from "@/app/components/Business/createHigherStaff/createHigherStaff";
 import FeatherIcon from "feather-icons-react";
 import api from "@/app/utils/Api/api";
-import {useParams, useRouter} from "next/navigation";
+import {useRouter} from "next/navigation";
 import Button from "@/app/widgets/Button/Button";
+import {jwtDecode} from "jwt-decode";
+import Cookies from "js-cookie";
+import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 
 interface BusinessesProps {
     user_role: "owner" | "higher-staff";
@@ -25,10 +28,24 @@ const Businesses: React.FC<BusinessesProps> = ({user_role}) => {
     const [businessData, setBusinessData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [user_id, setUser_id] = useState<string | null>(null)
     const router = useRouter();
-    const {user_id} = useParams();
 
     useEffect(() => {
+        const token = Cookies.get(ACCESS_TOKEN);
+        if (token) {
+            try {
+                const decodedToken: any = jwtDecode(token);
+                const user_id = decodedToken.user_id;
+                setUser_id(user_id);
+            } catch (error) {
+                console.error('Error in decode token', error);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!user_id) return;
         const fetchBusinessData = async () => {
             try {
                 let businesses = [];
@@ -70,9 +87,9 @@ const Businesses: React.FC<BusinessesProps> = ({user_role}) => {
     const handleBusinessNavigate = (businessId: string) => {
         let url = ''
         if (user_role === 'owner') {
-            url = `/pages/dashboard/busi/${user_id}/${businessId}`
+            url = `/pages/dashboard/busi/${businessId}`
         } else if (user_role === 'higher-staff') {
-            url = `/pages/higher-staff/busi/${user_id}/${businessId}`
+            url = `/pages/higher-staff/busi/${businessId}`
         }
         router.push(url)
     };
@@ -169,5 +186,3 @@ const Businesses: React.FC<BusinessesProps> = ({user_role}) => {
 };
 
 export default Businesses;
-
-

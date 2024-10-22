@@ -257,14 +257,14 @@ export const billingSchema: ValidationSchema = {
     item: {
         required: false,
     },
-    quantity: {
-        required: true,
-        pattern: /^[1-9]\d*$/,
-    },
-    discount: {
-        required: false,
-        pattern: /^([1-9]\d?|100)$/,
-    },
+    // quantity: {
+    //     required: true,
+    //     pattern: /^[1-9]\d*$/,
+    // },
+    // discount: {
+    //     required: false,
+    //     pattern: /^([1-9]\d?|100)$/,
+    // },
 }
 
 export const changePasswordSchema: ValidationSchema = {

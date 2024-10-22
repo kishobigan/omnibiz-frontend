@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import './supplier.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faEdit, faEye, faLock, faUnlock} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "next/navigation";
 import FeatherIcon from "feather-icons-react";
 import Button from "@/app/widgets/Button/Button";

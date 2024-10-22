@@ -37,7 +37,7 @@ const AdminBusiness: React.FC = () => {
     const rowsPerPage = 10;
     const role = 'admin';
     const token = Cookies.get(ACCESS_TOKEN) || '';
-    const business_id = ''
+    const business_id = '72y3r1p5'
 
     const columns = [
         {key: 'business_name', header: 'Business name'},

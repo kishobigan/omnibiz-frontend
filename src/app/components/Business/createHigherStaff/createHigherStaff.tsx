@@ -9,7 +9,7 @@ import api from "@/app/utils/Api/api";
 import Cookies from "js-cookie";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import Button from "@/app/widgets/Button/Button";
-import {useParams} from "next/navigation";
+import {jwtDecode} from "jwt-decode";
 
 interface CreateHigherStaffProps {
     type: 'Add' | 'Edit' | 'View';
@@ -24,8 +24,8 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
     const [businessData, setBusinessData] = useState<{ name: string, value: string }[]>([]);
+    const [user_id, setUser_id] = useState<string | null>(null)
     const token = Cookies.get(ACCESS_TOKEN)
-    const {user_id} = useParams()
 
     const initValues = {
         email: '',
@@ -46,6 +46,18 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
     }
 
     useEffect(() => {
+        if (token) {
+            try {
+                const decodedToken: any = jwtDecode(token);
+                const user_id = decodedToken.user_id;
+                setUser_id(user_id);
+            } catch (error) {
+                console.error('Error in decode token', error);
+            }
+        }
+    }, [token]);
+
+    useEffect(() => {
         if (type === 'Edit' && selectedHigherStaff) {
             initForm(selectedHigherStaff);
         } else if (type === 'Add') {
@@ -55,6 +67,7 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
     }, [initForm, resetForm, selectedHigherStaff, type]);
 
     useEffect(() => {
+        if (!user_id) return
         const fetchBusinesses = async () => {
             try {
                 const response = await api.get(`business/get-all-businesses/${user_id}`, {
@@ -77,7 +90,7 @@ const CreateHigherStaff: React.FC<CreateHigherStaffProps> = ({type, show, onHide
         };
 
         fetchBusinesses();
-    }, []);
+    }, [update, user_id]);
 
     useEffect(() => {
         if (!isSubmit) {
