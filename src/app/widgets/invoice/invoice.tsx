@@ -7,7 +7,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileInvoice} from "@fortawesome/free-solid-svg-icons";
 
 interface InvoiceProps {
-
     billingData: {
         invoice_id: string;
         balance: string;
@@ -80,8 +79,8 @@ const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData}, ref) => 
                         </tr>
                         </thead>
                         <tbody>
-                        {billingData.items.map((item) => (
-                            <tr key={item.itemId}>
+                        {billingData.items.map((item, index) => (
+                            <tr key={item.itemId || index}>
                                 <td>{item.itemName}</td>
                                 <td>{item.quantity}</td>
                                 <td>{item.unitPrice}</td>

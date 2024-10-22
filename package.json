@@ -17,7 +17,7 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "cloudinary": "^2.2.0",
-    "cookie": "^0.6.0",
+    "cookie": "^1.0.1",
     "crypto-js": "^4.2.0",
     "feather-icons-react": "^0.7.0",
     "html2canvas": "^1.4.1",

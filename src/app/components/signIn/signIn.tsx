@@ -54,12 +54,12 @@ const SignIn: React.FC<ContentProps> = ({
 
                     if (user_role === 'owner') {
                         if (owner_created) {
-                            router.push(`/pages/dashboard/home/${user_id}`);
+                            router.push(`/pages/dashboard/home`);
                         } else {
                             router.push('/pages/createOwner');
                         }
                     } else if (user_role === 'admin') {
-                        router.push(`/pages/admin/dashboard/${user_id}`);
+                        router.push(`/pages/admin/dashboard`);
                     } else if (user_role === 'staff') {
                         const staffProfileResponse = await api.get(`staff/get-staff-profile/${user_id}/`, {
                             headers: {
@@ -69,15 +69,15 @@ const SignIn: React.FC<ContentProps> = ({
                         const {business_id} = staffProfileResponse.data;
                         console.log("staff business id", business_id)
                         if (message === "Welcome, first-time user!") {
-                            router.push(`/pages/staff/change-password/${user_id}`);
+                            router.push(`/pages/staff/change-password`);
                         } else if (message === "Welcome back!") {
-                            router.push(`/pages/staff/business/${user_id}/${business_id}`);
+                            router.push(`/pages/staff/business/${business_id}`);
                         }
                     } else if (user_role === 'higher-staff') {
                         if (message === "Welcome, first-time user!") {
-                            router.push(`/pages/higher-staff/change-password/${user_id}`);
+                            router.push(`/pages/higher-staff/change-password`);
                         } else if (message === "Welcome back!") {
-                            router.push(`/pages/higher-staff/home/${user_id}`);
+                            router.push(`/pages/higher-staff/home`);
                         }
                     }
                 } else {

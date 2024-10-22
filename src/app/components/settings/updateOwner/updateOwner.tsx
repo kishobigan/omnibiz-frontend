@@ -7,16 +7,17 @@ import FormHandler from "@/app/utils/FormHandler/Formhandler";
 import {validate, createOwnerSchema} from "@/app/utils/Validation/validations";
 import api from "@/app/utils/Api/api";
 import Cookies from "js-cookie";
-import {useParams} from "next/navigation";
 import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 import Loader from "@/app/widgets/loader/loader";
+import {jwtDecode} from "jwt-decode";
 
 const UpdateOwner: React.FC = () => {
-    const {user_id} = useParams();
     const [loading, setLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
     const [isVisible, setIsVisible] = useState(true);
+    const [user_id, setUser_id] = useState<string | null>(null)
+    const token = Cookies.get(ACCESS_TOKEN);
 
     const {
         handleChange,
@@ -27,11 +28,21 @@ const UpdateOwner: React.FC = () => {
     } = FormHandler(() => {
     }, validate, createOwnerSchema);
 
+    useEffect(() => {
+        if (token) {
+            try {
+                const decodedToken: any = jwtDecode(token);
+                const user_id = decodedToken.user_id;
+                setUser_id(user_id);
+            } catch (error) {
+                console.error('Error in decode token', error);
+            }
+        }
+    }, [token]);
+
     const handleUpdateOwner = async () => {
         setLoading(true);
         try {
-            console.log("update owner button clicked")
-            const token = Cookies.get(ACCESS_TOKEN);
             const response = await api.put(
                 `owner/updateOwner/${user_id}/`,
                 {
@@ -65,6 +76,7 @@ const UpdateOwner: React.FC = () => {
     };
 
     useEffect(() => {
+        if (!user_id) return
         const fetchOwnerData = async () => {
             try {
                 const token = Cookies.get(ACCESS_TOKEN);

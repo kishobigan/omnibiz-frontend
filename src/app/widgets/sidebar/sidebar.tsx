@@ -11,8 +11,7 @@ import {
     faBriefcase,
     faSignOutAlt,
     faUsers,
-    faMoneyBillTransfer,
-    faExchangeAlt, faDollarSign
+    faExchangeAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import {IconProp} from '@fortawesome/fontawesome-svg-core';
 import {usePathname} from 'next/navigation';
@@ -36,27 +35,27 @@ function Sidebar({userId, business_id, role}: SidebarProps) {
     const {logout} = useLogout();
 
     const ownerMenuItems: MenuItem[] = [
-        {label: "Home", icon: faHome, link: `/pages/dashboard/home/${userId}`},
-        {label: "Business", icon: faBriefcase, link: `/pages/dashboard/businesses/${userId}`},
-        {label: "Settings", icon: faGear, link: `/pages/dashboard/settings/${userId}`},
+        {label: "Home", icon: faHome, link: `/pages/dashboard/home`},
+        {label: "Business", icon: faBriefcase, link: `/pages/dashboard/businesses`},
+        {label: "Settings", icon: faGear, link: `/pages/dashboard/settings`},
     ];
 
     const adminMenuItems: MenuItem[] = [
-        {label: "Home", icon: faHome, link: `/pages/admin/dashboard/${userId}`},
-        {label: "Business Owners", icon: faUsers, link: `/pages/admin/owners/${userId}`},
-        {label: "Business", icon: faBriefcase, link: `/pages/admin/business/${userId}`},
-        {label: "Transactions", icon: faExchangeAlt, link: `/pages/admin/transaction/${userId}`},
+        {label: "Home", icon: faHome, link: `/pages/admin/dashboard`},
+        {label: "Business Owners", icon: faUsers, link: `/pages/admin/owners`},
+        {label: "Business", icon: faBriefcase, link: `/pages/admin/business`},
+        {label: "Transactions", icon: faExchangeAlt, link: `/pages/admin/transaction`},
     ];
 
     const staffMenuItems: MenuItem[] = [
-        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${userId}/${business_id}`},
-        {label: "Settings", icon: faGear, link: `/pages/staff/settings/${userId}`},
+        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${business_id}`},
+        {label: "Settings", icon: faGear, link: `/pages/staff/settings`},
     ];
 
     const higherStaffMenuItems: MenuItem[] = [
-        {label: "Home", icon: faHome, link: `/pages/higher-staff/home/${userId}`},
-        {label: "Business", icon: faBriefcase, link: `/pages/higher-staff/business/${userId}`},
-        {label: "Settings", icon: faGear, link: `/pages/higher-staff/settings/${userId}`},
+        {label: "Home", icon: faHome, link: `/pages/higher-staff/home`},
+        {label: "Business", icon: faBriefcase, link: `/pages/higher-staff/business`},
+        {label: "Settings", icon: faGear, link: `/pages/higher-staff/settings`},
     ];
 
     function getMenuItems(role: string): MenuItem[] {
