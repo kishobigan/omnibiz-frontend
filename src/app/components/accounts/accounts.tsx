@@ -81,18 +81,24 @@ function Accounts() {
         };
 
         fetchData();
-    }, [business_id]);
+    }, [business_id, currentPage]);
 
     const totalPages = Math.ceil(accountData.length / rowsPerPage);
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
+
     const startRow = (currentPage - 1) * rowsPerPage;
     const endRow = startRow + rowsPerPage;
     const currentAccountData = accountData.slice(startRow, endRow).map((item) => ({
         ...item,
         dateAndTime: item.dateAndTime ? format(item.dateAndTime, "yyyy-MM-dd HH:mm:ss") : "",
     }));
+
+    useEffect(() => {
+        console.log('currentPage', currentPage);
+        console.log('currentAccountData', currentAccountData);
+    }, [currentPage, currentAccountData]);
 
     const cellRenderer = (columnKey: string, cellData: any, row: AccountItem) => {
         const cellStyle = {color: row.transaction_type === "income" ? "blue" : "red"};
@@ -107,11 +113,17 @@ function Accounts() {
                     <div className="col-12 col-md-6 col-lg-3 mb-3" key={index}>
                         <Card
                             className='cardWithBorderRadius shadow'
-                            title={<span style={{color: 'white'}}>{data.title}</span>}
+                            title={
+                                <div style={{textAlign: 'center', display: 'block', marginLeft: '2px'}}>
+                                <span style={{color: 'white', fontSize: '1.5rem', fontWeight: 'bold'}}>
+                                    {data.title}
+                                </span>
+                                </div>
+                            }
                             body={
-                                <div style={{color: 'white'}}>
-                                    <p>
-                                        <b>{data.cost}</b>
+                                <div style={{color: 'white', textAlign: 'center'}}>
+                                    <p style={{fontSize: '1.5rem', fontWeight: 'bold'}}>
+                                        {data.cost}
                                     </p>
                                 </div>
                             }
@@ -121,6 +133,7 @@ function Accounts() {
                 ))}
             </div>
             <Table
+                key={currentPage}
                 data={currentAccountData}
                 columns={columns}
                 cellRenderer={cellRenderer}

@@ -1,15 +1,23 @@
 'use client'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Layout from "@/app/widgets/layout/layout";
 import './adminTransaction.css'
 import Table from "@/app/widgets/table/Table";
 import Pagination from "@/app/widgets/pagination/pagination";
+import api from "@/app/utils/Api/api";
+import Notification from "@/app/widgets/notification/notification";
+import Cookies from "js-cookie";
+import {ACCESS_TOKEN} from "@/app/utils/Constants/constants";
 
 const Transaction: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [update, setUpdate] = useState<boolean>(false)
+    const [transactionData, setTransactionData] = useState([])
+    const [filteredTransactionData, setFilteredTransactionData] = useState([])
     const rowsPerPage = 10;
     const role = 'admin'
-    const business_id = ''
+    const token = Cookies.get(ACCESS_TOKEN) || '';
+    const business_id = '72y3r1p5'
 
     const columns = [
         {key: 'id', header: 'Id'},
@@ -79,6 +87,32 @@ const Transaction: React.FC = () => {
             debit: 200
         },
     ];
+
+    useEffect(() => {
+        const fetchTransactionData = async () => {
+            try {
+                const response = await api.get('payment/list-subscriptions');
+                const transactionData = response.data.map((item: any) => ({
+                    business_id: item.business_id,
+                    business_name: item.business_name,
+                    business_address: item.business_address,
+                    owner: item.owner[0].owner,
+                    phone_number: item.phone_number,
+                    subscription_count: item.subscription_count,
+                    subscription_trial_ended_at: new Date(item.subscription_trial_ended_at).toLocaleDateString('en-GB'),
+                    blocked: item.blocked,
+                    is_active: item.is_active
+                }));
+                setTransactionData(transactionData);
+                setFilteredTransactionData(transactionData);
+            } catch (error) {
+                console.error('Error fetching transaction data:', error);
+            }
+        };
+
+        fetchTransactionData();
+    }, [update]);
+
     const totalPages = Math.ceil(data.length / rowsPerPage);
 
     return (
@@ -89,6 +123,7 @@ const Transaction: React.FC = () => {
                         <h5><strong>Transactions</strong></h5>
                     </div>
                 </div>
+                <Notification business_id={business_id} token={token}/>
                 <div className="table-container">
                     <Table data={data}
                            columns={columns}

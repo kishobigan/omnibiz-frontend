@@ -7,11 +7,11 @@ interface CardProps {
     className: string;
 }
 
-const Card3: React.FC<CardProps> = ({ title, text }) => {
+const Card3: React.FC<CardProps> = ({title, text}) => {
     return (
         <div className='_card'>
-            <h5>{title}</h5>
-            <p className='mt-3 fw-bold'>{text}</p>
+            <h5 className='fw-bold fs-4'>{title}</h5>
+            <p className='mt-4 fs-3 fw-bold'>{text}</p>
         </div>
     );
 }
