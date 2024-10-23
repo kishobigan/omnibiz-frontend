@@ -1,9 +1,10 @@
 ._card {
-    flex: 0 0 calc(23% - 20px);
-    max-width: calc(23% - 20px);
+    flex: 0 0 calc(48% - 20px);
+    max-width: calc(48% - 20px);
     width: 100%;
-    /*background: var(--greenAceColor);*/
-    background: #C9D9FF;
+    background: var(--greenColor);
+    /*background: --greenColor;*/
+    color: white;
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 50px;
