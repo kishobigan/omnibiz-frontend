@@ -6,6 +6,7 @@ import Card from "@/app/widgets/card/card";
 import api from "@/app/utils/Api/api";
 import {useParams} from "next/navigation";
 import {format, parseISO, isValid} from "date-fns";
+import {formatCurrency} from "@/app/utils/UtilFunctions/formatCurrency";
 
 interface AccountItem {
     description: string;
@@ -28,10 +29,10 @@ function Accounts() {
     const [accountData, setAccountData] = useState<AccountItem[]>([]);
     const {business_id} = useParams();
     const [summaryData, setSummaryData] = useState([
-        {title: "Total Income", cost: "0", percentage: ""},
-        {title: "Total Expenses", cost: "0", percentage: ""},
-        {title: "Total Profit", cost: "0", percentage: ""},
-        {title: "Total Loss", cost: "0", percentage: ""},
+        {title: "Total Income", cost: "0"},
+        {title: "Total Expenses", cost: "0"},
+        {title: "Total Profit", cost: "0"},
+        {title: "Total Loss", cost: "0"},
     ]);
 
     useEffect(() => {
@@ -57,19 +58,21 @@ function Accounts() {
 
                 const totalProfit = totalIncome - totalExpenses;
                 const totalLoss = totalProfit < 0 ? Math.abs(totalProfit) : 0;
+                const totalIncome1 = formatCurrency(totalIncome)
+                const totalExpenses1 = formatCurrency(totalExpenses)
+                const totalProfit1 = formatCurrency(totalProfit)
+                const totalLoss1 = formatCurrency(totalLoss)
 
                 setSummaryData([
-                    {title: "Total Income", cost: totalIncome, percentage: "5%"},
-                    {title: "Total Expenses", cost: totalExpenses, percentage: "5%"},
+                    {title: "Total Income", cost: totalIncome1},
+                    {title: "Total Expenses", cost: totalExpenses1},
                     {
                         title: "Total Profit",
-                        cost: totalProfit > 0 ? totalProfit.toLocaleString() : "0",
-                        percentage: "5%",
+                        cost: totalProfit > 0 ? totalProfit1 : "0",
                     },
                     {
                         title: "Total Loss",
-                        cost: totalLoss > 0 ? totalLoss.toLocaleString() : "0",
-                        percentage: "5%",
+                        cost: totalLoss > 0 ? totalLoss1 : "0",
                     },
                 ]);
             } catch (error) {
@@ -104,18 +107,15 @@ function Accounts() {
                     <div className="col-12 col-md-6 col-lg-3 mb-3" key={index}>
                         <Card
                             className='cardWithBorderRadius shadow'
-                            title={data.title}
+                            title={<span style={{color: 'white'}}>{data.title}</span>}
                             body={
-                                <div>
+                                <div style={{color: 'white'}}>
                                     <p>
                                         <b>{data.cost}</b>
                                     </p>
-                                    <p>
-                                        <b>{data.percentage}</b>
-                                    </p>
                                 </div>
                             }
-                            color={'#ffffff'}
+                            color={'#178932'}
                         />
                     </div>
                 ))}
@@ -138,5 +138,3 @@ function Accounts() {
 }
 
 export default Accounts;
-
-
