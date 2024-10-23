@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Layout from "@/app/widgets/layout/layout";
 import Button from "@/app/widgets/Button/Button";
 import Card3 from "@/app/widgets/Card3/Card3";
@@ -7,7 +7,6 @@ import './adminDashboard.css';
 import CreateAdminForm from "@/app/components/admin/adminDashboard/createAdmin/createAdmin";
 import CreateAccessForm from "@/app/components/admin/adminDashboard/createAccess/createAccess";
 import api from "@/app/utils/Api/api";
-
 
 function AdminDashboard() {
     const [showAdminModal, setShowAdminModal] = useState(false);
@@ -18,13 +17,10 @@ function AdminDashboard() {
     const business_id = '';
 
     useEffect(() => {
-        // Fetch business and owner counts when component mounts
         const fetchCounts = async () => {
             try {
                 const businessResponse = await api.get('/super/get-businesses');
                 const ownerResponse = await api.get('/super/get-owners');
-
-
                 setBusinessCount(businessResponse.data.length);
                 setOwnerCount(ownerResponse.data.length);
             } catch (error) {
@@ -35,15 +31,14 @@ function AdminDashboard() {
         fetchCounts();
     }, []);
 
-
     const data = [
         {
             title: "Business Owners",
-            text: ownerCount !== null ? ownerCount : "Loading...",
+            text: ownerCount !== null ? ownerCount : '0',
         },
         {
             title: "Business",
-            text: businessCount !== null ? businessCount : "Loading...",
+            text: businessCount !== null ? businessCount : '0',
         },
     ];
 
@@ -66,10 +61,12 @@ function AdminDashboard() {
                             Create Access
                         </Button>
                     </div>
-                    <div className='_cards'>
-                        {data.map((item, index) => (
-                            <Card3 key={index} title={item.title} text={item.text} className="" />
-                        ))}
+                    <div className=''>
+                        <div className='_cards'>
+                            {data.map((item, index) => (
+                                <Card3 key={index} title={item.title} text={item.text} className=""/>
+                            ))}
+                        </div>
                     </div>
                     <CreateAdminForm
                         show={showAdminModal}

@@ -35,7 +35,7 @@ const AdminBusinessOwner: React.FC = () => {
     const [update, setUpdate] = useState<boolean>(false)
     const role = 'admin';
     const token = Cookies.get(ACCESS_TOKEN) || '';
-    const business_id = '';
+    const business_id = '72y3r1p5';
 
     const columns = [
         {key: 'owner_name', header: 'Owner name'},

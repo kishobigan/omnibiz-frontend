@@ -1,9 +1,8 @@
 ._card {
-    flex: 0 0 calc(48% - 20px);
-    max-width: calc(48% - 20px);
-    width: 100%;
+    flex: 0 0 calc(36% - 20px);
+    max-width: calc(36% - 20px);
+    /*width: 100%;*/
     background: var(--greenColor);
-    /*background: --greenColor;*/
     color: white;
     border-radius: 10px;
     padding: 20px;
@@ -19,9 +18,7 @@
 }
 
 ._card:hover {
-    /*border-color: var(--ashColor);*/
     box-shadow: 0 10px 20px rgba(100, 120, 120, 0.2);
-    /*box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);*/
 }
 
 @media (max-width: 969px) {
