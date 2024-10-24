@@ -71,7 +71,7 @@ const SignIn: React.FC<ContentProps> = ({
                         if (message === "Welcome, first-time user!") {
                             router.push(`/pages/staff/change-password`);
                         } else if (message === "Welcome back!") {
-                            router.push(`/pages/staff/business/${business_id}`);
+                            router.push(`/pages/staff/business/${business_id}/${user_id}`);
                         }
                     } else if (user_role === 'higher-staff') {
                         if (message === "Welcome, first-time user!") {

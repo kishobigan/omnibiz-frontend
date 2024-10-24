@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import ProtectedRoute from "@/app/utils/Routing/ProtectedRoute";
 import {useParams} from "next/navigation";
 import Cookies from "js-cookie";
@@ -11,6 +11,7 @@ import Inventory from "@/app/components/Inventory/inventory/inventory";
 import Accounts from "@/app/components/accounts/accounts";
 import Staff from '@/app/components/Staff/staff/staff';
 import api from "@/app/utils/Api/api";
+import axios from "axios";
 
 type TabItem = {
     label: string;
@@ -42,15 +43,17 @@ const StaffDashboard = () => {
     // const [tabItems, setTabItems] = useState<TabItem[]>([]);
     const role = 'staff';
     // const business_id = '72y3r1p5'
+    console.log("user id", user_id)
 
     useEffect(() => {
         const fetchPermissions = async () => {
             try {
-                const response = await api.get(`staff/list-staff-access/${user_id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                });
+                // const response = await api.get(`staff/list-staff-access/${user_id}`,
+                const response = await axios.get(`http://127.0.0.1:8000/api/staff/list-staff-access/0aafe063-0850-4c31-bdf8-bbc1742af8c1`,
+                    // headers: {
+                    //     Authorization: `Bearer ${token}`,
+                    // }
+                );
                 if (response.status === 200) {
                     const permissions = response.data.permissions;
                     console.log("Staff permissions", permissions)

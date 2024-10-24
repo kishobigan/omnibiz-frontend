@@ -102,7 +102,7 @@ const Billing: React.FC = () => {
                     address: customerValues.address,
                     phone: customerValues.phoneNumber,
                 };
-                const customerResponse = await createCustomer(customerData);
+                const customerResponse = await createCustomer(customerData, setCustomerValue);
                 setCustomerResponse(customerResponse);
             } catch (error) {
                 console.error("Error in customer creation", error);
@@ -112,7 +112,6 @@ const Billing: React.FC = () => {
         },
         validate,
         billingSchema,
-        {customerName: '', phoneNumber: '', address: ''}
     );
 
     const {
@@ -153,7 +152,6 @@ const Billing: React.FC = () => {
         },
         validate,
         billingSchema,
-        // {item: '', quantity: ''}
     );
 
     const handleDropdownChange = (name: string, value: string) => {
@@ -333,7 +331,7 @@ const Billing: React.FC = () => {
     );
 }
 
-const createCustomer = async (customerData: any) => {
+const createCustomer = async (customerData: any, setCustomerValue: Function) => {
     const token = Cookies.get(ACCESS_TOKEN);
     try {
         const response = await api.post('billing/create-customer', customerData, {
@@ -341,7 +339,14 @@ const createCustomer = async (customerData: any) => {
                 Authorization: `Bearer ${token}`,
             }
         });
-        return response.data;
+        if (response.status == 201) {
+            setCustomerValue({
+                customerName: '',
+                phoneNumber: '',
+                address: '',
+            });
+            return response.data;
+        }
     } catch (error) {
         console.error('Error creating customer:', error);
         throw new Error('Error creating customer: ' + error);

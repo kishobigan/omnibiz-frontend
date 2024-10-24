@@ -392,6 +392,3 @@ const Payment: React.FC<PaymentProps> = ({subtotal, discount, total, tableData, 
 }
 
 export default Payment;
-
-
-

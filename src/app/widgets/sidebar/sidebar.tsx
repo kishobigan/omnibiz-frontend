@@ -48,7 +48,7 @@ function Sidebar({userId, business_id, role}: SidebarProps) {
     ];
 
     const staffMenuItems: MenuItem[] = [
-        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${business_id}`},
+        {label: "Business", icon: faBriefcase, link: `/pages/staff/business/${business_id}/${userId}`},
         {label: "Settings", icon: faGear, link: `/pages/staff/settings`},
     ];
 
