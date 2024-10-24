@@ -14,78 +14,17 @@ const Transaction: React.FC = () => {
     const [update, setUpdate] = useState<boolean>(false)
     const [transactionData, setTransactionData] = useState([])
     const [filteredTransactionData, setFilteredTransactionData] = useState([])
+    const [searchText, setSearchText] = useState<string>("");
     const rowsPerPage = 10;
     const role = 'admin'
     const token = Cookies.get(ACCESS_TOKEN) || '';
     const business_id = '72y3r1p5'
 
     const columns = [
-        {key: 'id', header: 'Id'},
-        {key: 'owner', header: 'Business Owner'},
-        {key: 'description', header: 'Description'},
+        {key: 'owner', header: 'Owner ID'},
+        {key: 'business', header: 'Business ID'},
+        {key: 'amount', header: 'Amount'},
         {key: 'date', header: 'Date & Time'},
-        {key: 'debit', header: 'Debit'},
-    ];
-
-    const data = [
-        {id: 1, owner: 'John Doe', description: 'Lorem ipsum dolor sit amet', date: '2024-06-03 10:00:00', debit: 100},
-        {
-            id: 2,
-            owner: 'Jane Smith',
-            description: 'Consectetur adipiscing elit',
-            date: '2024-06-04 12:30:00',
-            debit: 150
-        },
-        {
-            id: 3,
-            owner: 'Alice Johnson',
-            description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-            date: '2024-06-05 15:45:00',
-            debit: 200
-        },
-        {id: 4, owner: 'Bob Brown', description: 'Ut enim ad minim veniam', date: '2024-06-06 09:20:00', debit: 120},
-        {
-            id: 5,
-            owner: 'Alice Johnson',
-            description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-            date: '2024-06-05 15:45:00',
-            debit: 200
-        },
-        {
-            id: 6,
-            owner: 'Alice Johnson',
-            description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-            date: '2024-06-05 15:45:00',
-            debit: 200
-        },
-        {
-            id: 7,
-            owner: 'Alice Johnson',
-            description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-            date: '2024-06-05 15:45:00',
-            debit: 200
-        },
-        {
-            id: 8,
-            owner: 'Alice Johnson',
-            description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-            date: '2024-06-05 15:45:00',
-            debit: 200
-        },
-        {
-            id: 3,
-            owner: 'Alice Johnson',
-            description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-            date: '2024-06-05 15:45:00',
-            debit: 200
-        },
-        {
-            id: 3,
-            owner: 'Alice Johnson',
-            description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-            date: '2024-06-05 15:45:00',
-            debit: 200
-        },
     ];
 
     useEffect(() => {
@@ -93,15 +32,10 @@ const Transaction: React.FC = () => {
             try {
                 const response = await api.get('payment/list-subscriptions');
                 const transactionData = response.data.map((item: any) => ({
-                    business_id: item.business_id,
-                    business_name: item.business_name,
-                    business_address: item.business_address,
-                    owner: item.owner[0].owner,
-                    phone_number: item.phone_number,
-                    subscription_count: item.subscription_count,
-                    subscription_trial_ended_at: new Date(item.subscription_trial_ended_at).toLocaleDateString('en-GB'),
-                    blocked: item.blocked,
-                    is_active: item.is_active
+                    owner: item.owner,
+                    business: item.business,
+                    amount: item.amount,
+                    date: item.created_at,
                 }));
                 setTransactionData(transactionData);
                 setFilteredTransactionData(transactionData);
@@ -113,7 +47,22 @@ const Transaction: React.FC = () => {
         fetchTransactionData();
     }, [update]);
 
-    const totalPages = Math.ceil(data.length / rowsPerPage);
+    // useEffect(() => {
+    //     filterOwners(searchText);
+    // }, [searchText, transactionData]);
+
+    // const filterOwners = (text: string) => {
+    //     const filtered = transactionData.filter(owner =>
+    //         owner.owner.toLowerCase().includes(text.toLowerCase()) ||
+    //         owner.business.toLowerCase().includes(text.toLowerCase()) ||
+    //         owner.phone_number.includes(text) ||
+    //         owner.business_count.toString().includes(text) ||
+    //         owner.subscription_amount.toString().includes(text)
+    //     );
+    //     setFilteredTransactionData(filtered);
+    // };
+
+    const totalPages = Math.ceil(transactionData.length / rowsPerPage);
 
     return (
         <Layout role={role} business_id={business_id}>
@@ -125,7 +74,7 @@ const Transaction: React.FC = () => {
                 </div>
                 <Notification business_id={business_id} token={token}/>
                 <div className="table-container">
-                    <Table data={data}
+                    <Table data={transactionData}
                            columns={columns}
                            currentPage={currentPage}
                            rowsPerPage={rowsPerPage}
