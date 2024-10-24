@@ -1,10 +1,18 @@
 'use client'
-import React, {useRef, forwardRef, useImperativeHandle} from 'react';
+import React, {useRef, forwardRef, useImperativeHandle, useState, useEffect} from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import "./invoice.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileInvoice} from "@fortawesome/free-solid-svg-icons";
+import api from "@/app/utils/Api/api";
+import {useParams} from 'next/navigation';
+
+interface BusinessData {
+    business_name: string;
+    business_address: string;
+    phone_number: string;
+}
 
 interface InvoiceProps {
     billingData: {
@@ -33,6 +41,8 @@ const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData}, ref) => 
     const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
     const cashierName = "Raja";
+    const [businessData, setBusinessData] = useState<BusinessData | null>(null)
+    const {business_id} = useParams()
 
     useImperativeHandle(ref, () => ({
         handlePrint: async () => {
@@ -46,6 +56,21 @@ const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData}, ref) => 
         }
     }));
 
+    useEffect(() => {
+        const getBusinessData = async () => {
+            try {
+                const response = await api.get(`business/get-business/${business_id}`);
+                setBusinessData(response.data);
+            } catch (error) {
+                console.error('Error in fetching business data', error);
+            }
+        }
+        getBusinessData()
+    }, [business_id]);
+
+    useEffect(() => {
+    }, [businessData]);
+
     return (
         <div ref={invoiceRef} className="container-fluid d-flex justify-content-center align-items-center">
             <div ref={invoiceRef} className="invoice-container col-sm-6">
@@ -56,16 +81,17 @@ const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData}, ref) => 
                         <h2 className="invoice-title">Invoice</h2>
                     </div>
                     <div className="header-right">
-                        <h3>OmniBiz</h3>
-                        <p>Your Business Address</p>
+                        <h3>{businessData?.business_name}</h3>
+                        <p>{businessData?.business_address}</p>
                     </div>
                 </div>
                 <div className="separator"></div>
                 <div className="billing-info">
-                    <p>Invoice ID: {billingData.invoice_id}</p>
+                    <p>Invoice ID: {billingData?.invoice_id}</p>
                     <p>Date: {currentDate}</p>
                     <p>Time: {currentTime}</p>
                     <p>Cashier: {cashierName}</p>
+                    <p>Phone No: {businessData?.phone_number}</p>
                 </div>
                 <div className="separator"></div>
                 <div className="items-table">
@@ -121,5 +147,3 @@ const Invoice = forwardRef<InvoiceHandle, InvoiceProps>(({billingData}, ref) => 
 Invoice.displayName = 'Invoice';
 
 export default Invoice;
-
-

@@ -244,19 +244,19 @@ export const createCategorySchema: ValidationSchema = {
 }
 
 export const billingSchema: ValidationSchema = {
-    customerName: {
-        required: false,
-    },
-    phoneNumber: {
-        required: false,
-        pattern: /^[0-9]{10,15}$/,
-    },
-    address: {
-        required: false
-    },
-    item: {
-        required: false,
-    },
+    // customerName: {
+    //     required: false,
+    // },
+    // phoneNumber: {
+    //     required: false,
+    //     pattern: /^[0-9]{10,15}$/,
+    // },
+    // address: {
+    //     required: false
+    // },
+    // item: {
+    //     required: false,
+    // },
     // quantity: {
     //     required: true,
     //     pattern: /^[1-9]\d*$/,
