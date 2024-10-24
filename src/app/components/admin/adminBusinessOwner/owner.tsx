@@ -95,9 +95,9 @@ const AdminBusinessOwner: React.FC = () => {
     const handleConfirmAction = async () => {
         if (selectedOwner) {
             try {
-                const endpoint = `owner/owner-action/${selectedOwner.user_id}`;
+                const endpoint = `auth/owner-action/${selectedOwner.user_id}`;
                 const action = actionType === 'block' ? 'block' : 'unblock';
-                const response = await api.post(endpoint, {action: action}, {
+                const response = await api.put(endpoint, {action: action}, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
