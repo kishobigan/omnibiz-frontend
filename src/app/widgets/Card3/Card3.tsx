@@ -5,6 +5,7 @@ interface CardProps {
     title: string;
     text: string;
     className: string;
+
 }
 
 const Card3: React.FC<CardProps> = ({title, text}) => {

@@ -1,7 +1,7 @@
 ._card {
     flex: 0 0 calc(36% - 20px);
     max-width: calc(36% - 20px);
-    /*width: 100%;*/
+    width: 100%;
     background: var(--greenColor);
     color: white;
     border-radius: 10px;
@@ -16,7 +16,16 @@
     align-items: center;
     text-align: center;
 }
-
+._cards {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-left: 180px;
+}
 ._card:hover {
     box-shadow: 0 10px 20px rgba(100, 120, 120, 0.2);
 }
