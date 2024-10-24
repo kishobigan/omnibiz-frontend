@@ -1,6 +1,6 @@
 ._card {
-    flex: 0 0 calc(36% - 20px);
-    max-width: calc(36% - 20px);
+    flex: 0 0 calc(46% - 20px);
+    max-width: calc(46% - 20px);
     width: 100%;
     background: var(--greenColor);
     color: white;
@@ -24,7 +24,7 @@
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
-    padding-left: 180px;
+    padding-left: 80px;
 }
 ._card:hover {
     box-shadow: 0 10px 20px rgba(100, 120, 120, 0.2);
