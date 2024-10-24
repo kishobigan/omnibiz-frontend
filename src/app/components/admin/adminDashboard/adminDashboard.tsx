@@ -61,7 +61,7 @@ function AdminDashboard() {
                             Create Access
                         </Button>
                     </div>
-                    <div className=''>
+                    <div className='d-flex justify-content-center'>
                         <div className='_cards'>
                             {data.map((item, index) => (
                                 <Card3 key={index} title={item.title} text={item.text} className=""/>
