@@ -127,6 +127,7 @@ const AdminBusinessOwner: React.FC = () => {
                 <FontAwesomeIcon
                     icon={row.is_active ? faUnlock : faLock}
                     style={{color: row.is_active ? 'blue' : 'red'}}
+                    size="lg"
                 />
             ),
             onClick: (row: Owner) => handleLockClick(row, row.is_active ? 'block' : 'unblock')
